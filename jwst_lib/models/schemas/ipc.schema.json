@@ -1,0 +1,21 @@
+{
+    "type" : "object",
+    "title": "IPC kernel model",
+    "extends" : {"$ref": "core.schema.json"},
+    "properties" : {
+
+        "data" :
+            {
+                "type" : "data",
+                "title" : "IPC deconvolution kernel",
+                "fits_hdu" : "SCI",
+                "default" : 1.0,
+                "ndim" : 2,
+                "dtype" : "float32"
+            },
+
+        "meta" :
+            {"$ref" : "referencefile.schema.json"}
+
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "type" : "object",
+    "extends" : {"$ref": "core.schema.json"},
+    "properties" : {
+        "data" :
+            {
+                "type" : "data",
+                "title" : "The gain",
+                "fits_hdu" : "SCI",
+                "default" : 0.0,
+                "ndim" : 2,
+                "dtype" : "float32"
+            },
+
+        "meta" :
+            {"$ref" : "referencefile.schema.json"}
+
+    }
+}

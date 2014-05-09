@@ -1,0 +1,42 @@
+{
+    "type": "object",
+
+    "extends": {
+        "$ref": "http://jwstlib.stsci.edu/schemas/core.schema.json"
+    },
+
+    "properties" : {
+        "mask" : {
+            "type" : "data",
+            "title" : "Bad pixel mask",
+            "fits_hdu" : "MASK",
+            "default" : 0,
+            "dtype" : "uint16",
+            "ndim" : 2
+        },
+
+        "field_def" : {
+            "type" : "data",
+            "title" : "Bit field definitions",
+            "fits_hdu" : "FIELD_DEF",
+            "dtype" : [
+                {"name" : "bit_value",
+                 "dtype" : "uint16"},
+                {"name" : "name",
+                 "dtype" : "string64"},
+                {"name" : "title",
+                 "dtype" : "string128"}
+            ]
+        },
+
+        "meta" : {
+            "properties": {
+                "bad_pixel_count" : {
+                    "type" : "integer",
+                    "title" : "Total count of all bad pixels",
+                    "fits_keyword" : "BPCOUNT"
+                }
+            }
+        }
+    }
+}

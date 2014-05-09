@@ -1,0 +1,18 @@
+{
+    "type" : "object",
+    "extends" : {"$ref": "core.schema.json"},
+    "properties" : {
+        "dq" :
+            {
+                "type" : "data",
+                "title" : "The mask",
+                "fits_hdu" : "DQ",
+                "default" : 0,
+                "ndim" : 2,
+                "dtype" : "uint8"
+            },
+
+        "meta" :
+            {"$ref" : "referencefile.schema.json"}
+    }
+}

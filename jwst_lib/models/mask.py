@@ -1,0 +1,31 @@
+from __future__ import absolute_import, unicode_literals, division, print_function
+
+from . import model_base
+from .dynamicdq import dynamic_mask
+
+__all__ = ['MaskModel']
+
+
+class MaskModel(model_base.DataModel):
+    """
+    A data model for 2D masks
+    """
+    schema_url = "mask.schema.json"
+
+    def __init__(self, init=None, dq=None, **kwargs):
+        super(MaskModel, self).__init__(init=init, **kwargs)
+
+        if dq is not None:
+            self.dq = dq
+        self.dq = dynamic_mask(self)
+
+    def get_primary_array_name(self):
+        """
+        Returns the name "primary" array for this model, which
+        controls the size of other arrays that are implicitly created.
+        This is intended to be overridden in the subclasses if the
+        primary array's name is not "data".
+        """
+        return 'dq'
+
+

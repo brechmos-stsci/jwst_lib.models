@@ -1,0 +1,71 @@
+{
+    "type" : "object",
+    "extends" : {"$ref": "core.schema.json"},
+    "properties" : {
+        "slits" : {
+            "type" : "array",
+            "title" : "An array of slits",
+            "items" : {
+                "type" : "object",
+                "properties" : {
+                    "data" : {
+                        "type" : "data",
+                        "fits_hdu" : "SCI",
+                        "default" : 0.0,
+                        "ndim" : 2,
+                        "dtype" : "float32"
+                    },
+                    "dq" : {
+                        "type" : "data",
+                        "fits_hdu" : "DQ",
+                        "default" : 0,
+                        "dtype" : "uint16"
+                    },
+                    "err" : {
+                        "type" : "data",
+                        "fits_hdu" : "ERR",
+                        "default" : 0.0,
+                        "dtype" : "float32"
+                    },
+                    "relsens" : {
+                        "$ref" : "relsens.schema.json"
+                    },
+                    "name" : {
+                        "title" : "Name of the slit",
+                        "type" : "string",
+                        "fits_keyword" : "SLTNAME",
+                        "fits_hdu" : "SCI"
+                    },
+                    "xstart" : {
+                        "title" : "Starting pixel in x direction",
+                        "type" : "number",
+                        "default" : 1,
+                        "fits_keyword" : "SLTSTRT1",
+                        "fits_hdu" : "SCI"
+                    },
+                    "xsize" : {
+                        "title" : "Number of pixels in x direction",
+                        "type" : "number",
+                        "default" : 0,
+                        "fits_keyword" : "SLTSIZE1",
+                        "fits_hdu" : "SCI"
+                    },
+                    "ystart" : {
+                        "title" : "Starting pixel in y direction",
+                        "type" : "number",
+                        "default" : 1,
+                        "fits_keyword" : "SLTSTRT2",
+                        "fits_hdu" : "SCI"
+                    },
+                    "ysize" : {
+                        "title" : "Number of pixels in y direction",
+                        "type" : "number",
+                        "default" : 0,
+                        "fits_keyword" : "SLTSIZE2",
+                        "fits_hdu" : "SCI"
+                    }
+                }
+            }
+        }
+    }
+}

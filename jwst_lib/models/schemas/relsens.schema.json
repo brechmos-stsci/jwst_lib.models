@@ -1,0 +1,11 @@
+{
+    "type": "data",
+    "title": "relative sensitivity table",
+    "fits_hdu": "RELSENS",
+    "dtype": [
+        {"name": "wavelength",
+         "dtype": "float64"},
+        {"name": "response",
+         "dtype": "float64"}
+    ]
+}

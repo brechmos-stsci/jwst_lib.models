@@ -1,0 +1,13 @@
+{
+    "type": "data",
+    "title": "Extracted count rate table",
+    "fits_hdu": "EXTRACT1D",
+    "dtype": [
+        {"name": "column",
+         "dtype": "float64"},
+        {"name": "wavelength",
+         "dtype": "float64"},
+        {"name": "countrate",
+         "dtype": "float64"}
+    ]
+}

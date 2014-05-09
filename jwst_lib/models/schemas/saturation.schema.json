@@ -1,0 +1,20 @@
+{
+    "type" : "object",
+    "title": "Saturation checking data",
+    "extends" : {"$ref": "core.schema.json"},
+    "properties" : {
+
+        "sat" :
+            {
+                "type" : "data",
+                "title" : "Saturation threshold",
+                "fits_hdu" : "SAT",
+                "default" : 100000.0,
+                "dtype" : "float32"
+            },
+
+        "meta" :
+            {"$ref" : "referencefile.schema.json"}
+
+    }
+}
