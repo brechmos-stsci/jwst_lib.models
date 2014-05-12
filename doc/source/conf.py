@@ -185,7 +185,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'jwst_lib.models.tex', u'jwstlib.models Documentation',
+  ('index', 'jwst_lib.models.tex', u'jwst_lib.models Documentation',
    u'STScI', 'manual'),
 ]
 
@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'jwst_lib.models', u'jwstlib.models Documentation',
+    ('index', 'jwst_lib.models', u'jwst_lib.models Documentation',
      [u'STScI'], 1)
 ]
 
@@ -229,7 +229,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'jwst_lib.models', u'jwstlib.models Documentation',
+  ('index', 'jwst_lib.models', u'jwst_lib.models Documentation',
    u'STScI', 'jwst_lib.models', 'One line description of project.',
    'Miscellaneous'),
 ]

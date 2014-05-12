@@ -416,7 +416,7 @@ def test_schema_url():
     with DataModel(schema={
             "type": "object",
             "extends": {
-                "$ref": "http://jwstlib.stsci.edu/schemas/jwst_lib.models/image.schema.json"}
+                "$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"}
                 }
         ) as x:
         assert isinstance(x.data, np.ndarray)

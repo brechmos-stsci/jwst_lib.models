@@ -92,7 +92,7 @@ this schema "extends" it:
 .. code-block:: javascript
 
       "extends": {
-          "$ref": "http://jwstlib.stsci.edu/schemas/core.schema.json"
+          "$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"
       },
 
 There's a lot going on in this one item.  ``extends`` declares the
@@ -107,19 +107,19 @@ The ``$ref`` URL can be a relative URL, in which case it is relative
 to the schema file where ``$ref`` is used.  In our case, however, it's
 an absolute URL.  Before you visit that URL to see what's there, I'll
 save you the trouble: there is nothing at that HTTP address.  The host
-``jwstlib.stsci.edu`` is recognized as a "special" address by the
+``jwst_lib.stsci.edu`` is recognized as a "special" address by the
 system that causes the schema to be looked up alongside installed
 Python code.  For example, to refer to a (hypothetical)
 ``my_instrument`` schema that ships with a Python package called
 ``astroboy``, use the following URL::
 
-  http://jwstlib.stsci.edu/schemas/astroboy/my_instrument.schema.json
+  http://jwst_lib.stsci.edu/schemas/astroboy/my_instrument.schema.json
 
 The "package" portion may be omitted to refer to schemas in the
 `jwst_lib.models` core, which is how we arrive at the URL we're using
 here::
 
-  http://jwstlib.stsci.edu/schemas/core.schema.json
+  http://jwst_lib.stsci.edu/schemas/core.schema.json
 
 .. note::
 
@@ -226,7 +226,7 @@ As an alternative, we could just as easily have said that we want to
 use the ``image`` schema from the core without defining any extra
 elements, by setting `schema_url` to::
 
-  schema_url = "http://jwstlib.stsci.edu/schemas/image.schema.json"
+  schema_url = "http://jwst_lib.stsci.edu/schemas/image.schema.json"
 
 .. note::
 

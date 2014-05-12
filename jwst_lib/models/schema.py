@@ -716,7 +716,7 @@ def get_schema_path(path, base_url):
     file path.
 
     If the schema path points to the special HTTP location
-    ``http://jwstlib.stsci.edu/schemas/$PACKAGE/$SCHEMA``, a heuristic
+    ``http://jwst_lib.stsci.edu/schemas/$PACKAGE/$SCHEMA``, a heuristic
     is used to find the schema within the local Python package
     namespace.  ``$PACKAGE`` is the dot-separated path to a Python
     package, and ``$SCHEMA`` is the name of a schema file that ships
@@ -724,12 +724,12 @@ def get_schema_path(path, base_url):
     ``bad_pixel_mask`` schema that ships with a Python package called
     ``mirilib``, use the following URL::
 
-        http://jwstlib.stsci.edu/schemas/mirilib/bad_pixel_mask.schema.json
+        http://jwst_lib.stsci.edu/schemas/mirilib/bad_pixel_mask.schema.json
 
     The ``$PACKAGE`` portion may be omitted to refer to schemas in the
     `jwst_lib.models` core::
 
-        http://jwstlib.stsci.edu/schemas/mirilib/image.schema.json
+        http://jwst_lib.stsci.edu/schemas/mirilib/image.schema.json
     """
     url_path, pound, json_pointer = path.partition('#')
 
@@ -745,7 +745,7 @@ def get_schema_path(path, base_url):
     url = urlparse.urljoin(
         base_url, url_path, allow_fragments=False)
 
-    if url.startswith('http://jwstlib.stsci.edu/schemas/'):
+    if url.startswith('http://jwst_lib.stsci.edu/schemas/'):
         import importlib
 
         path = urlparse.urlparse(url)[2]

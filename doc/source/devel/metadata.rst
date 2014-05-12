@@ -355,7 +355,7 @@ syntax and allows a subset of the schema file to be extracted.
 
 `jwst_lib.models` also supports special URLs that refer to schema files
 installed alongside Python code.  If URL is of the form
-``http://jwstlib.stsci.edu/schemas/$PACKAGE/$SCHEMA``, a heuristic is
+``http://jwst_lib.stsci.edu/schemas/$PACKAGE/$SCHEMA``, a heuristic is
 used to find the schema within the local Python package namespace.
 ``$PACKAGE`` is the dot-separated path to a Python package, and
 ``$SCHEMA`` is the name of a schema file that ships with that package.
@@ -363,12 +363,12 @@ For example, to refer to a (hypothetical) ``bad_pixel_mask`` schema
 that ships with a Python package called ``mirilib``, use the following
 URL::
 
-  http://jwstlib.stsci.edu/schemas/mirilib/bad_pixel_mask.schema.json
+  http://jwst_lib.stsci.edu/schemas/mirilib/bad_pixel_mask.schema.json
 
 The ``$PACKAGE`` portion may be omitted to refer to schemas in the
 `jwst_lib.models` core::
 
-  http://jwstlib.stsci.edu/schemas/image.schema.json
+  http://jwst_lib.stsci.edu/schemas/image.schema.json
 
 .. note::
 

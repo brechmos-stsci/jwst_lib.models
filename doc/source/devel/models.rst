@@ -84,7 +84,7 @@ exiting the `with` block.
 
 ::
 
-    from jwstlib import models
+    from jwst_lib import models
     with models.open("myimage.fits") as im:
         assert isinstance(im, models.ImageModel)
 

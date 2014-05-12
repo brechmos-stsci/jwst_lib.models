@@ -280,7 +280,7 @@ def test_metadata_doesnt_override():
 def test_table_with_metadata():
     schema = {
         "type" : "object",
-        "extends" : {"$ref": "http://jwstlib.stsci.edu/schemas/core.schema.json"},
+        "extends" : {"$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"},
         "properties" : {
             "flux_table" : {
                 "type" : "data",
