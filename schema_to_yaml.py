@@ -5,7 +5,7 @@ import yaml
 from yaml.nodes import MappingNode
 import collections
 
-with open("lib/jwstlib/models/schema.json", "r") as fd:
+with open("lib/jwst_lib.models/schema.json", "r") as fd:
     tree = json.load(fd, object_pairs_hook=collections.OrderedDict)
 
 def yaml_representer(dumper, obj):

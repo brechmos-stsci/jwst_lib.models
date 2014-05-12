@@ -4,7 +4,7 @@ from distutils.core import setup
 
 setup(
     name='custom_model',
-    description='Custom model example for jwstlib.models',
+    description='Custom model example for jwst_lib.models',
     packages=['custom_model', 'custom_model.tests'],
     package_dir={'custom_model': 'lib'},
     package_data={'custom_model': ['schemas/*.schema.json'],

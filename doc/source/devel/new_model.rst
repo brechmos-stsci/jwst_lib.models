@@ -4,7 +4,7 @@ Creating a new model
 ====================
 
 This tutorial describes the steps necessary to define a new model type
-using `jwstlib.models`.
+using `jwst_lib.models`.
 
 For further reading and details, see the reference materials in
 :ref:`metadata`.
@@ -22,10 +22,10 @@ the bits in the array means.
   still subject to change at the time of this writing.
 
 This example will be built as a third-party Python package, i.e. not
-part of `jwstlib.models` itself.  Doing so adds a few extra wrinkles
+part of `jwst_lib.models` itself.  Doing so adds a few extra wrinkles
 to the process, and it's most helpful to show what those wrinkles are.
 To skip ahead and just see the example in its entirety, see the
-``examples/custom_model`` directory within the `jwstlib.models` source
+``examples/custom_model`` directory within the `jwst_lib.models` source
 tree.
 
 Directory layout
@@ -61,7 +61,7 @@ Let's start with the schema file, ``bad_pixel_mask.schema.json``.
 There are a few things it needs to do:
 
    1) It should contain all of the core metadata from the core schema
-      that ships with `jwstlib.models`.  In JSON Schema parlance, this
+      that ships with `jwst_lib.models`.  In JSON Schema parlance, this
       schema "extends" the core schema.  In object-oriented
       programming terminology, this could be said that our schema
       "inherits from" the core schema.  It's all the same thing.
@@ -116,7 +116,7 @@ Python code.  For example, to refer to a (hypothetical)
   http://jwstlib.stsci.edu/schemas/astroboy/my_instrument.schema.json
 
 The "package" portion may be omitted to refer to schemas in the
-`jwstlib.models` core, which is how we arrive at the URL we're using
+`jwst_lib.models` core, which is how we arrive at the URL we're using
 here::
 
   http://jwstlib.stsci.edu/schemas/core.schema.json
@@ -205,7 +205,7 @@ the model.
 First, we need to import the `DataModel` class, which is the base
 class for all models::
 
-  from jwstlib.models import DataModel
+  from jwst_lib.models import DataModel
 
 Then we create a new Python class that inherits from `DataModel`, and
 set its `schema_url` class member to point to the schema that we just
@@ -236,18 +236,18 @@ elements, by setting `schema_url` to::
   automatically create the inheritance on the schema side (or vice
   versa).  The reason we can't is that the schema files are designed
   to be language-agnostic: it is possible to use them from an entirely
-  different implementation of the `jwstlib.models` framework possibly
+  different implementation of the `jwst_lib.models` framework possibly
   even written in a language other than Python.  So the schemas need
   to "stand alone" from the Python classes.  It's certainly possible
   to have the schema inherit from one thing and the Python class
-  inherit from another, and the `jwstlib.models` framework won't and
+  inherit from another, and the `jwst_lib.models` framework won't and
   can't really complain, but doing that is only going to lead to
   confusion, so just don't do it.
 
 Within this class, we'll define a constructor.  All model constructors
 must take the highly polymorphic ``init`` value as the first argument.
 This can be a file, another model, or all kinds of other things.  See
-the docstring of `jwstlib.models.DataModel.__init__` for more
+the docstring of `jwst_lib.models.DataModel.__init__` for more
 information.  But we're going to let the base class handle that
 anyway.
 
@@ -323,7 +323,7 @@ function.
 
    Since handling bit fields like this is such a commonly useful
    thing, it's possible that this functionality will become a part of
-   `jwstlib.models` itself in the future.  However, this still stands
+   `jwst_lib.models` itself in the future.  However, this still stands
    as a good example of something someone may want to do in a custom
    model class.
 
@@ -358,7 +358,7 @@ minimal, ``setup.py`` is presented below::
 
   setup(
       name='custom_model',
-      description='Custom model example for jwstlib.models',
+      description='Custom model example for jwst_lib.models',
       packages=['custom_model', 'custom_model.tests'],
       package_dir={'custom_model': 'lib'},
       package_data={'custom_model': ['schemas/*.schema.json'],

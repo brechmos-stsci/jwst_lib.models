@@ -44,7 +44,7 @@ To create a new `ImageModel`, just call its constructor.  To create a
 new model where all of the arrays will have default values, simply
 provide a shape as the first argument::
 
-    from jwstlib.models import ImageModel
+    from jwst_lib.models import ImageModel
     with ImageModel((1024, 1024)) as im:
         ...
 
@@ -68,7 +68,7 @@ using that array by passing it in as a data keyword argument::
 Creating a data model from a file
 ---------------------------------
 
-The `jwstlib.models.open` function is a convenient way to create a
+The `jwst_lib.models.open` function is a convenient way to create a
 model from a file on disk.  It may be passed any of the following:
 
     - a path to a FITS file
@@ -93,7 +93,7 @@ that what is being loaded is of a particular type, use the constructor
 of the desired concrete class.  For example, if you want to ensure
 that the file being opened contains 2-dimensional image data::
 
-    from jwstlib.models import ImageData
+    from jwst_lib.models import ImageData
     with ImageData("myimage.fits") as im:
         # raises exception if myimage.fits is not an image file
         pass
@@ -151,7 +151,7 @@ to FITS format.
 Converting from `pyfits`
 ========================
 
-This section describes how to port pyfits-using code to use `jwstlib.models`.
+This section describes how to port pyfits-using code to use `jwst_lib.models`.
 
 Opening a file
 --------------
@@ -162,7 +162,7 @@ Instead of::
 
 use::
 
-    from jwstlib.models import ImageModel
+    from jwst_lib.models import ImageModel
     with ImageModel("myfile.fits") as model:
         ...
 
@@ -215,7 +215,7 @@ use the :ref:`metadata` tree.
 There is a convenience method, `find_fits_keyword` to find where a
 FITS keyword is used in the metadata tree::
 
-    >>> from jwstlib.models import DataModel
+    >>> from jwst_lib.models import DataModel
     # First, create a model of the desired type
     >>> model = DataModel()
     >>> model.find_fits_keyword('DATE-OBS')

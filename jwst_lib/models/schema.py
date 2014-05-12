@@ -727,7 +727,7 @@ def get_schema_path(path, base_url):
         http://jwstlib.stsci.edu/schemas/mirilib/bad_pixel_mask.schema.json
 
     The ``$PACKAGE`` portion may be omitted to refer to schemas in the
-    `jwstlib.models` core::
+    `jwst_lib.models` core::
 
         http://jwstlib.stsci.edu/schemas/mirilib/image.schema.json
     """
@@ -753,7 +753,7 @@ def get_schema_path(path, base_url):
         if len(parts) == 4:
             package = parts[-2]
         elif len(parts) == 3:
-            package = "jwstlib.models"
+            package = "jwst_lib.models"
         else:
             raise ValueError("Unknown schema URL {0!r}".format(url))
         filename = parts[-1]

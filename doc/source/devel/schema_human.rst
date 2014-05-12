@@ -3,5 +3,5 @@
 Table
 =====
 
-.. autofunction:: jwstlib.models.doc.SchemaAsHuman
+.. autofunction:: jwst_lib.models.doc.SchemaAsHuman
 

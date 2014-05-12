@@ -13,16 +13,16 @@ Metadata values are automatically type-checked when they are set.
 Therefore, setting a value that expects a number to a string will
 raise an exception::
 
-    >>> from jwstlib.models import ImageModel
+    >>> from jwst_lib.models import ImageModel
     >>> dm = ImageModel()
     >>> dm.meta.target.ra = "foo"
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-      File "site-packages/jwstlib/models/schema.py", line 672, in __setattr__
+      File "site-packages/jwst_lib.models/schema.py", line 672, in __setattr__
         object.__setattr__(self, attr, val)
-      File "site-packages/jwstlib/models/schema.py", line 490, in __set__
+      File "site-packages/jwst_lib.models/schema.py", line 490, in __set__
         val = self.to_basic_type(val)
-      File "site-packages/jwstlib/models/schema.py", line 422, in to_basic_type
+      File "site-packages/jwst_lib.models/schema.py", line 422, in to_basic_type
         raise ValueError(e.message)
     ValueError: 'foo' is not of type u'number'
 
@@ -33,7 +33,7 @@ is values is set, a warning will be raised when saving to a FITS file.
     No way to save property 'transformations' in FITS
 
 The set of available metadata elements is defined in a JSON Schema
-that ships with `jwstlib.models`.  To see what elements are available,
+that ships with `jwst_lib.models`.  To see what elements are available,
 this schema can be viewed in the following formats:
 
 .. toctree::
@@ -48,7 +48,7 @@ schema.  `search_schema` will search the schema for the given
 substring in metadata names as well as their documentation.  The
 search is case-insensitive::
 
-    >>> from jwstlib.models import ImageModel
+    >>> from jwst_lib.models import ImageModel
     # Create a model of the desired type
     >>> model = ImageModel()
     # Call `search_schema` on it to find possibly related elements.
@@ -95,24 +95,24 @@ object where the attributes are type-checked::
 
     >>> trans = dm.meta.transformations[0]
     >>> print trans
-    <jwstlib.models.schema.Transformations object at 0x123a810>
+    <jwst_lib.models.schema.Transformations object at 0x123a810>
     >>> print trans.type
     SIN
     >>> trans.type = 42.0
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
-      File "site-packages/jwstlib/models/schema.py", line 672, in __setattr__
+      File "site-packages/jwst_lib.models/schema.py", line 672, in __setattr__
          object.__setattr__(self, attr, val)
-      File "site-packages/jwstlib/models/schema.py", line 490, in __set__
+      File "site-packages/jwst_lib.models/schema.py", line 490, in __set__
          val = self.to_basic_type(val)
-      File "site-packages/jwstlib/models/schema.py", line 422, in to_basic_type
+      File "site-packages/jwst_lib.models/schema.py", line 422, in to_basic_type
          raise ValueError(e.message)
     ValueError: 42.0 is not of type u'string'
 
 JSON Schema
 ===========
 
-The `jwstlib.models` library defines its metadata using `Draft 3 of
+The `jwst_lib.models` library defines its metadata using `Draft 3 of
 the JSON Schema specification
 <http://tools.ietf.org/html/draft-zyp-json-schema-03>`_.  The most
 important and commonly used parts are excerpted here.  The mapping
@@ -195,7 +195,7 @@ one of two forms:
 .. _schema-data-type:
 
   - **Extra Types:** In addition to these types defined as part of the
-    offical JSON Schema standard, `jwstlib.models` also understands a
+    offical JSON Schema standard, `jwst_lib.models` also understands a
     new type ``data`` used for *n* - dimensional arrays and tables
     (aka structured arrays).  (It would have been easier to use the
     name "array", but that is already used by the standard to handle
@@ -253,7 +253,7 @@ schema from the property definition.
 .. note::
 
    According to the JSON Schema spec, properties are logically
-   unordered.  However, `jwstlib.models` will preserve the order of
+   unordered.  However, `jwst_lib.models` will preserve the order of
    the properties as written in the schema when writing out to a file.
 
 additionalProperties
@@ -330,7 +330,7 @@ format
 .. note::
 
    This ``format`` attribute is not currently supported by the JSON
-   Schema validation library used by `jwstlib.models`.  However, some
+   Schema validation library used by `jwst_lib.models`.  However, some
    special values are defined for types used by FITS:
 
        - `http://www.stsci.edu/types/fits-date-time`: Defines a
@@ -347,13 +347,13 @@ schema, or even other parts of a schema in another file.
 Any dictionary containing a ``$ref`` attribute is replaced entirely with
 the target of the reference.
 
-The reference value is a URL.  `jwstlib.models` supports file and http
+The reference value is a URL.  `jwst_lib.models` supports file and http
 urls.  The URL may also have a local part following the ``#``
 character.  This local part is in `JSON Pointer
 <http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-03>`_
 syntax and allows a subset of the schema file to be extracted.
 
-`jwstlib.models` also supports special URLs that refer to schema files
+`jwst_lib.models` also supports special URLs that refer to schema files
 installed alongside Python code.  If URL is of the form
 ``http://jwstlib.stsci.edu/schemas/$PACKAGE/$SCHEMA``, a heuristic is
 used to find the schema within the local Python package namespace.
@@ -366,7 +366,7 @@ URL::
   http://jwstlib.stsci.edu/schemas/mirilib/bad_pixel_mask.schema.json
 
 The ``$PACKAGE`` portion may be omitted to refer to schemas in the
-`jwstlib.models` core::
+`jwst_lib.models` core::
 
   http://jwstlib.stsci.edu/schemas/image.schema.json
 
@@ -428,7 +428,7 @@ not replace the contents of the object, but merely merges it.  The
 target of the ``extents`` attribute is loaded in, and then any locally
 defined attributes override attributes in the target.
 
-For example, all of the built-in schemas in `jwstlib.models` extend the
+For example, all of the built-in schemas in `jwst_lib.models` extend the
 same core schema by using the `extends` attribute:
 
 .. code-block:: javascript
@@ -445,7 +445,7 @@ same core schema by using the `extends` attribute:
 FITS-specific Schema Attributes
 -------------------------------
 
-`jwstlib.models` also adds some new keys to the schema language in
+`jwst_lib.models` also adds some new keys to the schema language in
 order to handle reading and writing FITS files.  These attributes all
 have the prefix ``fits_``.
 
@@ -485,7 +485,7 @@ Extending the schema
 --------------------
 
 Since it would be cumbersome to update the core schema everytime a
-library wants to use application-specific keywords, `jwstlib.models`
+library wants to use application-specific keywords, `jwst_lib.models`
 makes it easy to overlay schema fragments on top of the core schema.
 
 Schema overlays are represented using a tuple of the form
@@ -513,7 +513,7 @@ Schema overlays may be used in two ways:
   1. When constructing the model from scratch, a list of overlays may
      be passed to the `schema_overlays` keyword argument::
 
-         from jwstlib.models import ImageModel
+         from jwst_lib.models import ImageModel
          model = ImageModel(schema_overlays=[my_schema])
          model.meta.target.population = 6e12
 

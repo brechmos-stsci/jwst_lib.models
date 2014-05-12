@@ -3,5 +3,5 @@
 YAML
 ====
 
-.. autofunction:: jwstlib.models.doc.SchemaAsYaml
+.. autofunction:: jwst_lib.models.doc.SchemaAsYaml
 

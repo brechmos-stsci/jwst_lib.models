@@ -3,5 +3,5 @@
 JSON
 ====
 
-.. autofunction:: jwstlib.models.doc.SchemaAsJson
+.. autofunction:: jwst_lib.models.doc.SchemaAsJson
 

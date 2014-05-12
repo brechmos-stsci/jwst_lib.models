@@ -1,4 +1,4 @@
-jwstlib.models Developer’s Documentation
+jwst_lib.models Developer’s Documentation
 ========================================
 
 Contents:
