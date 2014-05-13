@@ -1,44 +1,49 @@
 {
-    "type" : "object",
-    "extends" : {"$ref" : "core.schema.json"},
-    "properties" : {
-        "data" :
-            {
-                "type" : "data",
-                "title" : "The science data",
-                "fits_hdu" : "SCI",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
-            },
+    "allOf": [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "extends" : {"$ref" : "core.schema.json"},
+            "properties" : {
+                "data" :
+                {
+                    "type" : "data",
+                    "title" : "The science data",
+                    "fits_hdu" : "SCI",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
+                },
 
-        "pixeldq" :
-            {
-                "type" : "data",
-                "title" : "2-D data quality array for all planes",
-                "fits_hdu" : "PIXELDQ",
-                "default" : 0,
-                "ndim" : 2,
-                "dtype" : "uint8"
-            },
+                "pixeldq" :
+                {
+                    "type" : "data",
+                    "title" : "2-D data quality array for all planes",
+                    "fits_hdu" : "PIXELDQ",
+                    "default" : 0,
+                    "ndim" : 2,
+                    "dtype" : "uint8"
+                },
 
-        "groupdq" :
-            {
-                "type" : "data",
-                "title" : "4-D data quality array for each plane",
-                "fits_hdu" : "GROUPDQ",
-                "default" : 0,
-                "ndim" : 4,
-                "dtype" : "uint8"
-            },
+                "groupdq" :
+                {
+                    "type" : "data",
+                    "title" : "4-D data quality array for each plane",
+                    "fits_hdu" : "GROUPDQ",
+                    "default" : 0,
+                    "ndim" : 4,
+                    "dtype" : "uint8"
+                },
 
-        "err" :
-            {
-                "type" : "data",
-                "title" : "Error array",
-                "fits_hdu" : "ERR",
-                "default" : 0.0,
-                "dtype" : "float32"
+                "err" :
+                {
+                    "type" : "data",
+                    "title" : "Error array",
+                    "fits_hdu" : "ERR",
+                    "default" : 0.0,
+                    "dtype" : "float32"
+                }
             }
         }
+    ]
 }

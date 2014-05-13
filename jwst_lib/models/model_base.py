@@ -28,11 +28,10 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
     """
     schema_url = "core.schema.json"
 
-    def __init__(self, init=None, schema=None, schema_overlays=[]):
-        """
-        Parameters
+    def __init__(self, init=None, schema=None):
+        """Parameters
         ----------
-        init : shape tuple, file path, file object, pyfits.HDUList, numpy array, None
+        init : shape tuple, file path, file object, astropy.io.fits.HDUList, numpy array, None
 
             - None: A default data model with no shape
 
@@ -44,8 +43,8 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             - readable file object: Initialize from the given file
               object
 
-            - pyfits.HDUList: Initialize from the given
-              `pyfits.HDUList`
+            - ``astropy.io.fits.HDUList``: Initialize from the given
+              `~astropy.io.fits.HDUList`.
 
             - Storage instance: Use the given storage backend
               (internal use)
@@ -57,21 +56,6 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             If not provided, the schema associated with this class
             will be used.
 
-        schema_overlays : list of tuples
-            A list of schema overlays where each element is of the form
-            (*position*, *overlay*).
-
-            - *position* is a dot-separated path to the position in the
-              main schema where the overlay will be applied.  For
-              example, to overlay a schema for a new value `name` in the
-              category `target`, pass ``\"target.name\"``.
-
-            - *overlay* is a schema fragment that will be overlayed on top
-              of the main schema at that position.  Any key/value pairs in
-              the overlay that already exist in the main schema will be
-              replaced by those in the overlay.  Any key/value pairs in
-              the overlay that don't already exist in the main schema will
-              be added.
         """
         self._owns_storage = True
         is_array = False
@@ -121,11 +105,10 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         elif isinstance(schema, basestring):
             schema = mschema.get_schema(schema, base_url)
         elif isinstance(schema, dict):
-            schema = mschema.resolve_ref_and_extends(schema, base_url)
+            schema = mschema.resolve_references(schema, base_url)
         else:
             raise TypeError("schema must be str, dict or None")
 
-        schema = mschema.apply_overlays(schema, schema_overlays)
         self._schema = schema
 
         tree = mschema.schema_to_tree(schema, self.storage)
@@ -201,29 +184,26 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         self.to_fits(path, *args, **kwargs)
 
     @classmethod
-    def from_fits(cls, init, schema=None, schema_overlays=[]):
+    def from_fits(cls, init, schema=None):
         """
         Load a model from a FITS file.
 
         Parameters
         ----------
-        init : file path, file object, pyfits.HDUList
+        init : file path, file object, astropy.io.fits.HDUList
             - file path: Initialize from the given file
             - readable file object: Initialize from the given file object
-            - pyfits.HDUList: Initialize from the given `pyfits.HDUList`
+            - astropy.io.fits.HDUList: Initialize from the given
+              `~astropy.io.fits.HDUList`.
 
         schema :
-            Same as for `__init__`
-
-        schema_overlays :
             Same as for `__init__`
 
         Returns
         -------
         model : DataModel instance
         """
-        return cls(init, schema=schema,
-                   schema_overlays=schema_overlays)
+        return cls(init, schema=schema)
 
     def to_fits(self, init, *args, **kwargs):
         """
@@ -235,7 +215,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
 
         *args, **kwargs
             Any additional arguments are passed along to
-            `pyfits.writeto`.
+            `astropy.io.fits.writeto`.
         """
         from . import fits
 
@@ -246,7 +226,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             fits.FitsStorage.write_model_to(self, init, *args, **kwargs)
 
     @classmethod
-    def from_json(cls, init, schema=None, schema_overlays=[]):
+    def from_json(cls, init, schema=None):
         """
         Load the metadata for a DataModel from a JSON file.
 
@@ -259,9 +239,6 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         schema :
             Same as for `__init__`
 
-        schema_overlays :
-            Same as for `__init__`
-
         Returns
         -------
         model : DataModel instance
@@ -271,8 +248,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         tree = json_yaml.load(init)
         tree = {'meta': tree}
         storage = mstorage.TreeStorage(tree)
-        self = cls(
-            storage, schema=schema, schema_overlays=schema_overlays)
+        self = cls(storage, schema=schema)
         self.validate_tree(tree)
         return self
     from_yaml = from_json
@@ -296,7 +272,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         else:
             tree = self.to_tree()
 
-        json_yaml.dump(tree['meta'], init, format="json")
+        json_yaml.dump(tree.get('meta', {}), init, format="json")
 
     def to_yaml(self, path):
         """
@@ -325,16 +301,17 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             return self._storage.__get_shape__()
         return self._shape
 
-    def extend_schema(self, schema_overlays):
+    def extend_schema(self, new_schema):
         """
-        Extend the model's schema using the given schema overlays.
+        Extend the model's schema using the given schema, by combining
+        it in an "allOf" array.
 
         Parameters
         ----------
-        schema_overlays : list of schema overlays
-            See `__init__` for a description of this parameter.
+        new_schema : schema tree
         """
-        schema = mschema.apply_overlays(self._schema, schema_overlays)
+        schema = {'allOf': [self._schema, new_schema]}
+
         tree = mschema.schema_to_tree(schema, self.storage)
 
         # Replace the MetaBase base class with the new one
@@ -617,7 +594,8 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         """
         if hasattr(d, '_extra_fits'):
             self.extend_schema(
-                [('_extra_fits', d.schema['properties']['_extra_fits'])])
+                {'type': 'object',
+                 'properties': {'_extra_fits': d._extra_fits.__class__._schema}})
 
         for key, val in d.items(include_arrays=include_arrays,
                                 primary_only=primary_only):

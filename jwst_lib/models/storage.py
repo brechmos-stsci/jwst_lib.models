@@ -11,9 +11,9 @@ There are currently 2 storage backends implemented:
   - TreeStorage: Stores values in something akin to a JSON or YAML
     tree.
 
-  - FitsStorage: Stores values in a pyfits.HDUList hierarchy.  This
-    includes all of the nice things about pyfits, such as mmap'ing of
-    array data.
+  - FitsStorage: Stores values in a `astropy.io.fits.HDUList`
+    hierarchy.  This includes all of the nice things about
+    ``astropy.io.fits``, such as mmap'ing of array data.
 """
 from __future__ import absolute_import, unicode_literals, division, print_function
 
@@ -128,15 +128,15 @@ class TreeStorage(Storage):
 
         Returns
         -------
-        header : `pyfits.Header` object
+        header : `~astropy.io.fits.Header` object
         """
-        import pyfits
+        from astropy.io import fits
         from . import schema
 
         elements = schema.get_elements_for_fits_hdu(
             model.schema, hdu_name=hdu_name)
 
-        header = pyfits.Header()
+        header = fits.Header()
 
         for keyword, path in elements.items():
             val = model.get_item_as_json_value(path)

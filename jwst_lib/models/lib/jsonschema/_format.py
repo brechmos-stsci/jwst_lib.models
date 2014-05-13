@@ -2,6 +2,7 @@ import datetime
 import re
 import socket
 
+from .compat import str_types
 from .exceptions import FormatError
 
 

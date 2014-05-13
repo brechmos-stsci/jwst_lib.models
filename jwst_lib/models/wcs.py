@@ -8,10 +8,8 @@ def _get_wcs_class():
     try:
         from astropy.wcs import WCS
     except ImportError:
-        from pywcs import WCS
-    except ImportError:
         raise ImportError(
-            "astropy or pywcs must be installed for this functionality")
+            "astropy must be installed for this functionality")
     return WCS
 
 

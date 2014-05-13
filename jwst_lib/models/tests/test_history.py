@@ -5,7 +5,7 @@ import shutil
 import tempfile
 
 import numpy as np
-import pyfits
+from astropy.io import fits
 
 from .. import DataModel
 
@@ -31,7 +31,7 @@ def test_history_from_model_to_fits():
     assert m.history == ["First entry", "Second entry"]
     m.save(TMP_FITS)
 
-    hdulist = pyfits.open(TMP_FITS)
+    hdulist = fits.open(TMP_FITS)
     assert list(hdulist[0].header['HISTORY']) == ["First entry", "Second entry"]
     hdulist.close()
 
@@ -45,16 +45,16 @@ def test_history_from_model_to_fits():
 
     m2.save(TMP_FITS)
 
-    hdulist = pyfits.open(TMP_FITS)
+    hdulist = fits.open(TMP_FITS)
     assert list(hdulist[0].header['HISTORY']) == ["First entry", "Second entry"]
     hdulist.close()
 
 
 def test_history_from_fits():
-    header = pyfits.Header()
+    header = fits.Header()
     header['HISTORY'] = "First entry"
     header['HISTORY'] = "Second entry"
-    pyfits.writeto(TMP_FITS, np.array([]), header, clobber=True)
+    fits.writeto(TMP_FITS, np.array([]), header, clobber=True)
 
     m = DataModel(TMP_FITS)
     assert m.history == ["First entry", "Second entry"]

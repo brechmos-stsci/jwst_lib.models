@@ -73,7 +73,7 @@ model from a file on disk.  It may be passed any of the following:
 
     - a path to a FITS file
     - a path to a FINF file (TODO: At some future date)
-    - a `pyfits.HDUList` object
+    - a `astropy.io.fits.HDUList` object
 
 The file will be opened, and based on the nature of the data in the
 file, the correct data model class will be returned.  For example, if
@@ -148,17 +148,18 @@ To add an entry to the history::
 These history entries are stored in ``HISTORY`` keywords when saving
 to FITS format.
 
-Converting from `pyfits`
-========================
+Converting from ``astropy.io.fits``
+===================================
 
-This section describes how to port pyfits-using code to use `jwst_lib.models`.
+This section describes how to port code that uses ``astropy.io.fits``
+to use `jwst_lib.models`.
 
 Opening a file
 --------------
 
 Instead of::
 
-    pyfits.open("myfile.fits")
+    astropy.io.fits.open("myfile.fits")
 
 use::
 

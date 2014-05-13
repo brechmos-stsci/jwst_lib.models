@@ -13,28 +13,30 @@
                 "dtype" : "float32"
             },
 
-        "dq" :
-            {
-                "type" : "data",
-                "title" : "2-D data quality array for all planes",
-                "fits_hdu" : "DQ",
-                "default" : 0,
-                "ndim" : 2,
-                "dtype" : "uint8"
-            },
+                "dq" :
+                {
+                    "type" : "data",
+                    "title" : "2-D data quality array for all planes",
+                    "fits_hdu" : "DQ",
+                    "default" : 0,
+                    "ndim" : 2,
+                    "dtype" : "uint8"
+                },
 
-        "err" :
-            {
-                "type" : "data",
-                "title" : "Error array",
-                "fits_hdu" : "ERR",
-                "default" : 0.0,
-                "ndim" : 3,
-                "dtype" : "float32"
-            },
+                "err" :
+                {
+                    "type" : "data",
+                    "title" : "Error array",
+                    "fits_hdu" : "ERR",
+                    "default" : 0.0,
+                    "ndim" : 3,
+                    "dtype" : "float32"
+                },
 
-        "meta" :
-            {"$ref" : "referencefile.schema.json"}
+                "meta" :
+                {"$ref" : "referencefile.schema.json"}
 
+            }
         }
+    ]
 }

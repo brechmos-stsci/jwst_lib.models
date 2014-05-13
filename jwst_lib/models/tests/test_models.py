@@ -67,8 +67,8 @@ def test_broadcast2():
 
 
 def test_from_hdulist():
-    import pyfits
-    with pyfits.open(FITS_FILE) as hdulist:
+    from astropy.io import fits
+    with fits.open(FITS_FILE) as hdulist:
         with open(hdulist) as dm:
             pass
         assert hdulist.fileinfo(0)['file'].closed == False
@@ -332,8 +332,8 @@ def test_image_with_extra_keyword_to_multislit():
     with ImageModel(data=np.empty((32, 32))) as im:
         im.save(TMP_FITS, clobber=True)
 
-    import pyfits
-    with pyfits.open(TMP_FITS, mode="update") as hdulist:
+    from astropy.io import fits
+    with fits.open(TMP_FITS, mode="update") as hdulist:
         hdulist[1].header['BUNIT'] = 'x'
 
     with ImageModel(TMP_FITS) as im:

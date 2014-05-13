@@ -38,8 +38,8 @@ def test_wcs():
         wcs2 = dm2.get_fits_wcs()
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
-    world1 = wcs1.all_pix2sky(x, 1)
-    world2 = wcs2.all_pix2sky(x, 1)
+    world1 = wcs1.all_pix2world(x, 1)
+    world2 = wcs2.all_pix2world(x, 1)
 
     assert_array_almost_equal(world1, world2)
 
@@ -59,8 +59,8 @@ def test_wcs():
     assert wcs3.wcs.crpix[0] == 0.0
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
-    world1 = wcs1.all_pix2sky(x, 1)
-    world2 = wcs3.all_pix2sky(x, 1)
+    world1 = wcs1.all_pix2world(x, 1)
+    world2 = wcs3.all_pix2world(x, 1)
 
     dm4 = ImageModel()
     dm4.set_fits_wcs(wcs3)

@@ -66,33 +66,47 @@ def test_date2():
         assert isinstance(dm.meta.date, datetime.datetime)
 
 
-transformation_overlays = [
-    ("meta.transformations", {
-        "title" : "A list of transformations",
-        "type" : "array",
-        "items" : {
-            "title" : "A transformation",
-            "type" : "object",
-            "properties" : {
-                "type" : {
-                    "title" : "Transformation type",
-                    "type" : "string"
-                },
-                "coeff" : {
-                    "title" : "coefficients",
-                    "type" : "number"
+transformation_schema = {
+    "allOf": [
+        {"$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"},
+        {
+            "type": "object",
+            "properties": {
+                "meta": {
+                    "type": "object",
+                    "properties": {
+                        "transformations": {
+                            "title" : "A list of transformations",
+                            "type" : "array",
+                            "items" : {
+                                "title" : "A transformation",
+                                "type" : "object",
+                                "properties" : {
+                                    "type" : {
+                                        "title" : "Transformation type",
+                                        "type" : "string"
+                                    },
+                                    "coeff" : {
+                                        "title" : "coefficients",
+                                        "type" : "number"
+                                    }
+                                },
+                                "additionalProperties" : False
+                            }
+                        }
+                    }
                 }
-            },
-            "additionalProperties" : False
+            }
         }
-    })]
+    ]
+}
 
 
 @raises(ValueError)
 def test_list():
     with ImageModel(
             (50, 50),
-            schema_overlays=transformation_overlays) as dm:
+            schema=transformation_schema) as dm:
         dm.meta.transformations = []
         object = dm.meta.transformations.item(
             transformation="SIN",
@@ -103,7 +117,7 @@ def test_list():
 def test_list2():
     with ImageModel(
             (50, 50),
-            schema_overlays=transformation_overlays) as dm:
+            schema=transformation_schema) as dm:
         dm.meta.transformations = []
         object = dm.meta.transformations.append(
             {'transformation' : 'FOO',
@@ -111,7 +125,7 @@ def test_list2():
 
 
 def test_list3():
-    with DataModel(schema_overlays=transformation_overlays) as dm:
+    with DataModel(schema=transformation_schema) as dm:
         assert dm.meta.transformations == []
         trans = dm.meta.transformations.item(
             type = "SIN",
@@ -125,7 +139,7 @@ def test_list3():
         dm.to_json(TMP_JSON)
 
         with DataModel.from_json(
-            TMP_JSON, schema_overlays=transformation_overlays) as dm2:
+                TMP_JSON, schema=transformation_schema) as dm2:
             l2 = dm2.meta.transformations
             assert len(l2) == 2
             assert l2[0].type == 'SIN'
@@ -179,93 +193,6 @@ def test_ad_hoc_fits():
         assert dm2.meta.foo == {'a': 42, 'b': ['a', 'b', 'c']}
 
 
-schema_extra = [
-    ('meta.foo',
-     {'title': 'Custom type',
-      'type': 'string',
-      'default': 'bar',
-      'fits_keyword': 'FOO'}
-     ),
-
-    ('meta.restricted',
-     {'title': 'Custom type',
-      'type': 'object',
-      'additionalProperties': False,
-      'properties': {
-          'allowed': {
-              'type': 'number'
-          }
-      }
-     }
-     ),
-
-    ('meta.subarray.size',
-     {'title': 'Subarray size',
-      'type': 'number'}
-     ),
-
-    ('meta.bar.baz',
-     {'title': 'Deep custom type',
-      'type': 'string'}
-     ),
-
-    ('meta.subarray', {
-        'properties': {
-            'xstart': {
-                'type': 'string',
-                'default': 'fubar'
-                }
-            }
-        }
-     ),
-    ]
-
-
-def test_schema_overlay():
-    with DataModel(schema_overlays=schema_extra) as x:
-        assert x.meta.foo == 'bar'
-
-        try:
-            x.meta.subarray.size = 'string'
-        except:
-            pass
-        else:
-            raise AssertionError()
-
-        x.meta.restricted.allowed = 42.0
-        try:
-            x.meta.restricted.foobar = 32.0
-        except AttributeError:
-            pass
-        else:
-            raise AssertionError()
-
-        x.meta.bar.baz = 'google'
-        assert x.meta.bar.baz == 'google'
-
-        x.meta.subarray.xstart = 'fubar'
-
-        x.to_fits(TMP_FITS, clobber=True)
-
-    with DataModel.from_fits(TMP_FITS, schema_overlays=schema_extra) as y:
-        foo = y.meta.foo
-
-        y.extend_schema(schema_extra)
-
-        assert y.meta.foo == 'bar'
-
-
-def test_extend_schema():
-    with DataModel() as x:
-        x.meta.instrument.type = 'NIRCAM'
-        x.extend_schema(schema_extra)
-
-        assert x.meta.foo == 'bar'
-        x.meta.bar.baz = 'google'
-        x.meta.instrument.type = 'MIRI'
-        assert x.meta.instrument.type == 'MIRI'
-
-
 def test_find_fits_keyword():
     with DataModel() as x:
         assert x.find_fits_keyword('DATE-OBS', return_result=True) == \
@@ -281,8 +208,58 @@ def test_search_schema():
     assert 'meta.target.ra' in results
 
 
+schema_extra = {
+    "type": "object",
+    "properties": {
+        "meta": {
+            "type": "object",
+            "properties": {
+                "foo": {
+                    'title': 'Custom type',
+                    'type': 'string',
+                    'default': 'bar',
+                    'fits_keyword': 'FOO'
+                },
+                "restricted": {
+                    'title': 'Custom type',
+                    'type': 'object',
+                    'additionalProperties': False,
+                    'properties': {
+                        'allowed': {
+                            'type': 'number'
+                        }
+                    }
+                },
+                "bar": {
+                    "type": "object",
+                    "properties": {
+                        "baz": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "subarray": {
+                    "type": "object",
+                    "properties": {
+                        "size": {
+                            'title': 'Subarray size',
+                            'type': 'number'
+                        },
+                        'xstart': {
+                            'type': 'string',
+                            'default': 'fubar'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
 def test_dictionary_like():
-    with DataModel(schema_overlays=schema_extra) as x:
+    with DataModel(schema=schema_extra) as x:
         assert x['meta.foo'] == 'bar'
 
         try:
@@ -306,7 +283,7 @@ def test_dictionary_like():
 
 
 def test_to_flat_dict():
-    with DataModel(schema_overlays=schema_extra) as x:
+    with DataModel(schema=schema_extra) as x:
         assert x['meta.foo'] == 'bar'
 
         d = x.to_flat_dict()
@@ -315,26 +292,33 @@ def test_to_flat_dict():
 
 
 def test_table_array():
-    table_schema = [
-        ('table',
-         {'title': 'A structured table',
-          'fits_hdu': 'table',
-          'type': 'data',
-          'dtype': [
-              'bool8',
-              {'dtype': 'int16',
-               'name': 'my_int'},
-              {'dtype': 'float32',
-               'name': 'my_float',
-               'shape': [3, 2]},
-               {'dtype': 'string64',
-                'name': 'my_string'}
-               ]
+    table_schema = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "table": {
+                        'title': 'A structured table',
+                        'fits_hdu': 'table',
+                        'type': 'data',
+                        'dtype': [
+                            'bool8',
+                            {'dtype': 'int16',
+                             'name': 'my_int'},
+                            {'dtype': 'float32',
+                             'name': 'my_float',
+                             'shape': [3, 2]},
+                            {'dtype': 'string64',
+                             'name': 'my_string'}
+                        ]
+                    }
+                }
             }
-        )
         ]
+    }
 
-    with DataModel(schema_overlays=table_schema) as x:
+    with DataModel(schema=table_schema) as x:
         table = x.table
         assert table.dtype == [
             ('f0', '|i1'),
@@ -345,7 +329,7 @@ def test_table_array():
 
         x.to_fits(TMP_FITS, clobber=True)
 
-    with DataModel(TMP_FITS, schema_overlays=table_schema) as x:
+    with DataModel(TMP_FITS, schema=table_schema) as x:
         table = x.table
         assert table.dtype == [
             ('f0', '|i1'),
@@ -362,21 +346,28 @@ def test_table_array_convert():
     """
     from jwst_lib.models import util
 
-    table_schema = [
-        ('table',
-         {'title': 'A structured table',
-          'fits_hdu': 'table',
-          'type': 'data',
-          'dtype': [
-              'bool8',
-              {'dtype': 'int16',
-               'name': 'my_int'},
-               {'dtype': 'string64',
-                'name': 'my_string'}
-               ]
+    table_schema = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "table": {
+                        'title': 'A structured table',
+                        'fits_hdu': 'table',
+                        'type': 'data',
+                        'dtype': [
+                            'bool8',
+                            {'dtype': 'int16',
+                             'name': 'my_int'},
+                            {'dtype': 'string64',
+                             'name': 'my_string'}
+                        ]
+                    }
+                }
             }
-        )
         ]
+    }
 
     table = np.array(
         [(42, 32000, 'foo')],
@@ -394,7 +385,7 @@ def test_table_array_convert():
 
     assert x is table
 
-    with DataModel(schema_overlays=table_schema) as x:
+    with DataModel(schema=table_schema) as x:
         x.table = table
         assert x.table is table
 
@@ -406,7 +397,7 @@ def test_table_array_convert():
             ('my_string', 'S3')
             ])
 
-    with DataModel(schema_overlays=table_schema) as x:
+    with DataModel(schema=table_schema) as x:
         x.table = table
         assert x.table is not table
         assert x.table['my_string'][0] == table['my_string'][0]
@@ -414,11 +405,8 @@ def test_table_array_convert():
 
 def test_schema_url():
     with DataModel(schema={
-            "type": "object",
-            "extends": {
-                "$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"}
-                }
-        ) as x:
+            "$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"}
+               ) as x:
         assert isinstance(x.data, np.ndarray)
 
 
@@ -428,39 +416,47 @@ def test_mask_model():
 
 
 def test_data_array():
-    data_array_schema = [
-        ('arr',
-         {'title': 'An array of data',
-          'type': 'array',
-          "fits_hdu" : ["FOO", "DQ"],
+    data_array_schema = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/core.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "arr": {
+                        'title': 'An array of data',
+                        'type': 'array',
+                        "fits_hdu" : ["FOO", "DQ"],
 
-          "items" : {
-              "title" : "entry",
-              "type" : "object",
-              "properties" : {
-                    "data" : {
-                        "type" : "data",
-                        "fits_hdu" : "FOO",
-                        "default" : 0.0,
-                        "ndim" : 2,
-                        "dtype" : "float32"
-                    },
-                    "dq" : {
-                        "type" : "data",
-                        "fits_hdu" : "DQ",
-                        "default" : 1,
-                        "dtype" : "uint8"
-                    },
+                        "items" : {
+                            "title" : "entry",
+                            "type" : "object",
+                            "properties" : {
+                                "data" : {
+                                    "type" : "data",
+                                    "fits_hdu" : "FOO",
+                                    "default" : 0.0,
+                                    "ndim" : 2,
+                                    "dtype" : "float32"
+                                },
+                                "dq" : {
+                                    "type" : "data",
+                                    "fits_hdu" : "DQ",
+                                    "default" : 1,
+                                    "dtype" : "uint8"
+                                },
+                            }
+                        }
+                    }
+                }
             }
-        }
+        ]
     }
-    )]
 
     array1 = np.random.rand(5, 5)
     array2 = np.random.rand(5, 5)
     array3 = np.random.rand(5, 5)
 
-    with DataModel(schema_overlays=data_array_schema) as x:
+    with DataModel(schema=data_array_schema) as x:
         x.arr.append(x.arr.item())
         x.arr[0].data = array1
         assert len(x.arr) == 1
@@ -473,7 +469,7 @@ def test_data_array():
         assert len(x.arr) == 2
         x.to_fits(TMP_FITS, clobber=True)
 
-    with DataModel(TMP_FITS, schema_overlays=data_array_schema) as x:
+    with DataModel(TMP_FITS, schema=data_array_schema) as x:
         assert len(x.arr) == 2
         assert len(x._storage._fits) == 4
         assert_array_almost_equal(x.arr[0].data, array1)
@@ -495,8 +491,8 @@ def test_data_array():
         assert len(x._storage._fits) == 5
         x.to_fits(TMP_FITS2, clobber=True)
 
-    import pyfits
-    with pyfits.open(TMP_FITS2) as hdulist:
+    from astropy.io import fits
+    with fits.open(TMP_FITS2) as hdulist:
         x = set()
         for hdu in hdulist:
             x.add((hdu.header.get('EXTNAME'),
@@ -540,23 +536,36 @@ class Picklable(object):
 
 
 def test_pickle():
-    schema_extra = [
-        ('meta.pickled',
-         {'title': 'A pickled item',
-          'type': 'pickle'
-          }
-          )]
+    schema = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/jwst_lib.models/image.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "meta": {
+                        "type": "object",
+                        "properties": {
+                            "pickled": {
+                                'title': 'A pickled item',
+                                'type': 'pickle'
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
 
     obj = Picklable("Hi", 42, 1)
 
-    with DataModel(schema_overlays=schema_extra) as x:
+    with DataModel(schema=schema) as x:
         x.meta.pickled = obj
         x.save(TMP_FITS)
         assert x.meta.pickled.a == "Hi"
         assert x.meta.pickled.b == 42
         assert x.meta.pickled.c == 1
 
-    with DataModel(TMP_FITS, schema_overlays=schema_extra) as x:
+    with DataModel(TMP_FITS, schema=schema) as x:
         assert x.meta.pickled.a == "Hi"
         assert x.meta.pickled.b == 42
         assert x.meta.pickled.c == 1

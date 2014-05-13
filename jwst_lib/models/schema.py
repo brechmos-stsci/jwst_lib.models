@@ -31,6 +31,12 @@ from . import util
 jsonschema.securedict = True
 
 
+# Extend the version 4 schema to include the two custom types we use:
+# data and pickle
+jsonschema.Draft4Validator.META_SCHEMA['definitions']['simpleTypes']['enum'].extend(
+    ['data', 'pickle'])
+
+
 class ValidatingList(object):
     """
     A list that validates itself against a JSON schema fragment on
@@ -232,8 +238,8 @@ class schema_property(object):
     _extensions = extensions.extensions
 
     def __init__(self, name=None, path=None, doc=None, schema={},
-                 readonly=False, default=None, type='string', is_ad_hoc=False,
-                 dtype=np.float_, ndim=None, **kwargs):
+                 readonly=False, default=None, type='string',
+                 is_ad_hoc=False, dtype=np.float_, ndim=None, **kwargs):
         """
         Parameters
         ----------
@@ -253,7 +259,7 @@ class schema_property(object):
             If True, the property will be readonly
 
         default : any, optional
-            The default value to fill any newly-created arrays with.
+            The default value to fill any newly-created arrays with
 
         type : str, optional
             The data type of the property
@@ -291,6 +297,7 @@ class schema_property(object):
             if title is not None:
                 description = title + '\n\n' + description
         self.__doc__ = doc or description
+        self.description = description
 
         self.schema = schema
 
@@ -622,7 +629,7 @@ class HasArrayProperties(object):
 
         Notes
         -----
-        With recent versions of pyfits, it may be more efficient to
+        With recent versions of astropy, it may be more efficient to
         just use its memmapping feature rather than `get_section`.
 
         Examples
@@ -663,7 +670,7 @@ def validate_schema(schema):
     ValidationError :
         If the schema is not valid
     """
-    jsonschema.Draft3Validator.check_schema(schema)
+    jsonschema.Draft4Validator.check_schema(schema)
 
 
 def validate(instance, schema):
@@ -682,7 +689,7 @@ def validate(instance, schema):
     ValidationError :
         If `instance` does not validate against `schema`.
     """
-    jsonschema.validate(instance, schema, cls=jsonschema.Draft3Validator, types=[
+    jsonschema.validate(instance, schema, cls=jsonschema.Draft4Validator, types=[
         ('data', np.ndarray), ('pickle', object)])
 
 
@@ -709,8 +716,7 @@ def get_schema_path(path, base_url):
     Notes
     -----
     Schema paths come from a number of sources: the `schema_url`
-    member in model classes, and the `extends` and `$ref` features in
-    JSON Schema.
+    member in model classes, and the `$ref` feature in JSON Schema.
 
     If the schema path starts with a '/', it is treated as an absolute
     file path.
@@ -796,96 +802,10 @@ def get_schema(schema_url, base_url):
     schema_path, json_pointer = get_schema_path(schema_url, base_url)
     if (schema_path, json_pointer) not in _schemas:
         tree = _fetch_schema_subtree(schema_path, json_pointer)
-        tree = resolve_ref_and_extends(tree, schema_path)
+        tree = resolve_references(tree, schema_path)
         validate_schema(tree)
         _schemas[(schema_path, json_pointer)] = tree
     return _schemas[(schema_path, json_pointer)]
-
-
-def overlay_schema(schema, overlay, path=[]):
-    """
-    Overlays one schema on top of another (in place).
-
-    Parameters
-    ----------
-    schema : JSON schema fragment
-        The schema to overlay into.
-
-    overlay : JSON schema fragment
-        The schema to overlay onto `schema`.
-
-    path : list of str, optional
-        The path leading up to the position of `schema`.  Used for
-        error message only.
-    """
-    if isinstance(overlay, dict):
-        if not isinstance(schema, dict):
-            raise ValueError("Mismatch at {0}".format('.'.join(path)))
-        for key, val in overlay.items():
-            schema[key] = overlay_schema(
-                schema.setdefault(
-                    key, collections.OrderedDict()), val, path + [key])
-        return schema
-    else:
-        return overlay
-
-
-def apply_overlays(schema, overlays):
-    """
-    Applies a list of overlays to the given schema.
-
-    Parameters
-    ----------
-    schema : JSON schema fragment
-        This is the "main" schema, on top of which the
-        overlays are applied.
-
-    overlays : list of tuples
-        A list of overlays where each element is of the form
-        (*position*, *overlay*).
-
-        - *position* is a dot-separated path to the position in the
-          main schema where the overlay will be applied.  For
-          example, to overlay a schema for a new value `name` in the
-          category `target`, pass ``\"target.name\"``.
-
-        - *overlay* is a JSON schema fragment that will be overlayed on top
-          of the main schema at that position.  Any key/value pairs in
-          the overlay that already exist in the main schema will be
-          replaced by those in the overlay.  Any key/value pairs in
-          the overlay that don't already exist in the main schema will
-          be added.
-
-    Returns
-    -------
-    schema : JSON schema fragment
-        A new schema with the overlays applied.
-    """
-    if not isinstance(overlays, list):
-        overlays = [overlays]
-
-    if len(overlays):
-        schema = copy.deepcopy(schema)
-
-    for position, overlay in overlays:
-        if isinstance(overlay, basestring):
-            overlay = json_yaml.loads(overlay)
-
-        cursor = schema
-        parts = position.split('.')
-        for part in parts[:-1]:
-            cursor = cursor.setdefault('properties', collections.OrderedDict())
-            cursor = cursor.setdefault(
-                part, dict({'type': 'object', 'title': part}))
-        cursor = cursor.setdefault('properties', collections.OrderedDict())
-
-        cursor[parts[-1]] = overlay_schema(
-            cursor.setdefault(
-                parts[-1], collections.OrderedDict()), overlay, parts)
-
-    validate_schema(schema)
-
-    return schema
 
 
 class MetaBase(storage.HasStorage):
@@ -959,7 +879,7 @@ class MetaBase(storage.HasStorage):
             - *val* is the value
         """
         # Return the defined schema properties first
-        properties = self._schema['properties'].keys()
+        properties = _get_properties(self)
         for key in properties:
             val = getattr(self, key)
             prop = getattr(self.__class__, key)
@@ -968,7 +888,7 @@ class MetaBase(storage.HasStorage):
                     subresults = list(val.iter_properties(True))
                     if len(subresults):
                         # Only emit the comments if it has some children
-                        comment = self._schema['properties'][key].get('title')
+                        comment = prop._description
                         if comment is None:
                             comment = key
                         yield 'comment', prop, comment
@@ -1004,7 +924,7 @@ class MetaBase(storage.HasStorage):
         tree = {}
 
         # Return the defined schema properties first
-        properties = self._schema['properties'].keys()
+        properties = _get_properties(self)
         for key in properties:
             val = getattr(self, key)
             if isinstance(val, MetaBase):
@@ -1072,7 +992,7 @@ class MetaBaseWithAdHoc(MetaBase):
                     "schema does not allow additional properties here")
 
 
-def schema_to_tree(schema, storage=None, name='meta'):
+def schema_to_tree(schema, storage=None, name='root'):
     """
     Convert the schema tree to a tree of MetaBase classes.
 
@@ -1088,27 +1008,57 @@ def schema_to_tree(schema, storage=None, name='meta'):
     -------
     meta : a MetaBase subclass
     """
-    def tree_to_class(name, tree, path):
-        if tree.get('type') == 'object':
-            node = {}
-            for key, val in tree.get('properties', {}).items():
-                node[key] = tree_to_class(key, val, path + [key])
-            node['_schema'] = tree
-            node['_path'] = path
-            class_name = util.to_camelcase(name)
-            if sys.version_info[0] < 3:
-                class_name = class_name.encode('ascii')
-            if len(path):
-                base = MetaBaseWithAdHoc
+    class Node(object):
+        def __init__(self, name, tree, path):
+            self._name = name
+            self._tree = tree
+            self._path = path
+            self._entries = {}
+
+    def tree_to_nodes(name, tree, path, mapping):
+        combinations = tree.get('allOf', []) + tree.get('anyOf', [])
+        if len(combinations) or tree.get('type') == 'object':
+            path_string = '.'.join(path)
+            if path_string in mapping:
+                node = mapping[path_string]
             else:
-                base = MetaBase
-            x = type.__new__(
-                type, class_name, (base,), node)(storage=storage)
-            return x
+                node = Node(name, tree, path)
+                mapping[path_string] = node
+
+            if len(combinations):
+                for entry in combinations:
+                    tree_to_nodes(name, entry, path, mapping)
+            else:
+                for key, val in tree.get('properties', {}).items():
+                    node._entries[key] = tree_to_nodes(
+                        key, val, path + [key], mapping)
+
+            return node
         else:
             return schema_property(name, path, schema=tree, **tree)
 
-    return tree_to_class(name, schema, [])
+    def nodes_to_classes(node):
+        d = {}
+        for key, val in node._entries.iteritems():
+            if isinstance(val, Node):
+                d[key] = nodes_to_classes(val)
+            else:
+                d[key] = val
+
+        d['_schema'] = node._tree
+        d['_path'] = node._path
+        d['_description'] = node._tree.get('title')
+        class_name = util.to_camelcase(node._name)
+        if sys.version_info[0] < 3:
+            class_name = class_name.encode('ascii')
+        if len(node._path):
+            base = MetaBaseWithAdHoc
+        else:
+            base = MetaBase
+        return type.__new__(type, class_name, (base,), d)(storage=storage)
+
+    nodes = tree_to_nodes(name, schema, [], {})
+    return nodes_to_classes(nodes)
 
 
 def walk_schema(schema, func, data=None):
@@ -1133,10 +1083,15 @@ def walk_schema(schema, func, data=None):
         An arbitrary data object to pass to `func`.
     """
     def walk(schema, path):
-        func(data, schema, '.'.join(path))
-        if schema.get('type') == 'object':
-            for key, val in schema.get('properties', {}).items():
-                walk(val, path + [key])
+        combinations = schema.get('allOf', []) + schema.get('anyOf', [])
+        if len(combinations):
+            for entry in combinations:
+                walk(entry, path)
+        else:
+            func(data, schema, '.'.join(path))
+            if schema.get('type') == 'object':
+                for key, val in schema.get('properties', {}).items():
+                    walk(val, path + [key])
 
     walk(schema, [])
 
@@ -1210,71 +1165,6 @@ def resolve_references(schema, base_url):
         return tree
 
     return replace_ref(schema)
-
-
-def resolve_extends(schema):
-    """
-    Resolves all of the "extends" properties in the JSON schema.
-
-    This works by starting with the "extends" and overlaying the
-    schemas content on top of it.
-
-    Parameters
-    ----------
-    schema : JSON schema fragment
-        The schema in which to resolve references.  The references are
-        resolved in place.
-
-    base_url : str or unicode
-        The base URL of the schema, used to resolve references
-        against.
-    """
-    def replace_extends(tree, path):
-        if isinstance(tree, dict):
-            if 'extends' in tree:
-                bases = tree['extends']
-                if not isinstance(bases, list):
-                    bases = [bases]
-                del tree['extends']
-
-                new_tree = collections.OrderedDict()
-                for base in bases + [tree]:
-                    base = replace_extends(base, path)
-                    overlay_schema(new_tree, base, path)
-                tree = new_tree
-
-            for key, val in tree.items():
-                tree[key] = replace_extends(val, path + [key])
-        elif isinstance(tree, list):
-            for i in xrange(len(tree)):
-                tree[i] = replace_extends(tree[i], path + [str(i)])
-
-        return tree
-
-    return replace_extends(schema, [])
-
-
-def resolve_ref_and_extends(schema, base_url):
-    """
-    Resolves all of the `$ref` and `extends` properties in the given schema.
-
-    Parameters
-    ----------
-    schema : JSON schema fragment
-        The schema in which to resolve references.  The references are
-        resolved in place.
-
-    base_url : str or unicode
-        The base URL of the schema, used to resolve references
-        against.
-
-    Returns
-    -------
-    resolved_schema : JSON schema fragment
-    """
-    schema = resolve_references(schema, base_url)
-    schema = resolve_extends(schema)
-    return schema
 
 
 def get_elements_for_fits_hdu(schema, hdu_name='PRIMARY'):
@@ -1424,3 +1314,9 @@ def search_schema(schema, substring, return_result=False, verbose=False):
                 for path, description in results:
                     print('{0}: {1}'.format(
                         path, description.partition('\n')[0]))
+
+
+def _get_properties(self):
+    return [x for x in dir(self.__class__)
+            if isinstance(getattr(self.__class__, x),
+                          (schema_property, MetaBase))]

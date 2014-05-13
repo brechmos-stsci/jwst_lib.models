@@ -1,81 +1,86 @@
 {
-    "type" : "object",
-    "extends" : {"$ref" : "core.schema.json"},
-    "properties" : {
-        "slope" :
-            {
-                "type" : "data",
-                "title" : "Segment-specific slope",
-                "fits_hdu" : "SLOPE",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
-            },
+    "allOf": [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "extends" : {"$ref" : "core.schema.json"},
+            "properties" : {
+                "slope" :
+                {
+                    "type" : "data",
+                    "title" : "Segment-specific slope",
+                    "fits_hdu" : "SLOPE",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
+                },
 
-        "sigslope" :
-            {
-                "type" : "data",
-                "title" : "Sigma for segment-specific slope",
-                "fits_hdu" : "SIGSLOPE",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
+                "sigslope" :
+                {
+                    "type" : "data",
+                    "title" : "Sigma for segment-specific slope",
+                    "fits_hdu" : "SIGSLOPE",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
 
-            },
+                },
 
-        "yint" :
-            {
-                "type" : "data",
-                "title" : "Segment-specific y-intercept",
-                "fits_hdu" : "YINT",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
+                "yint" :
+                {
+                    "type" : "data",
+                    "title" : "Segment-specific y-intercept",
+                    "fits_hdu" : "YINT",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
 
-            },
+                },
 
-        "sigyint" :
-            {
-                "type" : "data",
-                "title" : "Sigma for segment-specific y-intercept",
-                "fits_hdu" : "SIGYINT",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
+                "sigyint" :
+                {
+                    "type" : "data",
+                    "title" : "Sigma for segment-specific y-intercept",
+                    "fits_hdu" : "SIGYINT",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
 
-            },
+                },
 
-        "pedestal" :
-            {
-                "type" : "data",
-                "title" : "Pedestal array",
-                "fits_hdu" : "PEDESTAL",
-                "default" : 0.0,
-                "ndim" : 3,
-                "dtype" : "float32"
+                "pedestal" :
+                {
+                    "type" : "data",
+                    "title" : "Pedestal array",
+                    "fits_hdu" : "PEDESTAL",
+                    "default" : 0.0,
+                    "ndim" : 3,
+                    "dtype" : "float32"
 
-            },
+                },
 
-        "weights" :
-            {
-                "type" : "data",
-                "title" : "Weights for segment-specific fits",
-                "fits_hdu" : "WEIGHTS",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
+                "weights" :
+                {
+                    "type" : "data",
+                    "title" : "Weights for segment-specific fits",
+                    "fits_hdu" : "WEIGHTS",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
 
-            },
+                },
 
-        "crmag" :
-            {
-                "type" : "data",
-                "title" : "Approximate CR magnitudes",
-                "fits_hdu" : "CRMAG",
-                "default" : 0.0,
-                "ndim" : 4,
-                "dtype" : "float32"
+                "crmag" :
+                {
+                    "type" : "data",
+                    "title" : "Approximate CR magnitudes",
+                    "fits_hdu" : "CRMAG",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
 
+                }
             }
         }
+    ]
 }

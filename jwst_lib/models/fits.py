@@ -36,8 +36,8 @@ _builtin_regex = re.compile(
 def is_builtin_fits_keyword(key):
     """
     Returns `True` if the given `key` is a built-in FITS keyword, i.e.
-    a keyword that is managed by pyfits and we wouldn't want to
-    propagate through the `_extra_fits` mechanism.
+    a keyword that is managed by ``astropy.io.fits`` and we wouldn't
+    want to propagate through the `_extra_fits` mechanism.
     """
     return _builtin_regex.match(key) is not None
 
@@ -409,19 +409,19 @@ class FitsListProxy(object):
 
 class FitsStorage(storage.Storage):
     def __init__(self, hdulist=None, hdu_index=None):
-        import pyfits
+        from astropy.io import fits
 
         self._do_close = False
 
         if hdulist is None:
-            hdulist = pyfits.HDUList()
-            hdulist.append(pyfits.PrimaryHDU())
+            hdulist = fits.HDUList()
+            hdulist.append(fits.PrimaryHDU())
 
         if isinstance(hdulist, (unicode, bytes)):
-            hdulist = pyfits.open(hdulist, uint=True)
+            hdulist = fits.open(hdulist, uint=True)
             self._do_close = True
         elif hasattr(hdulist, "read"):
-            hdulist = pyfits.open(hdulist, uint=True)
+            hdulist = fits.open(hdulist, uint=True)
 
         self._fits = hdulist
         self._fallback = storage.TreeStorage()
@@ -435,6 +435,12 @@ class FitsStorage(storage.Storage):
 
     def _get_hdu_name(self, prop):
         return _convert_hdu_name(getattr(prop, 'fits_hdu', None))
+
+    def _assert_non_primary_hdu(self, prop, hdu_name):
+        if hdu_name in (None, 0, 'PRIMARY'):
+            raise ValueError(
+                "schema for property '{0}' does not specify a non-primary hdu name".format(
+                    '.'.join(prop.path)))
 
     def _get_hdu_pair(self, hdu_name, index=None):
         if index is None:
@@ -500,7 +506,6 @@ class FitsStorage(storage.Storage):
             del self._fits
 
     def __get_array_section__(self, prop, obj, key, index=None):
-        import pyfits
         hdu_name = self._get_hdu_name(prop)
         name = prop.name
         hdu = self._get_hdu(name, hdu_name, index=index)
@@ -522,7 +527,7 @@ class FitsStorage(storage.Storage):
             return hdu.data.shape
 
     def __get__(self, prop, obj, index=None):
-        import pyfits
+        from astropy.io import fits
 
         if index is None:
             index = self._hdu_index
@@ -531,15 +536,16 @@ class FitsStorage(storage.Storage):
         name = prop.name
 
         if prop.is_data():
+            self._assert_non_primary_hdu(prop, hdu_name)
             try:
                 hdu = self._get_hdu(name, hdu_name, index)
             except AttributeError:
                 if index is None:
                     array = prop._make_default(obj)
                     if isinstance(prop.dtype, list):
-                        hdu = pyfits.BinTableHDU(array, name=hdu_name)
+                        hdu = fits.BinTableHDU(array, name=hdu_name)
                     else:
-                        hdu = pyfits.ImageHDU(array, name=hdu_name)
+                        hdu = fits.ImageHDU(array, name=hdu_name)
                     if index is not None:
                         hdu.ver = index + 1
                     self.get_hdulist().append(hdu)
@@ -568,7 +574,7 @@ class FitsStorage(storage.Storage):
             return val
 
     def __set__(self, prop, obj, val, index=None):
-        import pyfits
+        from astropy.io import fits
 
         hdu_name = self._get_hdu_name(prop)
         name = prop.name
@@ -577,15 +583,16 @@ class FitsStorage(storage.Storage):
 
         def make_new_hdu():
             if isinstance(prop.dtype, list):
-                hdu = pyfits.BinTableHDU(val, name=hdu_name)
+                hdu = fits.BinTableHDU(val, name=hdu_name)
             else:
-                hdu = pyfits.ImageHDU(val, name=hdu_name)
+                hdu = fits.ImageHDU(val, name=hdu_name)
             if index is not None:
                 hdu.ver = index + 1
             self.get_hdulist().append(hdu)
             return hdu
 
         if prop.is_data():
+            self._assert_non_primary_hdu(prop, hdu_name)
             try:
                 hdu = self._get_hdu(name, hdu_name, index)
             except AttributeError:
@@ -596,9 +603,9 @@ class FitsStorage(storage.Storage):
                 # wrong type.  If so, create a new HDU of the correct
                 # type, and then copy the metadata over.
                 if ((isinstance(prop.dtype, list) and
-                     not isinstance(hdu, pyfits.BinTableHDU)) or
+                     not isinstance(hdu, fits.BinTableHDU)) or
                     (not isinstance(prop.dtype, list) and
-                     not isinstance(hdu, pyfits.ImageHDU))):
+                     not isinstance(hdu, fits.ImageHDU))):
                     new_hdu = make_new_hdu()
                     for key, val in hdu.header.iteritems():
                         if not is_builtin_fits_keyword(key):
@@ -620,7 +627,7 @@ class FitsStorage(storage.Storage):
                 try:
                     hdu = self._get_hdu(name, hdu_name, index=index)
                 except AttributeError:
-                    hdu = pyfits.ImageHDU(name=hdu_name)
+                    hdu = fits.ImageHDU(name=hdu_name)
                     if index is not None:
                         hdu.ver = index + 1
                     self.get_hdulist().append(hdu)
@@ -644,6 +651,7 @@ class FitsStorage(storage.Storage):
         name = prop.name
 
         if prop.is_data():
+            self._assert_non_primary_hdu(prop, hdu_name)
             try:
                 self._get_hdu(name, hdu_name, index=index)
             except AttributeError:
@@ -741,7 +749,7 @@ class FitsStorage(storage.Storage):
 
         Returns
         -------
-        header : `pyfits.Header` object
+        header : `astropy.io.fits.Header` object
         """
         try:
             hdu = self.get_hdulist()[_convert_hdu_name(hdu_name)]
@@ -763,12 +771,12 @@ class FitsStorage(storage.Storage):
         """
         Saves all of the metadata as a blob of json in an extension.
         """
-        import pyfits
+        from astropy.io import fits
 
         try:
             hdu = self._get_hdu('meta', b'METADATA')
         except AttributeError:
-            hdu = pyfits.ImageHDU(name=b'METADATA')
+            hdu = fits.ImageHDU(name=b'METADATA')
             self.get_hdulist().append(hdu)
         json_buffer = io.BytesIO()
         model.to_json(json_buffer)
@@ -857,9 +865,15 @@ def extend_schema_with_fits_keywords(model, hdus):
     properties = collections.OrderedDict(properties)
 
     model.extend_schema(
-        [('_extra_fits', {
+        {"type": "object",
+         "properties": {
+            "_extra_fits": {
             "title": "Extra FITS keywords that were not defined in "
             "the schema",
             "type": "object",
             "properties": properties
-            })])
+                }
+             }
+         })
+
+    assert hasattr(model, '_extra_fits')

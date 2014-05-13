@@ -1,33 +1,38 @@
 {
-    "type" : "object",
-    "extends" : {"$ref": "core.schema.json"},
-    "properties" : {
-        "data" :
-            {
-                "type" : "data",
-                "title" : "The science data",
-                "fits_hdu" : "SCI",
-                "default" : 0.0,
-                "ndim" : 3,
-                "dtype" : "float32"
-            },
+    "allOf": [
+        {"$ref": "core.schema.json"},
+        {
+            "type" : "object",
+            "extends" : {"$ref": "core.schema.json"},
+            "properties" : {
+                "data" :
+                {
+                    "type" : "data",
+                    "title" : "The science data",
+                    "fits_hdu" : "SCI",
+                    "default" : 0.0,
+                    "ndim" : 3,
+                    "dtype" : "float32"
+                },
 
-        "dq" :
-            {
-                "type" : "data",
-                "title" : "Data quality array",
-                "fits_hdu" : "DQ",
-                "default" : 0,
-                "dtype" : "uint16"
-            },
+                "dq" :
+                {
+                    "type" : "data",
+                    "title" : "Data quality array",
+                    "fits_hdu" : "DQ",
+                    "default" : 0,
+                    "dtype" : "uint16"
+                },
 
-        "err" :
-            {
-                "type" : "data",
-                "title" : "Error array",
-                "fits_hdu" : "ERR",
-                "default" : 0.0,
-                "dtype" : "float32"
+                "err" :
+                {
+                    "type" : "data",
+                    "title" : "Error array",
+                    "fits_hdu" : "ERR",
+                    "default" : 0.0,
+                    "dtype" : "float32"
+                }
             }
-    }
+        }
+    ]
 }

@@ -1,6 +1,5 @@
-from __future__ import division, unicode_literals
+from __future__ import division
 
-import collections
 import contextlib
 import json
 import numbers
@@ -12,9 +11,10 @@ except ImportError:
 
 from . import _utils, _validators
 from .compat import (
-    PY3, Sequence, urljoin, urlsplit, urldefrag, unquote, urlopen,
+    Sequence, urljoin, urlsplit, urldefrag, unquote, urlopen,
     str_types, int_types, iteritems,
 )
+from .exceptions import ErrorTree  # Backwards compatibility  # noqa
 from .exceptions import RefResolutionError, SchemaError, UnknownType
 
 
@@ -38,8 +38,8 @@ def validates(version):
 
     def _validates(cls):
         validators[version] = cls
-        if "id" in cls.META_SCHEMA:
-            meta_schemas[cls.META_SCHEMA["id"]] = cls
+        if u"id" in cls.META_SCHEMA:
+            meta_schemas[cls.META_SCHEMA[u"id"]] = cls
         return cls
     return _validates
 
@@ -47,9 +47,9 @@ def validates(version):
 def create(meta_schema, validators=(), version=None, default_types=None):  # noqa
     if default_types is None:
         default_types = {
-            "array" : list, "boolean" : bool, "integer" : int_types,
-            "null" : type(None), "number" : numbers.Number, "object" : dict,
-            "string" : str_types,
+            u"array" : list, u"boolean" : bool, u"integer" : int_types,
+            u"null" : type(None), u"number" : numbers.Number, u"object" : dict,
+            u"string" : str_types,
         }
 
     class Validator(object):
@@ -79,10 +79,10 @@ def create(meta_schema, validators=(), version=None, default_types=None):  # noq
             if _schema is None:
                 _schema = self.schema
 
-            with self.resolver.in_scope(_schema.get("id", "")):
-                ref = _schema.get("$ref")
+            with self.resolver.in_scope(_schema.get(u"id", u"")):
+                ref = _schema.get(u"$ref")
                 if ref is not None:
-                    validators = [("$ref", ref)]
+                    validators = [(u"$ref", ref)]
                 else:
                     validators = iteritems(_schema)
 
@@ -100,7 +100,7 @@ def create(meta_schema, validators=(), version=None, default_types=None):  # noq
                             instance=instance,
                             schema=_schema,
                         )
-                        if k != "$ref":
+                        if k != u"$ref":
                             error.schema_path.appendleft(k)
                         yield error
 
@@ -118,7 +118,7 @@ def create(meta_schema, validators=(), version=None, default_types=None):  # noq
 
         def is_type(self, instance, type):
             if type not in self._types:
-                raise UnknownType(type)
+                raise UnknownType(type, instance, self.schema)
             pytypes = self._types[type]
 
             # bool inherits from int, so ensure bools aren't reported as ints
@@ -137,11 +137,7 @@ def create(meta_schema, validators=(), version=None, default_types=None):  # noq
 
     if version is not None:
         Validator = validates(version)(Validator)
-
-        name = "{0}Validator".format(version.title().replace(" ", ""))
-        if not PY3 and isinstance(name, unicode):
-            name = name.encode("utf-8")
-        Validator.__name__ = name
+        Validator.__name__ = version.title().replace(" ", "") + "Validator"
 
     return Validator
 
@@ -160,28 +156,28 @@ def extend(validator, validators, version=None):
 Draft3Validator = create(
     meta_schema=_utils.load_schema("draft3"),
     validators={
-        "$ref" : _validators.ref,
-        "additionalItems" : _validators.additionalItems,
-        "additionalProperties" : _validators.additionalProperties,
-        "dependencies" : _validators.dependencies,
-        "disallow" : _validators.disallow_draft3,
-        "divisibleBy" : _validators.multipleOf,
-        "enum" : _validators.enum,
-        "extends" : _validators.extends_draft3,
-        "format" : _validators.format,
-        "items" : _validators.items,
-        "maxItems" : _validators.maxItems,
-        "maxLength" : _validators.maxLength,
-        "maximum" : _validators.maximum,
-        "minItems" : _validators.minItems,
-        "minLength" : _validators.minLength,
-        "minimum" : _validators.minimum,
-        "multipleOf" : _validators.multipleOf,
-        "pattern" : _validators.pattern,
-        "patternProperties" : _validators.patternProperties,
-        "properties" : _validators.properties_draft3,
-        "type" : _validators.type_draft3,
-        "uniqueItems" : _validators.uniqueItems,
+        u"$ref" : _validators.ref,
+        u"additionalItems" : _validators.additionalItems,
+        u"additionalProperties" : _validators.additionalProperties,
+        u"dependencies" : _validators.dependencies,
+        u"disallow" : _validators.disallow_draft3,
+        u"divisibleBy" : _validators.multipleOf,
+        u"enum" : _validators.enum,
+        u"extends" : _validators.extends_draft3,
+        u"format" : _validators.format,
+        u"items" : _validators.items,
+        u"maxItems" : _validators.maxItems,
+        u"maxLength" : _validators.maxLength,
+        u"maximum" : _validators.maximum,
+        u"minItems" : _validators.minItems,
+        u"minLength" : _validators.minLength,
+        u"minimum" : _validators.minimum,
+        u"multipleOf" : _validators.multipleOf,
+        u"pattern" : _validators.pattern,
+        u"patternProperties" : _validators.patternProperties,
+        u"properties" : _validators.properties_draft3,
+        u"type" : _validators.type_draft3,
+        u"uniqueItems" : _validators.uniqueItems,
     },
     version="draft3",
 )
@@ -189,32 +185,32 @@ Draft3Validator = create(
 Draft4Validator = create(
     meta_schema=_utils.load_schema("draft4"),
     validators={
-        "$ref" : _validators.ref,
-        "additionalItems" : _validators.additionalItems,
-        "additionalProperties" : _validators.additionalProperties,
-        "allOf" : _validators.allOf_draft4,
-        "anyOf" : _validators.anyOf_draft4,
-        "dependencies" : _validators.dependencies,
-        "enum" : _validators.enum,
-        "format" : _validators.format,
-        "items" : _validators.items,
-        "maxItems" : _validators.maxItems,
-        "maxLength" : _validators.maxLength,
-        "maxProperties" : _validators.maxProperties_draft4,
-        "maximum" : _validators.maximum,
-        "minItems" : _validators.minItems,
-        "minLength" : _validators.minLength,
-        "minProperties" : _validators.minProperties_draft4,
-        "minimum" : _validators.minimum,
-        "multipleOf" : _validators.multipleOf,
-        "not" : _validators.not_draft4,
-        "oneOf" : _validators.oneOf_draft4,
-        "pattern" : _validators.pattern,
-        "patternProperties" : _validators.patternProperties,
-        "properties" : _validators.properties_draft4,
-        "required" : _validators.required_draft4,
-        "type" : _validators.type_draft4,
-        "uniqueItems" : _validators.uniqueItems,
+        u"$ref" : _validators.ref,
+        u"additionalItems" : _validators.additionalItems,
+        u"additionalProperties" : _validators.additionalProperties,
+        u"allOf" : _validators.allOf_draft4,
+        u"anyOf" : _validators.anyOf_draft4,
+        u"dependencies" : _validators.dependencies,
+        u"enum" : _validators.enum,
+        u"format" : _validators.format,
+        u"items" : _validators.items,
+        u"maxItems" : _validators.maxItems,
+        u"maxLength" : _validators.maxLength,
+        u"maxProperties" : _validators.maxProperties_draft4,
+        u"maximum" : _validators.maximum,
+        u"minItems" : _validators.minItems,
+        u"minLength" : _validators.minLength,
+        u"minProperties" : _validators.minProperties_draft4,
+        u"minimum" : _validators.minimum,
+        u"multipleOf" : _validators.multipleOf,
+        u"not" : _validators.not_draft4,
+        u"oneOf" : _validators.oneOf_draft4,
+        u"pattern" : _validators.pattern,
+        u"patternProperties" : _validators.patternProperties,
+        u"properties" : _validators.properties_draft4,
+        u"required" : _validators.required_draft4,
+        u"type" : _validators.type_draft4,
+        u"uniqueItems" : _validators.uniqueItems,
     },
     version="draft4",
 )
@@ -261,7 +257,7 @@ class RefResolver(object):
 
         """
 
-        return cls(schema.get("id", ""), schema, *args, **kwargs)
+        return cls(schema.get(u"id", u""), schema, *args, **kwargs)
 
     @contextlib.contextmanager
     def in_scope(self, scope):
@@ -311,11 +307,11 @@ class RefResolver(object):
 
         """
 
-        fragment = fragment.lstrip("/")
-        parts = unquote(fragment).split("/") if fragment else []
+        fragment = fragment.lstrip(u"/")
+        parts = unquote(fragment).split(u"/") if fragment else []
 
         for part in parts:
-            part = part.replace("~1", "/").replace("~0", "~")
+            part = part.replace(u"~1", u"/").replace(u"~0", u"~")
 
             if isinstance(document, Sequence):
                 # Array indexes should be turned into integers
@@ -360,7 +356,7 @@ class RefResolver(object):
         if scheme in self.handlers:
             result = self.handlers[scheme](uri)
         elif (
-            scheme in ["http", "https"] and
+            scheme in [u"http", u"https"] and
             requests and
             getattr(requests.Response, "json", None) is not None
         ):
@@ -379,86 +375,10 @@ class RefResolver(object):
         return result
 
 
-class ErrorTree(object):
-    """
-    ErrorTrees make it easier to check which validations failed.
-
-    """
-
-    _instance = _unset
-
-    def __init__(self, errors=()):
-        self.errors = {}
-        self._contents = collections.defaultdict(self.__class__)
-
-        for error in errors:
-            container = self
-            for element in error.path:
-                container = container[element]
-            container.errors[error.validator] = error
-
-            self._instance = error.instance
-
-    def __contains__(self, index):
-        """
-        Check whether ``instance[index]`` has any errors.
-
-        """
-
-        return index in self._contents
-
-    def __getitem__(self, index):
-        """
-        Retrieve the child tree one level down at the given ``index``.
-
-        If the index is not in the instance that this tree corresponds to and
-        is not known by this tree, whatever error would be raised by
-        ``instance.__getitem__`` will be propagated (usually this is some
-        subclass of :class:`LookupError`.
-
-        """
-
-        if self._instance is not _unset and index not in self:
-            self._instance[index]
-        return self._contents[index]
-
-    def __setitem__(self, index, value):
-        self._contents[index] = value
-
-    def __iter__(self):
-        """
-        Iterate (non-recursively) over the indices in the instance with errors.
-
-        """
-
-        return iter(self._contents)
-
-    def __len__(self):
-        """
-        Same as :attr:`total_errors`.
-
-        """
-
-        return self.total_errors
-
-    def __repr__(self):
-        return "<%s (%s total errors)>" % (self.__class__.__name__, len(self))
-
-    @property
-    def total_errors(self):
-        """
-        The total number of errors in the entire tree, including children.
-
-        """
-
-        child_errors = sum(len(tree) for _, tree in iteritems(self._contents))
-        return len(self.errors) + child_errors
-
-
 def validator_for(schema, default=_unset):
     if default is _unset:
         default = Draft4Validator
-    return meta_schemas.get(schema.get("$schema", ""), default)
+    return meta_schemas.get(schema.get(u"$schema", u""), default)
 
 
 def validate(instance, schema, cls=None, *args, **kwargs):

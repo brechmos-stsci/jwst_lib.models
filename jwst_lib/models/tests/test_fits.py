@@ -38,19 +38,19 @@ def teardown():
 
 @raises(AttributeError)
 def test_from_new_hdulist():
-    import pyfits
-    hdulist = pyfits.HDUList()
+    from astropy.io import fits
+    hdulist = fits.HDUList()
     with open(hdulist) as dm:
         sci = dm.data
 
 
 def test_from_new_hdulist2():
-    import pyfits
-    hdulist = pyfits.HDUList()
+    from astropy.io import fits
+    hdulist = fits.HDUList()
     data = np.empty((50, 50))
-    primary = pyfits.PrimaryHDU()
+    primary = fits.PrimaryHDU()
     hdulist.append(primary)
-    science = pyfits.ImageHDU(data=data, name='SCI')
+    science = fits.ImageHDU(data=data, name='SCI')
     hdulist.append(science)
     with open(hdulist) as dm:
         sci = dm.data
@@ -59,36 +59,24 @@ def test_from_new_hdulist2():
 
 
 def test_setting_arrays_on_fits():
-    import pyfits
-    hdulist = pyfits.HDUList()
+    from astropy.io import fits
+    hdulist = fits.HDUList()
     data = np.empty((50, 50))
-    primary = pyfits.PrimaryHDU()
+    primary = fits.PrimaryHDU()
     hdulist.append(primary)
-    science = pyfits.ImageHDU(data=data, name='SCI')
+    science = fits.ImageHDU(data=data, name='SCI')
     hdulist.append(science)
     with open(hdulist) as dm:
         dm.data = np.empty((50, 50))
         dm.dq = np.empty((10, 50, 50))
 
 
-# @raises(ValueError)
-# def test_setting_arrays_on_fits2():
-#     import pyfits
-#     hdulist = pyfits.HDUList()
-#     data = np.empty((50, 50))
-#     science = pyfits.ImageHDU(data=data, name='SCI')
-#     hdulist.append(science)
-#     hdulist.append(science)
-#     with open(hdulist) as dm:
-#         dm.data = np.empty((48, 50))
-
-
 @raises(AttributeError)
 def delete_array():
-    import pyfits
-    hdulist = pyfits.HDUList()
+    from astropy.io import fits
+    hdulist = fits.HDUList()
     data = np.empty((50, 50))
-    science = pyfits.ImageHDU(data=data, name='SCI')
+    science = fits.ImageHDU(data=data, name='SCI')
     hdulist.append(science)
     hdulist.append(science)
     with open(hdulist) as dm:
@@ -139,18 +127,27 @@ def test_date_obs():
 
 
 def test_fits_without_sci():
-    import pyfits
-    extra = [
-        ('coeffs', {
-            'type': 'data',
-            'fits_hdu': 'COEFFS'
-            })]
+    from astropy.io import fits
+    schema = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "coeffs": {
+                        'type': 'data',
+                        'fits_hdu': 'COEFFS'
+                    }
+                }
+            }
+        ]
+    }
 
-    fits = pyfits.HDUList(
-        [pyfits.PrimaryHDU(),
-         pyfits.ImageHDU(name='COEFFS', data=np.array([0.0]))])
+    fits = fits.HDUList(
+        [fits.PrimaryHDU(),
+         fits.ImageHDU(name='COEFFS', data=np.array([0.0]))])
 
-    with DataModel(fits, schema_overlays=extra) as dm:
+    with DataModel(fits, schema=schema) as dm:
         assert_array_equal(dm.coeffs, [0.0])
 
 
@@ -179,14 +176,14 @@ def test_extra_fits_update():
 
 
 def test_hdu_order():
-    import pyfits
+    from astropy.io import fits
 
     with ImageModel(data=[[0.0]], dq=[[0.0]], err=[[0.0]]) as dm:
         print(dm.dq)
         print(dm.err)
         dm.save(TMP_FITS)
 
-    with pyfits.open(TMP_FITS) as hdulist:
+    with fits.open(TMP_FITS) as hdulist:
         assert hdulist[1].header['EXTNAME'] == 'SCI'
         assert hdulist[2].header['EXTNAME'] == 'DQ'
         assert hdulist[3].header['EXTNAME'] == 'ERR'
@@ -206,55 +203,17 @@ def test_comments():
         assert dm._extra_fits.PRIMARY.COMMENT == ['foobar']
 
 
-def test_generate_fits_header():
-    import pyfits
-
-    header = {
-        'CRPIX1' : 1,
-        'CRVAL1' : 0.0,
-        'CDELT1' : 0.5,
-        'CTYPE1' : 'alpha',
-        'CUNIT1' : 'arcsec',
-        'CRPIX2' : 1,
-        'CRVAL2' : 0.0,
-        'CDELT2' : 0.5,
-        'CTYPE2' : 'beta',
-        'CUNIT2' : 'arcsec'
-    }
-    data = np.array([
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-        ])
-
-    fitsheader = pyfits.Header()
-    fitsheader.add_comment("This is a comment in the original header.")
-    for key in header.keys():
-        fitsheader[key] = (header[key], "")
-
-    hdulist = pyfits.HDUList([])
-    primary_hdu = pyfits.PrimaryHDU(data=data, header=fitsheader)
-    hdulist.append(primary_hdu)
-    hdulist.writeto(TMP_FITS, clobber=True)
-
-    with ImageModel(TMP_FITS) as old_model:
-        new_model = old_model.copy()
-        wcs = new_model.get_fits_wcs(hdu_name='PRIMARY')
-        new_model.set_fits_wcs(wcs, hdu_name='SCI')
-        assert new_model._extra_fits.SCI.CUNIT2 == 'arcsec'
-
-
 def test_fits_comments():
     with ImageModel() as dm:
         dm.meta.subarray.xstart = 42
         dm.save(TMP_FITS, clobber=True)
 
-    import pyfits
-    hdulist = pyfits.open(TMP_FITS)
+    from astropy.io import fits
+    hdulist = fits.open(TMP_FITS)
 
     header = hdulist[0].header
 
-    find = ['Subarray coordinates']
+    find = ['Subarray parameters']
     found = 0
 
     for card in header.cards:
@@ -268,8 +227,8 @@ def test_metadata_doesnt_override():
     with ImageModel() as dm:
         dm.save(TMP_FITS, clobber=True)
 
-    import pyfits
-    hdulist = pyfits.open(TMP_FITS, mode='update')
+    from astropy.io import fits
+    hdulist = fits.open(TMP_FITS, mode='update')
     hdulist[0].header['FILTER'] = 'JUNK'
     hdulist.close()
 
@@ -279,37 +238,41 @@ def test_metadata_doesnt_override():
 
 def test_table_with_metadata():
     schema = {
-        "type" : "object",
-        "extends" : {"$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"},
-        "properties" : {
-            "flux_table" : {
-                "type" : "data",
-                "title" : "Photometric flux conversion table",
-                "fits_hdu" : "FLUX",
-                "dtype" :
-                [
-                    {"name" : "parameter",    "dtype" : "string7"},
-                    {"name" : "factor",       "dtype" : "float64"},
-                    {"name" : "uncertainty",  "dtype" : "float64"}
-                ]
-            },
-            "meta" : {
-                "properties": {
-                    "fluxinfo" : {
-                        "title" : "Information about the flux conversion",
-                        "type" : "object",
-                        "properties" : {
-                            "exposure" : {
-                                "title" : "Description of exposure analyzed",
-                                "type" : "string",
-                                "fits_hdu" : "FLUX",
-                                "fits_keyword" : "FLUXEXP"
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"},
+            {"type": "object",
+             "properties" : {
+                 "flux_table" : {
+                     "type" : "data",
+                     "title" : "Photometric flux conversion table",
+                     "fits_hdu" : "FLUX",
+                     "dtype" :
+                     [
+                         {"name" : "parameter",    "dtype" : "string7"},
+                         {"name" : "factor",       "dtype" : "float64"},
+                         {"name" : "uncertainty",  "dtype" : "float64"}
+                     ]
+                 },
+                 "meta" : {
+                     "type": "object",
+                     "properties": {
+                         "fluxinfo" : {
+                             "title" : "Information about the flux conversion",
+                             "type" : "object",
+                             "properties" : {
+                                 "exposure" : {
+                                     "title" : "Description of exposure analyzed",
+                                     "type" : "string",
+                                     "fits_hdu" : "FLUX",
+                                     "fits_keyword" : "FLUXEXP"
+                                 }
+                             }
+                         }
+                     }
+                 }
+             }
+         }
+    ]
     }
 
     class FluxModel(DataModel):
@@ -328,49 +291,63 @@ def test_table_with_metadata():
         datamodel.save(TMP_FITS, clobber=True)
         del datamodel
 
-    import pyfits
-    hdulist = pyfits.open(TMP_FITS)
+    from astropy.io import fits
+    hdulist = fits.open(TMP_FITS)
     assert len(hdulist) == 3
-    assert isinstance(hdulist[1], pyfits.BinTableHDU)
+    assert isinstance(hdulist[1], fits.BinTableHDU)
     assert hdulist[1].name == 'FLUX'
-    assert isinstance(hdulist[2], pyfits.ImageHDU)
+    assert isinstance(hdulist[2], fits.ImageHDU)
     assert hdulist[2].name == 'METADATA'
 
 
 def test_replace_table():
-    import pyfits
+    from astropy.io import fits
 
-    schema_overlays_narrow = [
-        ("data", {
-            "type": "data",
-            "title": "relative sensitivity table",
-            "fits_hdu": "RELSENS",
-            "dtype": [
-                {"name" : "TYPE",       "dtype" : "string16"},
-                {"name" : "T_OFFSET",   "dtype" : "float32"},
-                {"name" : "DECAY_PEAK", "dtype" : "float32"},
-                {"name" : "DECAY_FREQ", "dtype" : "float32"},
-                {"name" : "TAU",        "dtype" : "float32"}
-            ]
-        }
-     )
-    ]
+    schema_narrow = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "data",
+                        "title": "relative sensitivity table",
+                        "fits_hdu": "RELSENS",
+                        "dtype": [
+                            {"name" : "TYPE",       "dtype" : "string16"},
+                            {"name" : "T_OFFSET",   "dtype" : "float32"},
+                            {"name" : "DECAY_PEAK", "dtype" : "float32"},
+                            {"name" : "DECAY_FREQ", "dtype" : "float32"},
+                            {"name" : "TAU",        "dtype" : "float32"}
+                        ]
+                    }
+                }
+            }
+        ]
+    }
 
-    schema_overlays_wide = [
-        ("data", {
-            "type": "data",
-            "title": "relative sensitivity table",
-            "fits_hdu": "RELSENS",
-            "dtype": [
-                {"name" : "TYPE",       "dtype" : "string16"},
-                {"name" : "T_OFFSET",   "dtype" : "float64"},
-                {"name" : "DECAY_PEAK", "dtype" : "float64"},
-                {"name" : "DECAY_FREQ", "dtype" : "float64"},
-                {"name" : "TAU",        "dtype" : "float64"}
-            ]
-        }
-     )
-    ]
+    schema_wide = {
+        "allOf": [
+            {"$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"},
+            {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "data",
+                        "title": "relative sensitivity table",
+                        "fits_hdu": "RELSENS",
+                        "dtype": [
+                            {"name" : "TYPE",       "dtype" : "string16"},
+                            {"name" : "T_OFFSET",   "dtype" : "float64"},
+                            {"name" : "DECAY_PEAK", "dtype" : "float64"},
+                            {"name" : "DECAY_FREQ", "dtype" : "float64"},
+                            {"name" : "TAU",        "dtype" : "float64"}
+                        ]
+                    }
+                }
+            }
+        ]
+    }
 
     x = np.array([("string", 1., 2., 3., 4.)],
                  dtype=[('TYPE', 'S16'),
@@ -379,33 +356,33 @@ def test_replace_table():
                         ('DECAY_FREQ', np.float32),
                         ('TAU', np.float32)])
 
-    m = DataModel(schema_overlays=schema_overlays_narrow)
+    m = DataModel(schema=schema_narrow)
     m.data = x
     m.to_fits(TMP_FITS, clobber=True)
 
-    with pyfits.open(TMP_FITS) as hdulist:
+    with fits.open(TMP_FITS) as hdulist:
         assert repr(list(x)) == repr(list(np.asarray(hdulist[1].data)))
         assert hdulist[1].data.dtype[1].str == '>f4'
         assert hdulist[1].header['TFORM2'] == 'E'
 
     with DataModel(TMP_FITS,
-                   schema_overlays=schema_overlays_wide) as m:
+                   schema=schema_wide) as m:
         foo = m.data
         m.to_fits(TMP_FITS2, clobber=True)
 
-    with pyfits.open(TMP_FITS2) as hdulist:
+    with fits.open(TMP_FITS2) as hdulist:
         assert repr(list(x)) == repr(list(np.asarray(hdulist[1].data)))
         assert hdulist[1].data.dtype[1].str == '>f8'
         assert hdulist[1].header['TFORM2'] == 'D'
 
 
 def test_metadata_from_fits():
-    import pyfits
+    from astropy.io import fits
 
     mask = np.array([[0, 1], [2, 3]])
-    pyfits.ImageHDU(data=mask, name='DQ').writeto(TMP_FITS, clobber=True)
+    fits.ImageHDU(data=mask, name='DQ').writeto(TMP_FITS, clobber=True)
     with DataModel(init=TMP_FITS) as dm:
         dm.save(TMP_FITS2)
 
-    with pyfits.open(TMP_FITS2) as hdulist:
+    with fits.open(TMP_FITS2) as hdulist:
         assert hdulist[2].name == 'METADATA'

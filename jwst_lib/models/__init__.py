@@ -75,7 +75,7 @@ def open(init=None):
     Parameters
     ----------
 
-    init : shape tuple, file path, file object, pyfits.HDUList, numpy array, None
+    init : shape tuple, file path, file object, astropy.io.fits.HDUList, numpy array, None
 
         - None: A default data model with no shape
 
@@ -85,7 +85,8 @@ def open(init=None):
 
         - readable file object: Initialize from the given file object
 
-        - pyfits.HDUList: Initialize from the given `pyfits.HDUList`
+        - astropy.io.fits.HDUList: Initialize from the given
+          `~astropy.io.fits.HDUList`
 
         - A numpy array: A new model with the data array initialized
           to what was passed in.
@@ -95,7 +96,7 @@ def open(init=None):
 
     model : DataModel instance
     """
-    import pyfits
+    from astropy.io import fits
 
     if init is None:
         return DataModel(None)
@@ -111,13 +112,13 @@ def open(init=None):
         shape = init.shape
     else:
         if isinstance(init, (unicode, bytes)) or hasattr(init, "read"):
-            hdulist = pyfits.open(init)
-        elif isinstance(init, pyfits.HDUList):
+            hdulist = fits.open(init)
+        elif isinstance(init, fits.HDUList):
             hdulist = init
         else:
             raise TypeError(
                 "init must be None, shape tuple, file path, "
-                "readable file object, or pyfits.HDUList")
+                "readable file object, or astropy.io.fits.HDUList")
 
         try:
             refouthdu = hdulist[fits_header_name('REFOUT')]
