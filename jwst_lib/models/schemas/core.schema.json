@@ -958,6 +958,17 @@
                                 }
                             }
                         },
+                        "fringe" : {
+                            "title" : "Fringe reference file information",
+                            "type" : "object",
+                            "properties" : {
+                                "name" : {
+                                    "title" : "Fringe reference file name",
+                                    "type" : "string",
+                                    "fits_keyword" : "R_FRINGE"
+                                }
+                            }
+                        },
                         "gain" : {
                             "title" : "Gain reference file information",
                             "type" : "object",
