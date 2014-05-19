@@ -1,17 +1,19 @@
 {
-    "type" : "object",
     "title" : "Dark current data model",
-    "extends" : {"$ref" : "core.schema.json"},
-    "properties" : {
-        "data" :
-            {
-                "type" : "data",
-                "title" : "Dark current array",
-                "fits_hdu" : "SCI",
-                "default" : 0.0,
-                "ndim" : 3,
-                "dtype" : "float32"
-            },
+    "allOf": [
+        {"$ref": "core.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
+                "data" :
+                {
+                    "type" : "data",
+                    "title" : "Dark current array",
+                    "fits_hdu" : "SCI",
+                    "default" : 0.0,
+                    "ndim" : 3,
+                    "dtype" : "float32"
+                },
 
                 "dq" :
                 {
@@ -33,8 +35,7 @@
                     "dtype" : "float32"
                 },
 
-                "meta" :
-                {"$ref" : "referencefile.schema.json"}
+                "meta" : {"$ref" : "referencefile.schema.json"}
 
             }
         }
