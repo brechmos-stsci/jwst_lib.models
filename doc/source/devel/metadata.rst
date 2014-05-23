@@ -4,7 +4,7 @@ Metadata
 ````````
 
 Metadata information associated with a data model is accessed through
-its `meta` member.  For example, to access the data that an
+its `meta` member.  For example, to access the date that an
 observation was made::
 
     print model.meta.observation.date
