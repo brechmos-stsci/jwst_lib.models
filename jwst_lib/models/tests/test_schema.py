@@ -574,3 +574,16 @@ def test_pickle():
 def test_implicit_creation_lower_dimensionality():
     with RampModel(np.zeros((10, 20, 30, 40))) as rm:
         assert rm.pixeldq.shape == (30, 40)
+
+
+def test_add_schema_entry():
+    with DataModel() as dm:
+        dm.add_schema_entry('meta.foo.bar', {'enum': ['foo', 'bar', 'baz']})
+        dm.meta.foo.bar
+        dm.meta.foo.bar = 'bar'
+        try:
+            dm.meta.foo.bar = 'what?'
+        except ValueError:
+            pass
+        else:
+            assert False

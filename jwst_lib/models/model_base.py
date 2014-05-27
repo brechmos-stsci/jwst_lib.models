@@ -326,6 +326,23 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
 
         return self
 
+    def add_schema_entry(self, position, new_schema):
+        """
+        Extend the model's schema by placing the given new_schema at
+        the given dot-separated position in the tree.
+
+        Parameters
+        ----------
+        position : str
+
+        new_schema : schema tree
+        """
+        parts = position.split('.')
+        schema = new_schema
+        for part in parts[::-1]:
+            schema = {'type': 'object', 'properties': {part: schema}}
+        return self.extend_schema(schema)
+
     def find_fits_keyword(self, keyword, return_result=False):
         """
         Utility function to find a reference to a FITS keyword in this
