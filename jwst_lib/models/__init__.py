@@ -40,6 +40,8 @@ from .miri_ramp import MIRIRampModel
 from .mask import MaskModel
 from .dark import DarkModel
 from .ipc import IPCModel
+from .flat import FlatModel
+from .fringe import FringeModel
 from .linearity import LinearityModel
 from .gain import GainModel
 from .readnoise import ReadnoiseModel
@@ -64,7 +66,7 @@ __all__ = [
     'LinearityModel', 'DarkModel', 'IPCModel', 'GainModel', 'ReadnoiseModel',
     'MaskModel', 'open', 'MIRIRampModel', 'RampFitOutputModel',
     'SaturationModel','ResetModel','LastFrameModel', 'SpecModel',
-    'MultiSpecModel']
+    'MultiSpecModel','FlatModel','FringeModel']
 __all__ = [str(x) for x in __all__]
 
 
