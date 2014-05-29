@@ -879,7 +879,7 @@ class MetaBase(storage.HasStorage):
             - *val* is the value
         """
         # Return the defined schema properties first
-        properties = _get_properties(self)
+        properties = list(_get_properties(self))
         for key in properties:
             val = getattr(self, key)
             prop = getattr(self.__class__, key)
@@ -924,7 +924,7 @@ class MetaBase(storage.HasStorage):
         tree = {}
 
         # Return the defined schema properties first
-        properties = _get_properties(self)
+        properties = list(_get_properties(self))
         for key in properties:
             val = getattr(self, key)
             if isinstance(val, MetaBase):
@@ -1317,6 +1317,27 @@ def search_schema(schema, substring, return_result=False, verbose=False):
 
 
 def _get_properties(self):
-    return [x for x in dir(self.__class__)
-            if isinstance(getattr(self.__class__, x),
-                          (schema_property, MetaBase))]
+    in_schema = set()
+
+    def recurse(schema):
+        if 'allOf' in schema:
+            for subtype in schema['allOf']:
+                for prop in recurse(subtype):
+                    yield prop
+        elif 'anyOf' in schema:
+            for subtype in schema['anyOf']:
+                for prop in recurse(self, subtype):
+                    yield prop
+        elif schema.get('type') == 'object' and 'properties' in schema:
+            for key in schema['properties'].keys():
+                yield key
+
+    for x in recurse(self._schema):
+        in_schema.add(x)
+        yield x
+
+    for x in dir(self.__class__):
+        if (x not in in_schema and
+            isinstance(getattr(self.__class__, x),
+                       (schema_property, MetaBase))):
+            yield x

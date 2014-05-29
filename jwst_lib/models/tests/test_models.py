@@ -148,14 +148,14 @@ def test_open():
 
 def test_copy():
     with ImageModel((50, 50)) as dm:
-        dm.meta.instrument.type = "NIRCAM"
+        dm.meta.instrument.name = "NIRCAM"
         dm.meta.foo = "BAR"
 
         with dm.copy() as dm2:
             dm2.data[0,0] = 42
             assert np.sum(dm.data.flatten()) == 0
 
-            assert dm2.meta.instrument.type == "NIRCAM"
+            assert dm2.meta.instrument.name == "NIRCAM"
             assert dm2.meta.foo == "BAR"
             dm2.meta.foo = "BAZ"
             assert dm.meta.foo == "BAR"
