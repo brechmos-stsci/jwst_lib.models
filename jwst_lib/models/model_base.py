@@ -614,8 +614,13 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
                 {'type': 'object',
                  'properties': {'_extra_fits': d._extra_fits.__class__._schema}})
 
-        for key, val in d.items(include_arrays=include_arrays,
-                                primary_only=primary_only):
+        if isinstance(d, DataModel):
+            items = d.items(include_arrays=include_arrays,
+                            primary_only=primary_only)
+        else:
+            items = d.iteritems()
+
+        for key, val in items:
             self[key] = val
 
         if hasattr(d, 'history'):
