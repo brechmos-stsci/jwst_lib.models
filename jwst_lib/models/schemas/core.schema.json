@@ -371,7 +371,21 @@
                             "title" : "Grating position for IFU channels 2 and 3",
                             "type" : "string",
                             "enum": ["SHORT", "MEDIUM", "LONG"],
-                            "fits_keyword": "GRATNG23"
+                            "fits_keyword" : "GRATNG23"
+                        },
+
+                        "gratinga" : {
+                            "title" : "MRS grating position for channels 1 and 4",
+                            "type" : "string",
+                            "enum" : ["SHORT", "MEDIUM", "LONG"],
+                            "fits_keyword" : "GRATINGA"
+                        },
+
+                        "gratingb" : {
+                            "title" : "MRS grating position for channels 2 and 3",
+                            "type" : "string",
+                            "enum": ["SHORT", "MEDIUM", "LONG"],
+                            "fits_keyword" : "GRATINGB"
                         },
 
                         "fixed_slit" : {
