@@ -1,19 +1,24 @@
 {
-    "type" : "object",
     "title" : "Spectrum data model",
-    "extends" : {"$ref" : "core.schema.json"},
-    "properties" : {
+    "allOf" : [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
 
-        "spec_table": {
-            "type": "data",
-            "title": "Extracted spectral data table",
-            "fits_hdu": "EXTRACT1D",
-            "dtype": [
-                {"name": "column", "dtype": "float32"},
-                {"name": "wavelength", "dtype": "float32"},
-                {"name": "countrate", "dtype": "float32"}
-            ]
+                "spec_table":
+                {
+                    "type": "data",
+                    "title": "Extracted spectral data table",
+                    "fits_hdu": "EXTRACT1D",
+                    "dtype": [
+                        {"name": "column", "dtype": "float32"},
+                        {"name": "wavelength", "dtype": "float32"},
+                        {"name": "countrate", "dtype": "float32"}
+                    ]
+                }
+            }
         }
-    }
+    ]
 }
 

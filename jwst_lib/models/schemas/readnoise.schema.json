@@ -3,7 +3,6 @@
         {"$ref": "core.schema.json"},
         {
             "type" : "object",
-            "extends" : {"$ref": "core.schema.json"},
             "properties" : {
                 "data" :
                 {
@@ -15,8 +14,7 @@
                     "dtype" : "float32"
                 },
 
-                "meta" :
-                {"$ref" : "referencefile.schema.json"}
+                "meta" : {"$ref" : "referencefile.schema.json"}
 
             }
         }

@@ -1,10 +1,9 @@
 {
+    "title": "Linearity correction data model",
     "allOf": [
         {"$ref": "core.schema.json"},
         {
             "type" : "object",
-            "title": "Linearity correction data",
-            "extends" : {"$ref": "core.schema.json"},
             "properties" : {
                 "coeffs" :
                 {
@@ -25,8 +24,7 @@
                     "dtype" : "uint8"
                 },
 
-                "meta" :
-                {"$ref" : "referencefile.schema.json"}
+                "meta" : {"$ref" : "referencefile.schema.json"}
 
             }
         }
