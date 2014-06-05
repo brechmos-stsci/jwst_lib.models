@@ -28,6 +28,12 @@
                     "title" : "Author of the reference file",
                     "type" : "string",
                     "fits_keyword" : "AUTHOR"
+                },
+
+                "useafter" : {
+                    "title" : "Use after date of the reference file",
+                    "type" : "string",
+                    "fits_keyword" : "USEAFTER"
                 }
             }
         }
