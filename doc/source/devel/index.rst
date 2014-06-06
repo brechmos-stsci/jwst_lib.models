@@ -7,5 +7,6 @@ Contents:
    :maxdepth: 2
 
    models
+   attributes
    metadata
    new_model
