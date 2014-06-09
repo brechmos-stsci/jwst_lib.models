@@ -121,10 +121,10 @@ Calling sequences and model-specific attributes
     - `err`: The error array.
     - `relsens`: The relative sensitivity table.
 
-`IPCModel(init=None, ipc=None, **kwargs)`
+`IPCModel(init=None, data=None, **kwargs)`
 
     - `init`: The name of the IPC reference file.
-    - `ipc`: The deconvolution kernel (a very small image).
+    - `data`: The deconvolution kernel (a very small image).
 
 `LastFrameModel(init=None, data=None, dq=None, err=None, **kwargs)`
 
