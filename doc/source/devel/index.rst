@@ -1,5 +1,5 @@
 jwst_lib.models Developer’s Documentation
-========================================
+=========================================
 
 Contents:
 
