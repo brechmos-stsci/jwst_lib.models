@@ -11,7 +11,7 @@
                     "title" : "Last Frame Correction array",
                     "fits_hdu" : "SCI",
                     "default" : 0.0,
-                    "ndim" : 2,
+                    "ndim" : 3,
                     "dtype" : "float32"
                 },
 
@@ -31,7 +31,7 @@
                     "title" : "Error array",
                     "fits_hdu" : "ERR",
                     "default" : 0.0,
-                    "ndim" : 2,
+                    "ndim" : 3,
                     "dtype" : "float32"
                 },
 
