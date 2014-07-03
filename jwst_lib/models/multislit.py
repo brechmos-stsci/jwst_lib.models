@@ -24,6 +24,7 @@ class MultiSlitModel(model_base.DataModel, wcs.HasFitsWcs):
     def __init__(self, init=None, **kwargs):
         if isinstance(init, ImageModel):
             super(MultiSlitModel, self).__init__(init=None, **kwargs)
+            self.update(init)
             self.slits.append(self.slits.item())
             self.slits[0].data = init.data
             self.slits[0].dq = init.dq
