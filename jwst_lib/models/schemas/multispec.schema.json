@@ -18,6 +18,7 @@
                                 "dtype": [
                                     {"name": "column", "dtype": "float32"},
                                     {"name": "wavelength", "dtype": "float32"},
+                                    {"name": "background", "dtype": "float32"},
                                     {"name": "countrate", "dtype": "float32"}
                                 ]
                             }

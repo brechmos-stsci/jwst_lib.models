@@ -7,6 +7,8 @@
          "dtype": "float64"},
         {"name": "wavelength",
          "dtype": "float64"},
+        {"name": "background",
+         "dtype": "float64"},
         {"name": "countrate",
          "dtype": "float64"}
     ]
