@@ -52,6 +52,7 @@ from .reset import ResetModel
 from .lastframe import LastFrameModel
 from .spec import SpecModel
 from .multispec import MultiSpecModel
+from .asn import AsnModel
 
 
 import sys

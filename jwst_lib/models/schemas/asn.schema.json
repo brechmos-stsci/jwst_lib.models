@@ -1,0 +1,21 @@
+{
+    "title" : "Association table data model",
+    "allOf" : [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
+
+                "asn_table": {
+                    "type": "data",
+                    "title": "Association table",
+                    "fits_hdu": "ASN",
+                    "dtype": [
+                        {"name": "expname", "dtype": "string45"},
+                        {"name": "exptype", "dtype": "string15"}
+                    ]
+                }
+            }
+        }
+    ]
+}
