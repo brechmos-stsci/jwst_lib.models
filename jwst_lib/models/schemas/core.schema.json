@@ -356,35 +356,36 @@
                             "title" : "Name of the grating element used",
                             "type" : "string",
                             "enum" : ["G140M", "G235M", "G395M", "G140H",
-                                      "G235H", "G395H", "PRISM", "MIRROR"],
+                                      "G235H", "G395H", "PRISM", "MIRROR",
+                                      "N/A", "ANY"],
                             "fits_keyword" : "GRATING"
                         },
 
                         "grating14" : {
                             "title" : "Grating position for IFU channels 1 and 4",
                             "type" : "string",
-                            "enum" : ["SHORT", "MEDIUM", "LONG"],
+                            "enum" : ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
                             "fits_keyword" : "GRATNG14"
                         },
 
                         "grating23" : {
                             "title" : "Grating position for IFU channels 2 and 3",
                             "type" : "string",
-                            "enum": ["SHORT", "MEDIUM", "LONG"],
+                            "enum": ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
                             "fits_keyword" : "GRATNG23"
                         },
 
                         "gratinga" : {
                             "title" : "MRS grating position for channels 1 and 4",
                             "type" : "string",
-                            "enum" : ["SHORT", "MEDIUM", "LONG"],
+                            "enum" : ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
                             "fits_keyword" : "GRATINGA"
                         },
 
                         "gratingb" : {
                             "title" : "MRS grating position for channels 2 and 3",
                             "type" : "string",
-                            "enum": ["SHORT", "MEDIUM", "LONG"],
+                            "enum": ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
                             "fits_keyword" : "GRATINGB"
                         },
 
