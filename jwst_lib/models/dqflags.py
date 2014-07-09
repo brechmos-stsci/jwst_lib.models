@@ -6,7 +6,7 @@ class pixel:
     DEAD = 8
     HOT = 16
     WARM = 32
-    LOW_DQ = 64
+    LOW_QE = 64
     RC = 128
     TELEGRAPH = 256
     NONLINEAR = 512
