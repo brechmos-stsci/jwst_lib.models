@@ -21,6 +21,7 @@ class pixel:
     UNRELIABLE_RESET = 262144
     SATURATED = 524288
     JUMP_DET = 1048576
+    FRAMES_SKIPPED = 2097152
 
 class group:
     GOOD = 0
