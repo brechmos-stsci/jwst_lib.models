@@ -53,6 +53,8 @@ from .lastframe import LastFrameModel
 from .spec import SpecModel
 from .multispec import MultiSpecModel
 from .asn import AsnModel
+from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
+from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
 
 
 import sys
@@ -67,7 +69,9 @@ __all__ = [
     'LinearityModel', 'DarkModel', 'IPCModel', 'GainModel', 'ReadnoiseModel',
     'MaskModel', 'open', 'MIRIRampModel', 'RampFitOutputModel',
     'SaturationModel','ResetModel','LastFrameModel', 'SpecModel',
-    'MultiSpecModel','FlatModel','FringeModel']
+    'MultiSpecModel','FlatModel','FringeModel','AsnModel','PhotomModel',
+    'NircamPhotomModel','NirissPhotomModel','NirspecPhotomModel',
+    'MiriImgPhotomModel','MiriMrsPhotomModel']
 __all__ = [str(x) for x in __all__]
 
 

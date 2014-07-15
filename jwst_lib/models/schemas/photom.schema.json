@@ -1,0 +1,26 @@
+{
+    "title" : "Photometric flux conversion data model",
+    "allOf" : [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
+
+                "phot_table": {
+                    "type": "data",
+                    "title": "Photometric flux conversion factors table",
+                    "fits_hdu": "PHOTOM",
+                    "dtype": [
+                        {"name": "filter", "dtype": "string12"},
+                        {"name": "photflam", "dtype": "float32"},
+                        {"name": "photerr", "dtype": "float32"},
+                        {"name": "nelem", "dtype": "int16"},
+                        {"name": "wavelength", "dtype": "float32", "shape": [50]},
+                        {"name": "response", "dtype": "float32", "shape": [50]},
+                        {"name": "resperr", "dtype": "float32", "shape": [50]}
+                    ]
+                }
+            }
+        }
+    ]
+}
