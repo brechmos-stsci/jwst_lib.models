@@ -20,7 +20,7 @@
                     "title" : "Data quality array",
                     "fits_hdu" : "DQ",
                     "default" : 0,
-                    "dtype" : "uint16"
+                    "dtype" : "uint32"
                 },
 
                 "err" :
