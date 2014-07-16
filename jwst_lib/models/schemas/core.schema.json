@@ -1145,20 +1145,50 @@
                             "type" : "string",
                             "fits_keyword" : "S_RAMP"
                         },
+                        "assign_wcs" : {
+                            "title" : "Assign World Coordinate System",
+                            "type" : "string",
+                            "fits_keyword" : "S_WCS"
+                        },
                         "flat_field" : {
                             "title" : "Flat Field Correction",
                             "type" : "string",
                             "fits_keyword" : "S_FLAT"
+                        },
+                        "fringe" : {
+                            "title" : "Fringe Correction",
+                            "type" : "string",
+                            "fits_keyword" : "S_FRINGE"
                         },
                         "persistence" : {
                             "title" : "Persistence Correction",
                             "type" : "string",
                             "fits_keyword" : "S_PERSIS"
                         },
+                        "straylight" : {
+                            "title" : "Straylight Correction",
+                            "type" : "string",
+                            "fits_keyword" : "S_STRAY"
+                        },
+                        "emission" : {
+                            "title" : "Telescope Emission Correction",
+                            "type" : "string",
+                            "fits_keyword" : "S_TELEMI"
+                        },
                         "photom" : {
                             "title" : "Photometric Calibration",
                             "type" : "string",
                             "fits_keyword" : "S_PHOTOM"
+                        },
+                        "extract_1d" : {
+                            "title" : "1-D Spectral Extraction",
+                            "type" : "string",
+                            "fits_keyword" : "S_EXTR1D"
+                        },
+                        "extract_2d" : {
+                            "title" : "2-D Spectral Extraction",
+                            "type" : "string",
+                            "fits_keyword" : "S_EXTR2D"
                         }
                     }
                 }
