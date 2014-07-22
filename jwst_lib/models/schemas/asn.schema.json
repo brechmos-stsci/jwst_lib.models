@@ -11,7 +11,7 @@
                     "title": "Association table",
                     "fits_hdu": "ASN",
                     "dtype": [
-                        {"name": "expname", "dtype": "string45"},
+                        {"name": "expname", "dtype": "string80"},
                         {"name": "exptype", "dtype": "string15"}
                     ]
                 }

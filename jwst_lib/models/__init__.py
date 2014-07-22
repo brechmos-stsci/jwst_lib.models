@@ -55,7 +55,8 @@ from .multispec import MultiSpecModel
 from .asn import AsnModel
 from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
 from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
-
+from .drizpars import DrizParsModel, NircamDrizParsModel, MiriImgDrizParsModel
+from .drizproduct import DrizProductModel
 
 import sys
 if sys.version_info[0] >= 3:

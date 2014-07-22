@@ -1,0 +1,27 @@
+{
+    "title" : "Default Drizzle parameters data model",
+    "allOf" : [
+        {"$ref" : "drizpars.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
+
+                "drizpars_table": {
+                    "type": "data",
+                    "title": "Distortion correction parameters table",
+                    "fits_hdu": "DRIZPARS",
+                    "dtype": [
+                        {"name": "numimages", "dtype": "int32"},
+                        {"name": "filter",   "dtype": "string40"},
+                        {"name": "subarray", "dtype": "string15"},
+                        {"name": "pixfrac",  "dtype": "float32"},
+                        {"name": "kernel",   "dtype": "string10"},
+                        {"name": "fillval",  "dtype": "string10"},
+                        {"name": "wht_type", "dtype": "string10"},
+                        {"name": "stepsize", "dtype": "int32"}
+                    ]
+                }
+            }
+        }
+    ]
+}
