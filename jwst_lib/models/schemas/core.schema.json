@@ -1180,6 +1180,11 @@
                             "type" : "string",
                             "fits_keyword" : "S_PHOTOM"
                         },
+                        "wfs_combine" : {
+                            "title" : "Wavefront Sensing Combination",
+                            "type" : "string",
+                            "fits_keyword" : "S_WFSCOM"
+                        },
                         "extract_1d" : {
                             "title" : "1-D Spectral Extraction",
                             "type" : "string",
