@@ -37,6 +37,19 @@ jsonschema.Draft4Validator.META_SCHEMA['definitions']['simpleTypes']['enum'].ext
     ['data', 'pickle'])
 
 
+class PickleProxy(object):
+    def __init__(self, x):
+        self.x = x
+
+    def __str__(self):
+        import cPickle
+        val = cPickle.dumps(self.x)
+        val = val.decode('latin-1')
+        return val
+
+    __unicode__ = __str__
+
+
 class ValidatingList(object):
     """
     A list that validates itself against a JSON schema fragment on
@@ -422,7 +435,6 @@ class schema_property(object):
                     warnings.warn(
                         "{0}. Setting to default of {1!r}".format(
                             e.message, val))
-                    return val
         except AttributeError as e:
             if self.is_ad_hoc:
                 raise
@@ -433,6 +445,9 @@ class schema_property(object):
                 if self.type == "array":
                     items = self.schema.get('items')
                     val = ValidatingList(items, self.name, val)
+
+        if isinstance(val, PickleProxy):
+            val = val.x
 
         return val
 
@@ -541,6 +556,7 @@ class schema_property(object):
                 if isinstance(val, unicode):
                     val = val.encode('latin-1')
                 val = cPickle.loads(val)
+                val = PickleProxy(val)
             else:
                 try:
                     validate(val, self.schema)
@@ -577,9 +593,7 @@ class schema_property(object):
                 val = new_val
             elif (self.schema.get('type') == 'pickle' and
                   not isinstance(val, basestring)):
-                import cPickle
-                val = cPickle.dumps(val)
-                val = val.decode('latin-1')
+                val = PickleProxy(val)
 
             format = self.schema.get('format')
             if format and format in self._extensions:

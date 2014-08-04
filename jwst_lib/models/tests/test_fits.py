@@ -103,7 +103,7 @@ def test_from_scratch():
         with ImageModel.from_fits(TMP_FITS) as dm2:
             assert dm2.shape == (50, 50)
             assert dm2.meta.instrument.name == 'NIRCAM'
-            assert dm2.dq.dtype.name == 'uint16'
+            assert dm2.dq.dtype.name == 'uint32'
             assert np.all(dm2.data == data)
 
 

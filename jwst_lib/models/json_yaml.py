@@ -8,6 +8,7 @@ from __future__ import absolute_import, unicode_literals, division, print_functi
 
 import collections
 import io
+import json
 import os.path
 
 from . import util
@@ -108,9 +109,17 @@ def loads(s):
         return load(fd)
 
 
+class CustomJsonEncoder(json.JSONEncoder):
+    def default(self, o):
+        from . import schema
+        if isinstance(o, schema.PickleProxy):
+            return str(o)
+        return super(CustomJsonEncoder, self).default(o)
+
+
 def _dump_json(tree, fd):
     import json
-    return json.dump(tree, fd, indent=2)
+    return json.dump(tree, fd, indent=2, cls=CustomJsonEncoder)
 
 
 def _dump_yaml(tree, fd):

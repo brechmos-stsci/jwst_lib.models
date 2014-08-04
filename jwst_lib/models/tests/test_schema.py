@@ -560,13 +560,15 @@ def test_pickle():
 
     with DataModel(schema=schema) as x:
         x.meta.pickled = obj
-        x.save(TMP_FITS)
         assert x.meta.pickled.a == "Hi"
         assert x.meta.pickled.b == 42
         assert x.meta.pickled.c == 1
+        x.meta.pickled.a = 'Bye'
+        assert x.meta.pickled.a == 'Bye'
+        x.save(TMP_FITS)
 
     with DataModel(TMP_FITS, schema=schema) as x:
-        assert x.meta.pickled.a == "Hi"
+        assert x.meta.pickled.a == "Bye"
         assert x.meta.pickled.b == 42
         assert x.meta.pickled.c == 1
 

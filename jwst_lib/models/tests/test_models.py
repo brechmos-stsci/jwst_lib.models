@@ -210,7 +210,7 @@ def test_base_model_has_no_arrays():
 
 def test_array_type():
     with ImageModel() as dm:
-        assert dm.dq.dtype == np.uint16
+        assert dm.dq.dtype == np.uint32
 
 
 def test_copy_model():
