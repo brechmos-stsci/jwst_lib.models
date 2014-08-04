@@ -447,6 +447,7 @@ class schema_property(object):
                     val = ValidatingList(items, self.name, val)
 
         if isinstance(val, PickleProxy):
+            obj.storage.__set__(self, obj, val)
             val = val.x
 
         return val
