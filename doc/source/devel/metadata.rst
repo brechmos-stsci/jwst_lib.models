@@ -486,40 +486,43 @@ Extending the schema
 
 Since it would be cumbersome to update the core schema everytime a
 library wants to use application-specific keywords, `jwst_lib.models`
-makes it easy to overlay schema fragments on top of the core schema.
+makes it easy to overlay schema on top of the core schema.
 
-Schema overlays are represented using a tuple of the form
-(*location*, *schema_fragment*).  *location* is a dot-separated path
-indicating where to insert the *schema_fragment*.  *schema_fragment*
-is a piece of JSON Schema as defined above.
+Schema overlays are just schema that are combined with the built-in
+schema using the ``allOf`` keyword, meaning the resulting schema must
+match *both* the built-in schema and the given schema.
 
 For example, suppose you are writing an application that needs to know
 the population of the target being observed.  To store this in the
 model, we'll create a new metadata element ``meta.target.population``
 that accepts a number.  When reading/writing FITS, we want to store
 this this information in the keyword ``TARGPOP`` in the primary HDU.
-The schema fragment to describe this new element is::
+The schema to describe this new element is::
 
-    my_schema = (
-        "meta.target.population",
-        {"title": "Population of the target",
-         "type": "integer",
-         "fits_keyword": "TARGPOP"
-         }
-        )
+    my_schema = {
+        "type": "object",
+        "properties": {
+            "meta": {
+                "type": "object",
+                "properties": {
+                    "target": {
+                        "type": "object",
+                        "properties": {
+                            "population": {
+                                "title": "Population of the target",
+                                "type": "integer",
+                                "fits_keyword": "TARGPOP"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-Schema overlays may be used in two ways:
-
-  1. When constructing the model from scratch, a list of overlays may
-     be passed to the `schema_overlays` keyword argument::
-
-         from jwst_lib.models import ImageModel
-         model = ImageModel(schema_overlays=[my_schema])
-         model.meta.target.population = 6e12
-
-  2. To extend an already-created model instance, call the
-     `extend_schema` method to add the new schema overlays in place::
+To extend an already-created model instance, call the `extend_schema`
+method to add the new schema overlays in place::
 
          def process(input_model):
-             input_model.extend_schema([my_schema])
+             input_model.extend_schema(my_schema)
              input_model.meta.target.population = 6e12
