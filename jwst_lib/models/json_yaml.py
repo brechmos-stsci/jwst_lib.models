@@ -113,7 +113,7 @@ class CustomJsonEncoder(json.JSONEncoder):
     def default(self, o):
         from . import schema
         if isinstance(o, schema.PickleProxy):
-            return str(o)
+            return unicode(o)
         return super(CustomJsonEncoder, self).default(o)
 
 
