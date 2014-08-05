@@ -7,7 +7,7 @@ def dynamic_mask(input_model):
     # Dynamic flags define what each plane refers to using header keywords
     # of the form
     # DQ_1, DQ_2, DQ_4, DQ_8 etc.
-
+    dq_in = input_model.dq
     # Get the DQ array and the flag definitions
     try:
         dqcards = input_model.storage.get_fits_header(1, hdu_name='DQ')['DQ_*']
@@ -16,7 +16,7 @@ def dynamic_mask(input_model):
         # If the model wasn't created directly from a FITS file, there's no
         # FITS storage, so this won't work.  E.g. if the model is a .copy()
         # of another model.  In that case, just return the original dq array
-        dqmask = input_model.dq
+        dqmask = dq_in
         return dqmask
 
     #
@@ -27,19 +27,19 @@ def dynamic_mask(input_model):
     # standard definitions
 
     if len(dqcards) > 0:
-        dqmask = np.zeros(input_model.dq.shape, dtype=input_model.dq.dtype)
+        dqmask = np.zeros(dq_in.shape, dtype=dq_in.dtype)
         for keyword, value in zip(dqcards.keys(), dqcards.values()):
             bitplane = int(keyword[keyword.find('_')+1:])
             bitvalue = 2**bitplane
             try:
-                truevalue = dqflags.pixel.__dict__.__getitem__(value)
+                truevalue = dqflags.pixel[value]
             except KeyError:
-                print 'Keyword %s = %s does not correspond to an existing DQ mnemonic, so will be ignored' % (keyword, value)
+                print 'Keyword %s = %s is not an existing DQ mnemonic, so will be ignored' % (keyword, value)
                 continue
-            maskedpixels = np.where(np.bitwise_and(input_model.dq, bitvalue) == bitvalue)
-            dqmask[maskedpixels] = np.bitwise_or(dqmask[maskedpixels], truevalue)
+            mask = np.where(np.bitwise_and(dq_in, bitvalue) == bitvalue)
+            dqmask[mask] = np.bitwise_or(dqmask[maskedpixels], truevalue)
 
     else:
-        dqmask = input_model.dq
+        dqmask = dq_in
 
     return dqmask

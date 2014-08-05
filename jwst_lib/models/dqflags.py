@@ -1,30 +1,30 @@
-class pixel:
-    GOOD = 0
-    DO_NOT_USE = 1
-    UNRELIABLE_ERROR = 2
-    NON_SCIENCE = 4
-    DEAD = 8
-    HOT = 16
-    WARM = 32
-    LOW_QE = 64
-    RC = 128
-    TELEGRAPH = 256
-    NONLINEAR = 512
-    NO_LIN_CORR = 1024
-    NO_SAT_CHECK = 2048
-    UNRELIABLE_BIAS = 4096
-    UNRELIABLE_DARK = 8192
-    UNRELIABLE_SLOPE = 16384
-    UNRELIABLE_FLAT = 32768
-    OPEN = 65536
-    ADJ_OPEN = 131072
-    UNRELIABLE_RESET = 262144
-    SATURATED = 524288
-    JUMP_DET = 1048576
-    FRAMES_SKIPPED = 2097152
+pixel = {'GOOD': 0,
+         'DO_NOT_USE': 1,
+         'UNRELIABLE_ERROR' : 2,
+         'NON_SCIENCE' : 4,
+         'DEAD' : 8,
+         'HOT' : 16,
+         'WARM' : 32,
+         'LOW_QE' : 64,
+         'RC' : 128,
+         'TELEGRAPH' : 256,
+         'NONLINEAR' : 512,
+         'NO_LIN_CORR' : 1024,
+         'NO_SAT_CHECK' : 2048,
+         'UNRELIABLE_BIAS' : 4096,
+         'UNRELIABLE_DARK' : 8192,
+         'UNRELIABLE_SLOPE' : 16384,
+         'UNRELIABLE_FLAT' : 32768,
+         'OPEN' : 65536,
+         'ADJ_OPEN' : 131072,
+         'UNRELIABLE_RESET' : 262144,
+         'SATURATED' : 524288,
+         'JUMP_DET' : 1048576,
+         'FRAMES_SKIPPED' : 2097152
+}
 
-class group:
-    GOOD = 0
-    DO_NOT_USE = 1
-    SATURATED = 2
-    JUMP_DET = 4
+group = {'GOOD' : 0,
+         'DO_NOT_USE' : 1,
+         'SATURATED' : 2,
+         'JUMP_DET' : 4
+}
