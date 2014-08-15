@@ -13,9 +13,9 @@ class DrizProductModel(model_base.DataModel, wcs.HasFitsWcs):
     """
     schema_url = "drizproduct.schema.json"
 
-    def __init__(self, init=None, data=None, dq=None, err=None, hdrtab=None,
+    def __init__(self, init=None, data=None, con=None, wht=None, hdrtab=None,
                     relsens=None, **kwargs):
-        super(ImageModel, self).__init__(init=init, **kwargs)
+        super(DrizProductModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
             self.data = data
