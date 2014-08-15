@@ -13,7 +13,6 @@
                     "dtype": [
                         {"name": "numimages", "dtype": "int32"},
                         {"name": "filter",   "dtype": "string40"},
-                        {"name": "subarray", "dtype": "string15"},
                         {"name": "pixfrac",  "dtype": "float32"},
                         {"name": "kernel",   "dtype": "string10"},
                         {"name": "fillval",  "dtype": "string10"},
