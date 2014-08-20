@@ -12,11 +12,15 @@ class MaskModel(model_base.DataModel):
     """
     schema_url = "mask.schema.json"
 
-    def __init__(self, init=None, dq=None, **kwargs):
+    def __init__(self, init=None, dq=None, dq_def=None, **kwargs):
         super(MaskModel, self).__init__(init=init, **kwargs)
 
         if dq is not None:
             self.dq = dq
+
+        if dq_def is not None:
+            self.dq_def = dq_def
+
         self.dq = dynamic_mask(self)
 
     def get_primary_array_name(self):
@@ -27,5 +31,3 @@ class MaskModel(model_base.DataModel):
         primary array's name is not "data".
         """
         return 'dq'
-
-

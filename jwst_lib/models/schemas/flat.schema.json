@@ -20,7 +20,7 @@
                     "title" : "Data quality array",
                     "fits_hdu" : "DQ",
                     "default" : 0,
-                    "dtype" : "uint16"
+                    "dtype" : "uint32"
                 },
 
                 "err" :
@@ -31,6 +31,19 @@
                     "default" : 0.0,
                     "dtype" : "float32"
                 },
+
+		"dq_def" :
+		{
+		    "type" : "data",
+		    "title" : "DQ flag definitions",
+		    "fits_hdu" : "DQ_DEF",
+		    "dtype" : [
+		        {"name" : "BIT", "dtype" : "int32"},
+			{"name" : "VALUE", "dtype" : "int32"},
+			{"name" : "NAME", "dtype" : "string40"},
+			{"name" : "DESCRIPTION", "dtype" : "string80"}
+		    ]
+		},
 
                 "meta" : {"$ref": "referencefile.schema.json"}
             }

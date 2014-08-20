@@ -13,7 +13,8 @@ class LinearityModel(model_base.DataModel):
     """
     schema_url = "linearity.schema.json"
 
-    def __init__(self, init=None, coeffs=None, dq=None, **kwargs):
+    def __init__(self, init=None, coeffs=None, dq=None, dq_def=None,
+                 **kwargs):
         super(LinearityModel, self).__init__(init=init, **kwargs)
 
         if coeffs is not None:
@@ -21,4 +22,8 @@ class LinearityModel(model_base.DataModel):
 
         if dq is not None:
             self.dq = dq
+
+        if dq_def is not None:
+            self.dq_def = dq_def
+
         self.dq = dynamic_mask(self)

@@ -12,7 +12,8 @@ class DarkModel(model_base.DataModel):
     """
     schema_url = "dark.schema.json"
 
-    def __init__(self, init=None, data=None, dq=None, err=None, **kwargs):
+    def __init__(self, init=None, data=None, dq=None, err=None, 
+                 dq_def=None, **kwargs):
         super(DarkModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
@@ -20,7 +21,11 @@ class DarkModel(model_base.DataModel):
 
         if dq is not None:
             self.dq = dq
-        self.dq = dynamic_mask(self)
+
+        if dq_def is not None:
+            self.dq_def = dq_def
 
         if err is not None:
             self.err = err
+
+        self.dq = dynamic_mask(self)

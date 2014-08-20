@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals, division, print_functi
 
 from . import model_base
 from . import wcs
+from .dynamicdq import dynamic_mask
 
 
 __all__ = ['FringeModel']
@@ -13,7 +14,8 @@ class FringeModel(model_base.DataModel, wcs.HasFitsWcs):
     """
     schema_url = "fringe.schema.json"
 
-    def __init__(self, init=None, data=None, dq=None, err=None, **kwargs):
+    def __init__(self, init=None, data=None, dq=None, err=None,
+                 dq_def=None, **kwargs):
         super(FringeModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
@@ -25,3 +27,7 @@ class FringeModel(model_base.DataModel, wcs.HasFitsWcs):
         if err is not None:
             self.err = err
 
+        if dq_def is not None:
+            self.dq_def = dq_def
+
+        self.dq = dynamic_mask(self)
