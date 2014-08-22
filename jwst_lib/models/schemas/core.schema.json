@@ -389,6 +389,13 @@
                             "fits_keyword" : "GRATINGB"
                         },
 
+                        "band" : {
+                            "title" : "MRS wavelength band",
+                            "type" : "string",
+                            "enum": ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
+                            "fits_keyword" : "BAND"
+                        },
+
                         "fixed_slit" : {
                             "title" : "Name of fixed slit aperture used",
                             "type" : "string",
