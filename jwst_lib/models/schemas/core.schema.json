@@ -980,6 +980,17 @@
                                 }
                             }
                         },
+                        "straylight" : {
+                            "title" : "Straylight reference file information",
+                            "type" : "object",
+                            "properties" : {
+                                "name" : {
+                                    "title" : "Straylight reference file name",
+                                    "type" : "string",
+                                    "fits_keyword" : "R_STRAY"
+                                }
+                            }
+                        },
                         "fringe" : {
                             "title" : "Fringe reference file information",
                             "type" : "object",

@@ -41,6 +41,7 @@ from .mask import MaskModel
 from .dark import DarkModel
 from .ipc import IPCModel
 from .flat import FlatModel
+from .straylight import StrayLightModel
 from .fringe import FringeModel
 from .linearity import LinearityModel
 from .gain import GainModel
