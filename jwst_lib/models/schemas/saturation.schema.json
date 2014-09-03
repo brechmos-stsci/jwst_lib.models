@@ -15,6 +15,18 @@
                     "dtype" : "float32"
                 },
 
+                "dq" :
+                {
+                    "type" : "data",
+                    "title" : "2-D data quality array for all planes",
+                    "fits_hdu" : "DQ",
+                    "default" : 0,
+                    "ndim" : 2,
+                    "dtype" : "uint32"
+                },
+
+		"dq_def" : {"$ref" : "dq_def.schema.json"},
+
                 "meta" : {"$ref" : "referencefile.schema.json"}
             }
         }
