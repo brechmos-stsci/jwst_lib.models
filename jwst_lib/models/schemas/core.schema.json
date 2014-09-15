@@ -456,7 +456,7 @@
                         "type" : {
                             "title" : "Type of data in the exposure",
                             "type" : "string",
-                            "fits_keyword" : "EXPTYPE"
+                            "fits_keyword" : "EXP_TYPE"
                         },
 
                         "start_time" : {
