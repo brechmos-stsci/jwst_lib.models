@@ -6,11 +6,11 @@
             "type" : "object",
             "properties" : {
 
-                "sat" :
+                "data" :
                 {
                     "type" : "data",
                     "title" : "Saturation threshold",
-                    "fits_hdu" : "SAT",
+                    "fits_hdu" : "SCI",
                     "default" : 100000.0,
                     "dtype" : "float32"
                 },
