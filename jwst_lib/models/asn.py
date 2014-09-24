@@ -23,13 +23,16 @@ class AsnModel(model_base.DataModel):
         self.parse_table()
 
     def parse_table(self):
-
         self.output = None
         self.output_rootname = None
         self.inputs = []
         self.input_rootnames = []
         self.num_inputs = 0
-        for i,etype in enumerate(self.asn_table.exptype):
+
+        if not len(self.asn_table):
+            return
+
+        for i, etype in enumerate(self.asn_table.exptype):
             if 'prod' in etype.lower():
                 self.output_rootname = self.asn_table.expname[i]
                 for fmt in self.supported_formats:

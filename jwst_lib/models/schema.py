@@ -516,9 +516,9 @@ class schema_property(object):
             else:
                 if isinstance(self.dtype, list):
                     if self.ndim is None:
-                        array = np.empty((1,), dtype=self.dtype)
+                        array = np.empty((0,), dtype=self.dtype)
                     else:
-                        array = np.empty(tuple([1] * self.ndim),
+                        array = np.empty(tuple([0] * self.ndim),
                                          dtype=self.dtype)
                 else:
                     has_primary_array_shape = False

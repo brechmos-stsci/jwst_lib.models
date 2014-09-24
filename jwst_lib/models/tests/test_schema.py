@@ -7,7 +7,7 @@ from nose.tools import raises
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
-from .. import DataModel, ImageModel, RampModel, MaskModel, MultiSlitModel, open
+from .. import DataModel, ImageModel, RampModel, MaskModel, MultiSlitModel, open, AsnModel
 from .. import schema
 
 
@@ -589,3 +589,8 @@ def test_add_schema_entry():
             pass
         else:
             assert False
+
+
+def test_table_size_zero():
+    with AsnModel() as dm:
+        assert len(dm.asn_table) == 0

@@ -255,7 +255,7 @@ def test_multislit_from_fits_image():
         assert ms.slits[0].data.shape == (64, 64)
 
         for i, slit in enumerate(ms.slits):
-            assert slit == ms.slits[i]
+            assert slit.data is ms.slits[i].data
 
         ms2 = ms.copy()
         ms2.slits = ms.slits
