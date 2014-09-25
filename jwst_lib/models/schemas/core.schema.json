@@ -790,7 +790,7 @@
                         "spatial_y" : {
                             "title" : "Y spatial coordinate of JWST (km)",
                             "type" : "number",
-                            "fits_keyword" : "JWST_X"
+                            "fits_keyword" : "JWST_Y"
                         },
 
                         "spatial_z" : {

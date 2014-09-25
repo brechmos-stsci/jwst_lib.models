@@ -11,8 +11,7 @@
                     "title": "Photometric flux conversion factors table",
                     "fits_hdu": "PHOTOM",
                     "dtype": [
-                        {"name": "gratng14", "dtype": "string12"},
-                        {"name": "gratng23", "dtype": "string12"},
+                        {"name": "band", "dtype": "string12"},
                         {"name": "photflam", "dtype": "float32"},
                         {"name": "nelem", "dtype": "int16"},
                         {"name": "wavelength", "dtype": "float32", "shape": [50]},
