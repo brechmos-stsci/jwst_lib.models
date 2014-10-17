@@ -451,7 +451,8 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         part = parts[-1]
         setattr(meta, part, value)
 
-    def iteritems(self, include_arrays=False, primary_only=False):
+    def iteritems(self, include_arrays=False, primary_only=False,
+                  everything=False):
         """
         Iterates over all of the schema items in a flat way.
 
@@ -469,11 +470,16 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
 
         primary_only : bool, optional
             When `True`, only return values from the PRIMARY FITS HDU.
+
+        everything : bool, optional
+            When `True`, include even non-serializable items.
         """
         for obj, prop, val in self.iter_properties():
-            if include_arrays or (
-                isinstance(val, (bytes, unicode, int, long, float, bool)) and
-                not prop.is_data()):
+            if (include_arrays or (
+                (isinstance(val, (bytes, unicode, int, long, float, bool))
+                 or everything) and
+                    not prop.is_data())):
+
                 if (primary_only and
                     prop.schema.get('fits_hdu', 'PRIMARY') != 'PRIMARY'):
                     continue
@@ -482,7 +488,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
     if IS_PY3K:
         items = iteritems
     else:
-        def items(self, include_arrays=False, primary_only=False):
+        def items(self, include_arrays=False, primary_only=False, everything=False):
             """
             Get all of the schema items in a flat way.
 
@@ -501,9 +507,13 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             primary_only : bool, optional
                 When `True`, only return values from the PRIMARY FITS
                 HDU.
+
+            everything : bool, optional
+                When `True`, include even non-serializable items.
             """
             return list(self.iteritems(include_arrays=include_arrays,
-                                       primary_only=primary_only))
+                                       primary_only=primary_only,
+                                       everything=everything))
 
     def iterkeys(self, include_arrays=False, primary_only=False):
         """
@@ -616,11 +626,14 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
 
         if isinstance(d, DataModel):
             items = d.items(include_arrays=include_arrays,
-                            primary_only=primary_only)
+                            primary_only=primary_only,
+                            everything=True)
         else:
             items = d.iteritems()
 
         for key, val in items:
+            if isinstance(val, mschema.PickleProxy):
+                val = val.x
             self[key] = val
 
         if hasattr(d, 'history'):
