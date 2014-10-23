@@ -53,7 +53,7 @@ class TreeStorage(Storage):
         self._history = []
 
     def close(self):
-        pass
+        del self._tree
 
     def __get_array_section__(self, prop, obj, key):
         return self.__get__(prop, obj)[key]

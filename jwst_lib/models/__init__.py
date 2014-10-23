@@ -131,10 +131,12 @@ def open(init=None):
 
         try:
             refouthdu = hdulist[fits_header_name('REFOUT')]
-            new_class = MIRIRampModel
-            return new_class(init)
         except KeyError:
             pass
+        else:
+            new_class = MIRIRampModel
+            return new_class(init)
+
         try:
             hdu = hdulist[fits_header_name('SCI')]
             shape = hdu.shape
