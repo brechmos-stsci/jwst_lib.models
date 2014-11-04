@@ -271,7 +271,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         self.storage.validate(self)
 
         if isinstance(self.storage, mstorage.TreeStorage):
-            tree = self.storage._tree
+            tree = self.storage.tree
         else:
             tree = self.to_tree()
 
@@ -292,7 +292,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         self.storage.validate(self)
 
         if isinstance(self.storage, mstorage.TreeStorage):
-            tree = self.storage._tree
+            tree = self.storage.tree
         else:
             tree = self.to_tree()
 

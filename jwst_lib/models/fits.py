@@ -872,8 +872,8 @@ def extend_schema_with_fits_keywords(model, hdus):
             "the schema",
             "type": "object",
             "properties": properties
-                }
-             }
-         })
+            }
+         }
+     })
 
     assert hasattr(model, '_extra_fits')

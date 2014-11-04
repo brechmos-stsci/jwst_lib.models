@@ -62,7 +62,7 @@ class TreeStorage(Storage):
         return self._shape
 
     def __get__(self, prop, obj):
-        cursor = self._tree
+        cursor = self.tree
         if not prop.is_ad_hoc:
             for part in prop.path[:-1]:
                 cursor = cursor.setdefault(part, {})
@@ -86,7 +86,7 @@ class TreeStorage(Storage):
         raise AttributeError('.'.join(prop.path))
 
     def __set__(self, prop, obj, val):
-        cursor = self._tree
+        cursor = self.tree
         for part in prop.path[:-1]:
             cursor = cursor.setdefault(part, {})
         if len(prop.path):
@@ -96,7 +96,7 @@ class TreeStorage(Storage):
             cursor = val
 
     def __delete__(self, prop, obj):
-        cursor = self._tree
+        cursor = self.tree
         for part in prop.path[:-1]:
             try:
                 cursor = cursor[part]
@@ -111,7 +111,7 @@ class TreeStorage(Storage):
 
     def validate(self, model):
         from . import schema
-        schema.validate(self._tree, model.schema)
+        schema.validate(self.tree, model.schema)
 
     def get_fits_header(self, model, hdu_name='PRIMARY'):
         """
@@ -156,6 +156,12 @@ class TreeStorage(Storage):
     def history(self, v):
         assert isinstance(v, list)
         self._history = v
+
+    @property
+    def tree(self):
+        if not hasattr(self, '_tree'):
+            raise IOError("Storage has been closed.")
+        return self._tree
 
 
 class HasStorage(object):

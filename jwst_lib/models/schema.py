@@ -126,7 +126,7 @@ class ValidatingList(object):
     def _check(self, item):
         if isinstance(item, MetaBase):
             # This should only be treestorage
-            item = item.storage.tree
+            item = item.storage._tree
         try:
             validate(item, self._schema)
         except ValidationError as e:
