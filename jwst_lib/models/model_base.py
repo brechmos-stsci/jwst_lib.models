@@ -88,7 +88,10 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             from . import fits
             try:
                 storage = fits.FitsStorage(init)
-            except IOError:
+            except IOError as e:
+                raise IOError("Failed to read from file path: {0}".format(
+                    str(e)))
+            except:
                 raise TypeError(
                     "First argument must be None, shape tuple, file path, "
                     "readable file object or Storage instance")
