@@ -126,7 +126,7 @@ class ValidatingList(object):
     def _check(self, item):
         if isinstance(item, MetaBase):
             # This should only be treestorage
-            item = item.storage._tree
+            item = item.storage.tree
         try:
             validate(item, self._schema)
         except ValidationError as e:
@@ -861,7 +861,7 @@ class MetaBase(storage.HasStorage):
     def validate_tree(self, tree):
         validate(tree, self._schema)
 
-    def iter_properties(self, include_comments=False):
+    def iter_properties(self, include_comments=False, include_arrays=True):
         """
         Iterates recursively over all of the property values.
 
@@ -880,6 +880,9 @@ class MetaBase(storage.HasStorage):
             a new namespace in the hierarchy.  These results are
             of the form ('comment', *prop*, *comment*)
 
+        include_arrays : bool, optional
+            If False, don't include Numpy arrays in the results.
+
         Returns
         -------
         properties : iterator over tuples
@@ -896,9 +899,9 @@ class MetaBase(storage.HasStorage):
         # Return the defined schema properties first
         properties = list(_get_properties(self))
         for key in properties:
-            val = getattr(self, key)
             prop = getattr(self.__class__, key)
-            if isinstance(val, MetaBase):
+            if isinstance(prop, MetaBase):
+                val = getattr(self, key)
                 if include_comments:
                     subresults = list(val.iter_properties(True))
                     if len(subresults):
@@ -913,10 +916,11 @@ class MetaBase(storage.HasStorage):
                     for x in val.iter_properties():
                         yield x
             else:
-                val = prop.__get__(self, type(self))
-                if val is not None:
-                    val = prop.to_basic_type(val)
-                    yield self, prop, val
+                if include_arrays or not prop.is_data():
+                    val = prop.__get__(self, type(self))
+                    if val is not None:
+                        val = prop.to_basic_type(val)
+                        yield self, prop, val
 
         # Return any extra ad-hoc values next
         prop = schema_property(

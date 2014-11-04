@@ -477,7 +477,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         everything : bool, optional
             When `True`, include even non-serializable items.
         """
-        for obj, prop, val in self.iter_properties():
+        for obj, prop, val in self.iter_properties(include_arrays=include_arrays):
             if (include_arrays or (
                 (isinstance(val, (bytes, unicode, int, long, float, bool))
                  or everything) and
