@@ -24,7 +24,7 @@ _builtin_regexes = [
     'EXTNAME', 'EXTVER', 'EXTLEVEL', 'GROUPS', 'PYTPE[0-9]',
     'PSCAL[0-9]', 'PZERO[0-9]', 'SIMPLE', 'TFIELDS',
     'TBCOL[0-9]{1,3}', 'TFORM[0-9]{1,3}', 'TTYPE[0-9]{1,3}',
-    'TUNIT[0-9]{1,3}', 'TSCAL[0-9]{1,3}', 'TZERO[0-9]{1,3}',
+    'TSCAL[0-9]{1,3}', 'TZERO[0-9]{1,3}',
     'TNULL[0-9]{1,3}', 'TDISP[0-9]{1,3}'
     ]
 
