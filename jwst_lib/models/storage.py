@@ -200,7 +200,7 @@ class HasStorage(object):
     def close(self):
         if hasattr(self, '_parent'):
             del self._parent
-        if self._owns_storage:
+        if hasattr(self, '_storage') and self._owns_storage:
             self._storage.close()
 
     @property
