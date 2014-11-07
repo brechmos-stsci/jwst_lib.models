@@ -526,6 +526,40 @@ class FitsStorage(storage.Storage):
             # Support earlier versions of pyfits
             return hdu.data.shape
 
+    def exists(self, prop, obj, index=None):
+        from astropy.io import fits
+
+        if index is None:
+            index = self._hdu_index
+
+        hdu_name = self._get_hdu_name(prop)
+        name = prop.name
+
+        if prop.is_data():
+            self._assert_non_primary_hdu(prop, hdu_name)
+            try:
+                hdu = self._get_hdu(name, hdu_name, index)
+            except AttributeError:
+                return False
+            return True
+        else:
+            if not hasattr(prop, 'fits_keyword'):
+                if prop.type == 'array':
+                    return False
+                return self._fallback.exists(prop, obj)
+
+            try:
+                hdu = self._get_hdu(name, hdu_name, index)
+            except AttributeError:
+                return False
+
+            try:
+                val = hdu.header[prop.fits_keyword]
+            except KeyError:
+                return False
+
+            return True
+
     def __get__(self, prop, obj, index=None):
         from astropy.io import fits
 

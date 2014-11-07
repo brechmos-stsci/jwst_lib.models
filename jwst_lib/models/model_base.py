@@ -70,6 +70,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             self.__dict__.update(init.__dict__)
             self._owns_storage = False
             self.__class__ = init.__class__
+            self._parent = init
             return
         elif isinstance(init, DataModel):
             raise TypeError(
@@ -135,13 +136,19 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
                     "array in its schema")
             setattr(self, primary_array_name, init)
 
+    def __del__(self):
+        try:
+            self.close()
+        except RuntimeError:
+            pass
+
     def copy(self):
         """
         Returns a deep copy of this model.
         """
         new = self._real_cls(schema=self._schema)
 
-        for obj, prop, val in self.iter_properties():
+        for obj, prop, val in self.iter_properties(include_empty_arrays=False):
             if val is not None:
                 if isinstance(val, np.ndarray):
                     c = val.copy()

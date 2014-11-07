@@ -53,13 +53,32 @@ class TreeStorage(Storage):
         self._history = []
 
     def close(self):
-        del self._tree
+        if hasattr(self, '_tree'):
+            del self._tree
 
     def __get_array_section__(self, prop, obj, key):
         return self.__get__(prop, obj)[key]
 
     def __get_shape__(self):
         return self._shape
+
+    def exists(self, prop, obj):
+        cursor = self.tree
+        if not prop.is_ad_hoc:
+            for part in prop.path[:-1]:
+                cursor = cursor.setdefault(part, {})
+        else:
+            for part in prop.path[:-1]:
+                try:
+                    cursor = cursor[part]
+                except KeyError:
+                    return False
+
+        if len(prop.path):
+            last_part = prop.path[-1]
+            return last_part in cursor
+        else:
+            return True
 
     def __get__(self, prop, obj):
         cursor = self.tree
@@ -179,6 +198,8 @@ class HasStorage(object):
         self.close()
 
     def close(self):
+        if hasattr(self, '_parent'):
+            del self._parent
         if self._owns_storage:
             self._storage.close()
 

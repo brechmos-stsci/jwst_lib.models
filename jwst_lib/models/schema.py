@@ -621,6 +621,9 @@ class schema_property(object):
         """
         return self.type == 'data'
 
+    def exists(self, obj, objtype):
+        return obj.storage.exists(self, obj)
+
 
 class HasArrayProperties(object):
     """
@@ -861,7 +864,8 @@ class MetaBase(storage.HasStorage):
     def validate_tree(self, tree):
         validate(tree, self._schema)
 
-    def iter_properties(self, include_comments=False, include_arrays=True):
+    def iter_properties(self, include_comments=False, include_arrays=True,
+                        include_empty_arrays=True):
         """
         Iterates recursively over all of the property values.
 
@@ -882,6 +886,10 @@ class MetaBase(storage.HasStorage):
 
         include_arrays : bool, optional
             If False, don't include Numpy arrays in the results.
+
+        include_empty_arrays : bool, optional
+            If True, include arrays that haven't yet been
+            instantiated.
 
         Returns
         -------
@@ -917,6 +925,9 @@ class MetaBase(storage.HasStorage):
                         yield x
             else:
                 if include_arrays or not prop.is_data():
+                    if (not include_empty_arrays and
+                        not prop.exists(self, type(self))):
+                        continue
                     val = prop.__get__(self, type(self))
                     if val is not None:
                         val = prop.to_basic_type(val)
