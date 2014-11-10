@@ -289,6 +289,8 @@ def test_multislit_copy():
             i += 1
         assert i == 4
 
+        input.save(TMP_FITS)
+
         output = input.copy()
         assert len(output.slits) == 4
 
@@ -296,6 +298,15 @@ def test_multislit_copy():
         for slit in output.slits:
             i += 1
         assert i == 4
+
+    with MultiSlitModel(TMP_FITS) as input:
+        i = 0
+        for slit in input.slits:
+            i += 1
+        assert i == 4
+
+        output = input.copy()
+        assert len(output.slits) == 4
 
 
 def test_model_with_nonstandard_primary_array():

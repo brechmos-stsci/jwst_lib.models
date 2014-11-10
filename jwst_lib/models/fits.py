@@ -185,6 +185,9 @@ class FitsListProxy(object):
     _do_not_validate = True
 
     def __init__(self, storage, prop, obj):
+        import traceback
+        traceback.print_stack()
+
         self._storage = storage
         self._prop = prop
         self._obj = obj
@@ -543,6 +546,9 @@ class FitsStorage(storage.Storage):
                 return False
             return True
         else:
+            if prop.type == 'array':
+                return True
+
             if not hasattr(prop, 'fits_keyword'):
                 if prop.type == 'array':
                     return False
