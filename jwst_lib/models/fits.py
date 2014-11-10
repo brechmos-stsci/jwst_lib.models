@@ -185,9 +185,6 @@ class FitsListProxy(object):
     _do_not_validate = True
 
     def __init__(self, storage, prop, obj):
-        import traceback
-        traceback.print_stack()
-
         self._storage = storage
         self._prop = prop
         self._obj = obj
