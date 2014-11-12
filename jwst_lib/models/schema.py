@@ -708,8 +708,7 @@ def validate(instance, schema):
         If `instance` does not validate against `schema`.
     """
     jsonschema.validate(instance, schema, cls=jsonschema.Draft4Validator, types=[
-        ('data', np.ndarray), ('pickle', object),
-        ('integer', tuple(list(jsonschema.compat.int_types) + [float]))])
+        ('data', np.ndarray), ('pickle', object)])
 
 
 def get_schema_path(path, base_url):
