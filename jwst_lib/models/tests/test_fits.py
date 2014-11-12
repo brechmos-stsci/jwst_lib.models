@@ -386,3 +386,16 @@ def test_metadata_from_fits():
 
     with fits.open(TMP_FITS2) as hdulist:
         assert hdulist[2].name == 'METADATA'
+
+
+def test_float_as_int():
+    from astropy.io import fits
+
+    hdulist = fits.HDUList()
+    primary = fits.PrimaryHDU()
+    hdulist.append(primary)
+    hdulist[0].header['SUBSTRT1'] = 42.7
+    hdulist.writeto(TMP_FITS, clobber=True)
+
+    with DataModel(TMP_FITS) as dm:
+        assert dm.meta.subarray.xstart == 42.7
