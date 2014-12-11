@@ -1129,7 +1129,7 @@
                             "fits_keyword" : "S_DQINIT"
                         },
                         "bias_drift" : {
-                            "title" : "Refernce Pixel Correction",
+                            "title" : "Reference Pixel Correction",
                             "type" : "string",
                             "fits_keyword" : "S_REFPIX"
                         },
