@@ -135,43 +135,43 @@ The next part of the file describes the array data, that is, things
 that are Numpy arrays on the Python side and images or tables on the
 FITS side.
 
-First, we describe the main ``"mask"`` array.  It's declared to be
-2-dimensional, and each element is an unsigned 16-bit integer:
+First, we describe the main ``"dq"`` array.  It's declared to be
+2-dimensional, and each element is an unsigned 32-bit integer:
 
 .. code-block:: javascript
 
     "properties" : {
-        "mask" : {
+        "dq" : {
             "type" : "data",
             "title" : "Bad pixel mask",
-            "fits_hdu" : "MASK",
+            "fits_hdu" : "DQ",
             "default" : 0,
-            "dtype" : "uint16",
-            "ndim" : 2
+            "ndim" : 2,
+            "dtype" : "uint16"
         },
 
 The next entry describes a table that will store the mapping between
-bit fields and their meanings.  This table has three columns:
+bit fields and their meanings.  This table has four columns:
 
-   - ``bit_value``: The value of the bit field (a power of 2)
+   - ``BIT``: The value of the bit field (a power of 2)
 
-   - ``name``: The name used to refer to the bit field
+   - ``VALUE``: The value resulting when raising 2 to the BIT power
 
-   - ``title``: A longer, human-readable description of the bit field
+   - ``NAME``: The name used to refer to the bit field
+
+   - ``DESCRIPTION``: A longer, human-readable description of the bit field
 
 .. code-block:: javascript
 
-        "field_def" : {
+        "dq_def" : {
             "type" : "data",
-            "title" : "Bit field definitions",
-            "fits_hdu" : "FIELD_DEF",
+            "title" : "DQ flag definitions",
+            "fits_hdu" : "DQ_DEF",
             "dtype" : [
-                {"name" : "bit_value",
-                 "dtype" : "uint16"},
-                {"name" : "name",
-                 "dtype" : "string64"},
-                {"name" : "title",
-                 "dtype" : "string128"}
+                {"name" : "BIT", "dtype" : "uint32"},
+                {"name" : "VALUE", "dtype" : "uint32"},
+                {"name" : "NAME", "dtype" : "string40"},
+                {"name" : "DESCRIPTION", "dtype" : "string80"}
             ]
         },
 
@@ -256,14 +256,14 @@ add a couple of keyword arguments so the user can data arrays when
 creating a model from scratch.  If you don't need to do that, then
 technically writing a new constructor for the model is optional::
 
-    def __init__(self, init=None, mask=None, field_def=None, **kwargs):
+    def __init__(self, init=None, dq=None, dq_def=None, **kwargs):
         super(MiriBadPixelMaskModel, self).__init__(init=init, **kwargs)
 
-        if mask is not None:
-            self.mask = mask
+        if dq is not None:
+            self.dq = dq
 
-        if field_def is not None:
-            self.field_def = field_def
+        if dq_def is not None:
+            self.dq_def = dq_def
 
 The ``super..`` line is just the standard Python way of calling the
 constructor of the base class.  The rest of the constructor sets the
@@ -277,7 +277,7 @@ alone, it may not be necessary to define any extra methods.
 In the case of our example, it would be nice to have a function that,
 given the name of a bit field, would return a new array that is `True`
 wherever that bit field is true in the main mask array.  Since the
-order and content of the bit fields are defined in the `field_def`
+order and content of the bit fields are defined in the `dq_def`
 table, the function should use it in order to do this work::
 
     def get_mask_for_field(self, name):
@@ -299,7 +299,7 @@ table, the function should use it in order to do this work::
         """
         # Find the field value that corresponds to the given name
         field_value = None
-        for value, field_name, title in self.field_def:
+        for value, field_name, title in self.dq_def:
             if field_name == name:
                 field_value = value
                 break
@@ -308,7 +308,7 @@ table, the function should use it in order to do this work::
 
         # Create an array that is `True` only for the requested
         # bit field
-        return self.mask & field_value
+        return self.dq & field_value
 
 One thing to note here: this array is semantically a "copy" of the
 underlying data.  Most Numpy arrays in the model framework are
@@ -375,3 +375,63 @@ all of the "hot" pixels::
 
    with MiriBadPixelMaskModel("bad_pixel_mask.fits") as dm:
        hot_pixels = dm.get_mask_for_field('HOT')
+
+A table-based model
+-------------------
+
+In addition to n-dimensional data arrays, models can also contain tabular
+data. For example, the photometric correction reference file used in the
+JWST calibration pipeline consists of a table with 7 columns. The schema
+file for this model looks like this:
+
+.. code-block:: javascript
+
+    {
+        "title" : "Photometric flux conversion data model",
+        "allOf" : [
+            {"$ref" : "core.schema.json"},
+            {
+                "type" : "object",
+                "properties" : {
+                    "phot_table": {
+                        "type": "data",
+                        "title": "Photometric flux conversion factors table",
+                        "fits_hdu": "PHOTOM",
+                        "dtype": [
+                            {"name": "filter", "dtype": "string12"},
+                            {"name": "photflam", "dtype": "float32"},
+                            {"name": "photerr", "dtype": "float32"},
+                            {"name": "nelem", "dtype": "int16"},
+                            {"name": "wavelength", "dtype": "float32", "shape": [50]},
+                            {"name": "response", "dtype": "float32", "shape": [50]},
+                            {"name": "resperr", "dtype": "float32", "shape": [50]}
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+
+In this particular table the first 4 columns contain scalar entries of types
+string, float, and integer. The entries in the final 3 columns, on the other
+hand, contain 1-D float arrays (vectors). The "shape" attribute is used to
+designate the dimensions of the arrays.
+
+The corressponding python module containing the data model class is quite
+simple:
+
+.. code-block:: javascript
+
+    class PhotomModel(model_base.DataModel):
+        """
+        A data model for photom reference files.
+        """
+        schema_url = "photom.schema.json"
+    
+        def __init__(self, init=None, phot_table=None, **kwargs):
+            super(PhotomModel, self).__init__(init=init, **kwargs)
+    
+            if phot_table is not None:
+                self.phot_table = phot_table
+
+
