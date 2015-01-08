@@ -190,14 +190,14 @@ def test_hdu_order():
 
 
 def test_casting():
-    with ImageModel(FITS_FILE) as dm:
+    with RampModel(FITS_FILE) as dm:
         sum = np.sum(dm.data)
         dm.data[:] = dm.data + 2
         assert np.sum(dm.data) > sum
 
 
 def test_comments():
-    with ImageModel(FITS_FILE) as dm:
+    with RampModel(FITS_FILE) as dm:
         assert dm._extra_fits.PRIMARY.COMMENT == ['This is a comment']
         dm._extra_fits.PRIMARY.COMMENT = ['foobar']
         assert dm._extra_fits.PRIMARY.COMMENT == ['foobar']

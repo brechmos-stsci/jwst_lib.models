@@ -364,6 +364,11 @@ class schema_property(object):
             if val is not None:
                 val = util.gentle_asarray(val, self.dtype)
 
+                if self.ndim and val.ndim != self.ndim:
+                    raise self._formatted_error(
+                        ValueError, "must have {0} dimensions, got {1}".format(
+                            self.ndim, val.ndim))
+
                 # # Check the shape of the data array
                 # if obj.shape is not None:
                 #     if not util.can_broadcast(val.shape, obj.shape):
@@ -475,12 +480,6 @@ class schema_property(object):
             val = util.gentle_asarray(val, dtype=self.dtype)
             val = self.validate(obj, val)
 
-            if self.ndim:
-                if val.ndim != self.ndim:
-                    raise self._formatted_error(
-                        ValueError, "must have {0} dimensions".format(
-                            self.ndim))
-
         val = self.to_basic_type(val)
 
         obj.storage.__set__(self, obj, val)
@@ -508,7 +507,10 @@ class schema_property(object):
             primary_array_name = obj.get_primary_array_name()
             if self.name == primary_array_name:
                 if obj.shape is None:
-                    shape = (0,)
+                    if self.ndim is None:
+                        shape = (0,)
+                    else:
+                        shape = tuple([0] * self.ndim)
                 else:
                     shape = obj.shape
                 array = np.empty(shape, dtype=self.dtype)
