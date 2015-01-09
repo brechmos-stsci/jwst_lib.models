@@ -126,7 +126,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
 
         self._storage.extract_extra_elements(self)
 
-        self.meta.date = datetime.datetime.now()
+        self.meta.date = datetime.datetime.utcnow()
 
         if is_array:
             primary_array_name = self.get_primary_array_name()
