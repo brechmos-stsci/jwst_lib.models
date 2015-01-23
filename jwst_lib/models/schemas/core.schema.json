@@ -116,10 +116,17 @@
                     "type" : "object",
                     "properties" : {
                         "date" : {
-                            "title" : "UTC date/time at the start of the exposure",
+                            "title" : "UTC dateat the start of the exposure",
                             "type" : "string",
-                            "format" : "http://www.stsci.edu/types/fits-date-time",
+                            "format" : "http://www.stsci.edu/types/fits-date",
                             "fits_keyword" : "DATE-OBS"
+                        },
+
+                        "time" : {
+                            "title" : "UTC time at the start of the exposure",
+                            "type" : "string",
+                            "format" : "http://www.stsci.edu/types/fits-time",
+                            "fits_keyword" : "TIME-OBS"
                         },
 
                         "obs_id" : {

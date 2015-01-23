@@ -470,7 +470,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         dot-separated name.  For example, the schema element
         `meta.observation.date` will end up in the result as::
 
-            ( "meta.observation.date": "2012-04-22T03:22:05.432" )
+            ( "meta.observation.date": "2012-04-22" )
 
         Parameters
         ----------
@@ -506,7 +506,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             dot-separated name.  For example, the schema element
             `meta.observation.date` will end up in the result as::
 
-                ( "meta.observation.date": "2012-04-22T03:22:05.432" )
+                ( "meta.observation.date": "2012-04-22" )
 
             Parameters
             ----------
@@ -657,7 +657,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         schema element `meta.observation.date` will end up in the
         dictionary as::
 
-            { "meta.observation.date": "2012-04-22T03:22:05.432" }
+            { "meta.observation.date": "2012-04-22" }
 
         Parameters
         ----------

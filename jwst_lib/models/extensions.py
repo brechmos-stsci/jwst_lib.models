@@ -63,9 +63,79 @@ class FitsDateTime(object):
                 raise ValueError("Must be a datetime object")
 
 
+class FitsDate(object):
+    """
+    Proxy class for serializing datetime.datetime or datetime.date
+    objects as dates.
+    """
+
+    FULL_FORMAT = "%Y-%m-%d"
+
+    @classmethod
+    def to_basic(cls, obj):
+        if isinstance(obj, (datetime.datetime, datetime.date)):
+            return obj.strftime(cls.FULL_FORMAT)
+        else:
+            return obj
+
+    @classmethod
+    def from_basic(cls, obj):
+        return datetime.datetime.strptime(obj, cls.FULL_FORMAT)
+
+    @classmethod
+    def validate(cls, obj):
+        if not isinstance(obj, (datetime.datetime, datetime.date)):
+            try:
+                obj = cls.from_basic(obj)
+            except ValueError:
+                raise ValueError(
+                    "Must be a datetime.datetime or datetime.date object")
+
+
+class FitsTime(object):
+    """
+    Proxy class for serializing datetime.datetime or datetime.time
+    objects as times.
+    """
+
+    BASE_FORMAT = "%H:%M:%S"
+    FULL_FORMAT = "%H:%M:%S.%f"
+
+    @classmethod
+    def to_basic(cls, obj):
+        if isinstance(obj, (datetime.datetime, datetime.time)):
+            return obj.strftime(cls.FULL_FORMAT)
+        else:
+            return obj
+
+    @classmethod
+    def from_basic(cls, obj):
+        # The builtin strptime only handles fractional seconds up to 6
+        # decimal places.  Therefore, we have to parse in a more
+        # manual way.
+        base, dot, fractional = obj.partition('.')
+        parts = list(time.strptime(base, cls.BASE_FORMAT))[0:6]
+        if fractional:
+            us = int(fractional) * (10.0 ** -len(fractional)) * 1000000.0
+            parts.append(int(us))
+        return datetime.datetime(*parts)
+
+    @classmethod
+    def validate(cls, obj):
+        if not isinstance(obj, (datetime.datetime, datetime.time)):
+            try:
+                obj = cls.from_basic(obj)
+            except ValueError:
+                raise ValueError(
+                    "Must be a datetime.datetime or datetime.time object")
+
+
+
 # Map a URL (which doesn't have to exist, it just has to be unique) to
 # each of the classes in this module.  These correspond to custom
 # "format" values in the JSON Schema.
 extensions = {
+    'http://www.stsci.edu/types/fits-date': FitsDate,
+    'http://www.stsci.edu/types/fits-time': FitsTime,
     'http://www.stsci.edu/types/fits-date-time': FitsDateTime
     }

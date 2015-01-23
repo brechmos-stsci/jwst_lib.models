@@ -123,7 +123,7 @@ def test_section():
 
 def test_date_obs():
     with DataModel(FITS_FILE) as dm:
-        assert dm.meta.observation.date.microsecond == 314592
+        assert dm.meta.observation.date.year == 2008
 
 
 def test_fits_without_sci():

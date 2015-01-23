@@ -355,7 +355,7 @@ Base class methods
     example, the schema element `meta.observation.date` will end up in
     the result as::
 
-    ( "meta.observation.date": "2012-04-22T03:22:05.432" )
+    ( "meta.observation.date": "2012-04-22" )
 
     - `include_arrays`: When `True`, include numpy arrays in the result.
     - `primary_only`: When `True`, only return values from the PRIMARY
