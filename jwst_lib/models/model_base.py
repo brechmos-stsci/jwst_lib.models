@@ -86,16 +86,27 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             shape = init
             storage = mstorage.TreeStorage()
         else:
-            from . import fits
-            try:
-                storage = fits.FitsStorage(init)
-            except IOError as e:
-                raise IOError("Failed to read from file path: {0}".format(
-                    str(e)))
-            except:
-                raise TypeError(
-                    "First argument must be None, shape tuple, file path, "
-                    "readable file object or Storage instance")
+            from astropy.io.fits import HDUList
+            if (isinstance(init, HDUList) or
+                isinstance(init, (unicode, bytes)) and
+                init.lower().endswith('.fits')):
+                from . import fits
+                try:
+                    storage = fits.FitsStorage(init)
+                except IOError as e:
+                    raise IOError("Failed to read from file path: {0}".format(
+                        str(e)))
+                except:
+                    raise TypeError(
+                        "First argument must be None, shape tuple, file path, "
+                        "readable file object or Storage instance")
+            elif isinstance(init, (unicode, bytes)) and init.lower().endswith('.json'):
+                import json
+                with open(init) as fd:
+                    tree = json.load(fd)
+                storage = mstorage.TreeStorage(tree)
+            else:
+                raise TypeError("Unsupported initializer '{0}'".format(init))
 
         mschema.HasArrayProperties.__init__(self)
         mstorage.HasStorage.__init__(self, storage=storage)
