@@ -58,6 +58,8 @@ from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
 from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
 from .drizpars import DrizParsModel, NircamDrizParsModel, MiriImgDrizParsModel
 from .drizproduct import DrizProductModel
+from .amilg import AmiLgModel
+from .filter import FilterModel
 
 import sys
 if sys.version_info[0] >= 3:
