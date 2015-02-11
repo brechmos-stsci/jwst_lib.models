@@ -10,7 +10,7 @@
                 {
                     "type": "data",
                     "title": "Filter throughput table",
-                    "fits_hdu": "FILTER",
+                    "fits_hdu": "THROUGHPUT",
                     "dtype": [
                         {"name": "wavelength", "dtype": "float32"},
                         {"name": "throughput", "dtype": "float32"}
