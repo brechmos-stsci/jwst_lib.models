@@ -1,0 +1,21 @@
+{
+    "title" : "Coronagraphic contrast curve data model",
+    "allOf" : [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
+
+                "contrast_table": {
+                    "type": "data",
+                    "title": "Contrast curve table",
+                    "fits_hdu": "CONTRAST",
+                    "dtype": [
+                        {"name": "radius", "dtype": "float32"},
+                        {"name": "sigma", "dtype": "float32"}
+                    ]
+                }
+            }
+        }
+    ]
+}

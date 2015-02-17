@@ -230,7 +230,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'jwst_lib.models', u'jwst_lib.models Documentation',
-   u'STScI', 'jwst_lib.models', 'One line description of project.',
+   u'STScI', 'jwst_lib.models', 'jwst_lib.models Documentation',
    'Miscellaneous'),
 ]
 

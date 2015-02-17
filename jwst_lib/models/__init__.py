@@ -32,34 +32,35 @@ from __future__ import absolute_import, unicode_literals, division, print_functi
 import numpy as np
 
 from .model_base import DataModel
-from .image import ImageModel
-from .cube import CubeModel
-from .multislit import MultiSlitModel
-from .ramp import RampModel
-from .miri_ramp import MIRIRampModel
-from .mask import MaskModel
-from .dark import DarkModel
-from .ipc import IPCModel
-from .flat import FlatModel
-from .straylight import StrayLightModel
-from .fringe import FringeModel
-from .linearity import LinearityModel
-from .gain import GainModel
-from .readnoise import ReadnoiseModel
-from .rampfitoutput import RampFitOutputModel
-from .saturation import SaturationModel
-from .util import fits_header_name
-from .reset import ResetModel
-from .lastframe import LastFrameModel
-from .spec import SpecModel
-from .multispec import MultiSpecModel
+from .amilg import AmiLgModel
 from .asn import AsnModel
-from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
-from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
+from .contrast import ContrastModel
+from .cube import CubeModel
+from .dark import DarkModel
 from .drizpars import DrizParsModel, NircamDrizParsModel, MiriImgDrizParsModel
 from .drizproduct import DrizProductModel
-from .amilg import AmiLgModel
 from .filter import FilterModel
+from .flat import FlatModel
+from .fringe import FringeModel
+from .gain import GainModel
+from .image import ImageModel
+from .ipc import IPCModel
+from .lastframe import LastFrameModel
+from .linearity import LinearityModel
+from .mask import MaskModel
+from .miri_ramp import MIRIRampModel
+from .multislit import MultiSlitModel
+from .multispec import MultiSpecModel
+from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
+from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
+from .ramp import RampModel
+from .rampfitoutput import RampFitOutputModel
+from .readnoise import ReadnoiseModel
+from .reset import ResetModel
+from .saturation import SaturationModel
+from .spec import SpecModel
+from .straylight import StrayLightModel
+from .util import fits_header_name
 
 import sys
 if sys.version_info[0] >= 3:
@@ -69,13 +70,16 @@ from .version import (__version__, __svn_revision__, __svn_full_info__, __setup_
 
 
 __all__ = [
-    'DataModel', 'ImageModel', 'CubeModel', 'RampModel', 'MultiSlitModel',
-    'LinearityModel', 'DarkModel', 'IPCModel', 'GainModel', 'ReadnoiseModel',
-    'MaskModel', 'open', 'MIRIRampModel', 'RampFitOutputModel',
-    'SaturationModel','ResetModel','LastFrameModel', 'SpecModel',
-    'MultiSpecModel','FlatModel','FringeModel','AsnModel','PhotomModel',
-    'NircamPhotomModel','NirissPhotomModel','NirspecPhotomModel',
-    'MiriImgPhotomModel','MiriMrsPhotomModel']
+    'open', 'DataModel', 'AmiLgModel', 'AsnModel', 'ContrastModel', 'CubeModel',
+    'DarkModel', 'DrizParsModel', 'NircamDrizParsModel', 'MiriImgDrizParsModel',
+    'DrizProductModel', 'FilterModel', 'FlatModel', 'FringeModel', 'GainModel',
+    'ImageModel', 'IPCModel', 'LastFrameModel', 'LinearityModel', 'MaskModel',
+    'MIRIRampModel', 'MultiSlitModel', 'MultiSpecModel', 'PhotomModel',
+    'NircamPhotomModel', 'NirissPhotomModel', 'NirspecPhotomModel',
+    'MiriImgPhotomModel', 'MiriMrsPhotomModel', 'RampModel', 'RampFitOutputModel',
+    'ReadnoiseModel', 'ResetModel', 'SaturationModel', 'SpecModel',
+    'StrayLightModel']
+
 __all__ = [str(x) for x in __all__]
 
 
