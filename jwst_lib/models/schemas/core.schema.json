@@ -318,14 +318,14 @@
                     "properties" : {
                         "name" : {
                             "title" : "Instrument used to acquire the data",
-                            "description": "'NIRISS' is deprecated in favor of 'NIS'",
                             "type" : "string",
-                            "enum" :  ["NIRCAM", "NIRSPEC", "MIRI", "TFI", "FGS", "NIRISS", "NIS"],
+                            "enum" :  ["NIRCAM", "NIRSPEC", "MIRI", "TFI", "FGS", "NIRISS"],
                             "fits_keyword" : "INSTRUME"
                         },
 
                         "detector" : {
                             "title" : "Name of detector used to acquire the data",
+                            "description": "'NIRISS' is deprecated in favor of 'NIS'",
                             "type" : "string",
                             "fits_keyword" : "DETECTOR"
                         },
