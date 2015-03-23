@@ -139,6 +139,10 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
 
         self.meta.date = datetime.datetime.utcnow()
 
+        # NIRISS was changed to NIS on 03/23/15
+        if self.meta.instrument == 'NIRISS':
+            self.meta.instrument = 'NIS'
+
         if is_array:
             primary_array_name = self.get_primary_array_name()
             if primary_array_name is None:
