@@ -1,0 +1,53 @@
+{
+    "allOf": [
+        {"$ref" : "core.schema.json"},
+        {
+            "type" : "object",
+            "properties" : {
+                "yint" :
+                {
+                    "type" : "data",
+                    "title" : "Y-intercept",
+                    "fits_hdu" : "YINT",
+                    "default" : 0.0,
+                    "ndim" : 3,
+                    "dtype" : "float32"
+
+                },
+
+                "sigyint" :
+                {
+                    "type" : "data",
+                    "title" : "Sigma for Y-intercept",
+                    "fits_hdu" : "SIGYINT",
+                    "default" : 0.0,
+                    "ndim" : 3,
+                    "dtype" : "float32"
+
+                },
+
+                "crmag" :
+                {
+                    "type" : "data",
+                    "title" : "CR magnitudes",
+                    "fits_hdu" : "CRMAG",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
+
+                }
+
+                "sigcrmag" :
+                {
+                    "type" : "data",
+                    "title" : "Sigma for CR magnitudes",
+                    "fits_hdu" : "SIGCRMAG",
+                    "default" : 0.0,
+                    "ndim" : 4,
+                    "dtype" : "float32"
+
+                }
+            }
+        }
+    ]
+}

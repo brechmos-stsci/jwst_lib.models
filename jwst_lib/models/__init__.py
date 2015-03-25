@@ -43,6 +43,7 @@ from .filter import FilterModel
 from .flat import FlatModel
 from .fringe import FringeModel
 from .gain import GainModel
+from .gls_rampfit import GLS_RampFitModel
 from .image import ImageModel
 from .ipc import IPCModel
 from .lastframe import LastFrameModel
@@ -73,6 +74,7 @@ __all__ = [
     'open', 'DataModel', 'AmiLgModel', 'AsnModel', 'ContrastModel', 'CubeModel',
     'DarkModel', 'DrizParsModel', 'NircamDrizParsModel', 'MiriImgDrizParsModel',
     'DrizProductModel', 'FilterModel', 'FlatModel', 'FringeModel', 'GainModel',
+    'GLS_RampFitModel',
     'ImageModel', 'IPCModel', 'LastFrameModel', 'LinearityModel', 'MaskModel',
     'MIRIRampModel', 'MultiSlitModel', 'MultiSpecModel', 'PhotomModel',
     'NircamPhotomModel', 'NirissPhotomModel', 'NirspecPhotomModel',
