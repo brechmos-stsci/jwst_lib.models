@@ -116,7 +116,7 @@
                     "type" : "object",
                     "properties" : {
                         "date" : {
-                            "title" : "UTC dateat the start of the exposure",
+                            "title" : "UTC date at the start of the exposure",
                             "type" : "string",
                             "format" : "http://www.stsci.edu/types/fits-date",
                             "fits_keyword" : "DATE-OBS"
@@ -372,34 +372,6 @@
                                       "G235H", "G395H", "PRISM", "MIRROR",
                                       "N/A", "ANY"],
                             "fits_keyword" : "GRATING"
-                        },
-
-                        "grating14" : {
-                            "title" : "Grating position for IFU channels 1 and 4",
-                            "type" : "string",
-                            "enum" : ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
-                            "fits_keyword" : "GRATNG14"
-                        },
-
-                        "grating23" : {
-                            "title" : "Grating position for IFU channels 2 and 3",
-                            "type" : "string",
-                            "enum": ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
-                            "fits_keyword" : "GRATNG23"
-                        },
-
-                        "gratinga" : {
-                            "title" : "MRS grating position for channels 1 and 4",
-                            "type" : "string",
-                            "enum" : ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
-                            "fits_keyword" : "GRATINGA"
-                        },
-
-                        "gratingb" : {
-                            "title" : "MRS grating position for channels 2 and 3",
-                            "type" : "string",
-                            "enum": ["SHORT", "MEDIUM", "LONG", "N/A", "ANY"],
-                            "fits_keyword" : "GRATINGB"
                         },
 
                         "band" : {
@@ -960,17 +932,6 @@
                                 }
                             }
                         },
-                        "amplifier" : {
-                            "title" : "Amplifier reference file information",
-                            "type" : "object",
-                            "properties" : {
-                                "name" : {
-                                    "title" : "Amplifier reference file name",
-                                    "type" : "string",
-                                    "fits_keyword" : "R_AMPLIF"
-                                }
-                            }
-                        },
                         "dark" : {
                             "title" : "Dark reference file information",
                             "type" : "object",
@@ -1225,6 +1186,16 @@
                             "title" : "2-D Spectral Extraction",
                             "type" : "string",
                             "fits_keyword" : "S_EXTR2D"
+                        },
+                        "resample" : {
+                            "title" : "Image resampling",
+                            "type" : "string",
+                            "fits_keyword" : "S_RESAMP"
+                        },
+                        "back_sub" : {
+                            "title" : "Background subtraction",
+                            "type" : "string",
+                            "fits_keyword" : "S_BKDSUB"
                         }
                     }
                 }
