@@ -1,4 +1,5 @@
 {
+    "title" : "Optional output for GLS ramp fitting",
     "allOf": [
         {"$ref" : "core.schema.json"},
         {
@@ -35,7 +36,7 @@
                     "ndim" : 4,
                     "dtype" : "float32"
 
-                }
+                },
 
                 "sigcrmag" :
                 {
