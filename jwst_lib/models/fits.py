@@ -717,7 +717,9 @@ class FitsStorage(storage.Storage):
         storage = cls()
 
         # Write out the non-_extra_fits keywords first
-        for obj, prop, val in model.iter_properties(include_comments=True):
+        for obj, prop, val in model.iter_properties(
+                include_comments=True,
+                include_empty_arrays=False):
             if isinstance(obj, basestring) and obj == 'comment':
                 storage.add_comment(val)
             else:
