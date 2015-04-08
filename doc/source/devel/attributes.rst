@@ -27,11 +27,14 @@ The current models are as follows:
     - MIRIRampModel
     - MultiSlitModel
     - MultiSpecModel
+    - PhotomModel
     - RampFitOutputModel
     - RampModel
     - ReadnoiseModel
     - ResetModel
+    - SaturationModel
     - SpecModel
+    - StrayLightModel
 
 Commonly used attributes
 ------------------------
@@ -87,26 +90,29 @@ Calling sequences and model-specific attributes
     - `dq`: The data quality array, a 3-D array.
     - `err`: The error array, a 3-D array.
 
-`DarkModel(init=None, data=None, dq=None, err=None, **kwargs)`
+`DarkModel(init=None, data=None, dq=None, err=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the dark reference file.
     - `data`: The science data.
     - `dq`: The data quality array.
     - `err`: The error array.
+    - `dq_def`: The data quality definitions table.
 
-`FlatModel(init=None, data=None, dq=None, err=None, **kwargs)`
+`FlatModel(init=None, data=None, dq=None, err=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the flat-field reference file.
     - `data`: The science data.
     - `dq`: The data quality array.
     - `err`: The error array.
+    - `dq_def`: The data quality definitions table.
 
-`FringeModel(init=None, data=None, dq=None, err=None, **kwargs)`
+`FringeModel(init=None, data=None, dq=None, err=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the fringe-correction reference file.
     - `data`: The science data.
     - `dq`: The data quality array.
     - `err`: The error array.
+    - `dq_def`: The data quality definitions table.
 
 `GainModel(init=None, data=None, **kwargs)`
 
@@ -126,23 +132,26 @@ Calling sequences and model-specific attributes
     - `init`: The name of the IPC reference file.
     - `data`: The deconvolution kernel (a very small image).
 
-`LastFrameModel(init=None, data=None, dq=None, err=None, **kwargs)`
+`LastFrameModel(init=None, data=None, dq=None, err=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the last-frame reference file.
     - `data`: The science data.
     - `dq`: The data quality array.
     - `err`: The error array.
+    - `dq_def`: The data quality definitions table.
 
-`LinearityModel(init=None, coeffs=None, dq=None, **kwargs)`
+`LinearityModel(init=None, coeffs=None, dq=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the linearity reference file.
     - `coeffs`: Coefficients defining the nonlinearity function.
     - `dq`: The data quality array.
+    - `dq_def`: The data quality definitions table.
 
-`MaskModel(init=None, dq=None, **kwargs)`
+`MaskModel(init=None, dq=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the mask reference file.
     - `dq`: The data quality array.
+    - `dq_def`: The data quality definitions table.
 
 `MIRIRampModel(init=None, data=None, pixeldq=None, groupdq=None, err=None, refout=None, **kwargs)`
 
@@ -189,6 +198,46 @@ Calling sequences and model-specific attributes
     >>>     spec = models.SpecModel(spec_table=otab)
     >>>     output_model.spec.append(spec)
 
+`PhotomModel(init=None, phot_table=None, **kwargs)`
+
+    `PhotomModel` is a base class for the following instrument-specific 
+    photometric reference file models
+
+`NircamPhotomModel(init=None, phot_table=None, **kwargs)`
+
+    - `init`: The name of the output file.
+    - `phot_table`: A table-like object containing row selection criteria
+    made up of instrument mode parameters and photometric conversion factors
+    associated with those modes.
+
+`NirissPhotomModel(init=None, phot_table=None, **kwargs)`
+
+    - `init`: The name of the output file.
+    - `phot_table`: A table-like object containing row selection criteria
+    made up of instrument mode parameters and photometric conversion factors
+    associated with those modes.
+
+`NirspecPhotomModel(init=None, phot_table=None, **kwargs)`
+
+    - `init`: The name of the output file.
+    - `phot_table`: A table-like object containing row selection criteria
+    made up of instrument mode parameters and photometric conversion factors
+    associated with those modes.
+
+`MiriImgPhotomModel(init=None, phot_table=None, **kwargs)`
+
+    - `init`: The name of the output file.
+    - `phot_table`: A table-like object containing row selection criteria
+    made up of instrument mode parameters and photometric conversion factors
+    associated with those modes.
+
+`MiriMrsPhotomModel(init=None, phot_table=None, **kwargs)`
+
+    - `init`: The name of the output file.
+    - `phot_table`: A table-like object containing row selection criteria
+    made up of instrument mode parameters and photometric conversion factors
+    associated with those modes.
+
 `RampFitOutputModel(init=None, slope=None, sigslope=None, yint=None, sigyint=None, pedestal=None, weights=None, crmag=None, **kwargs)`
 
     `RampFitOutputModel` is the model for an optional output file giving
@@ -220,23 +269,31 @@ Calling sequences and model-specific attributes
     - `init`: The name of the readnoise reference file.
     - `data`: Read noise for all pixels (2-D array).
 
-`ResetModel(init=None, data=None, dq=None, err=None, **kwargs)`
+`ResetModel(init=None, data=None, dq=None, err=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the reset reference file.
     - `data`: The science data.
     - `dq`: The data quality array.
     - `err`: The error array.
+    - `dq_def`: The data quality definitions table.
 
-`SaturationModel(init=None, sat=None, **kwargs)`
+`SaturationModel(init=None, data=None, dq=None, dq_def=None, **kwargs)`
 
     - `init`: The name of the saturation reference file.
-    - `sat`: Saturation mask.
+    - `data`: A 2-D saturation thresholds array.
+    - `dq`: The data quality array.
+    - `dq_def`: The data quality definitions table.
 
 `SpecModel(init=None, spec_table=None, **kwargs)`
 
     - `init`: The name of the input file.
     - `spec_table`: An array with three columns: pixel number, wavelength,
       and count rate.
+
+`StrayLightModel(init=None, data=None, **kwargs)`
+
+    - `init`: The name of the input file.
+    - `data`: A 2-D straylight mask array.
 
 Base class methods
 ==================
