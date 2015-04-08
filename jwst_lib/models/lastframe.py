@@ -12,7 +12,7 @@ class LastFrameModel(model_base.DataModel):
     """
     schema_url = "lastframe.schema.json"
 
-    def __init__(self, init=None, data=None, dq=None, err=None, 
+    def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):
         super(LastFrameModel, self).__init__(init=init, **kwargs)
 
@@ -29,3 +29,7 @@ class LastFrameModel(model_base.DataModel):
             self.dq_def = dq_def
 
         self.dq = dynamic_mask(self)
+
+        x# Implicitly create arrays
+        self.dq = self.dq
+        self.err = self.err

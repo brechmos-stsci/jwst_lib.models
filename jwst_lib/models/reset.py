@@ -29,3 +29,7 @@ class ResetModel(model_base.DataModel):
             self.dq_def = dq_def
 
         self.dq = dynamic_mask(self)
+
+        # Implicitly create arrays
+        self.dq = self.dq
+        self.err = self.err

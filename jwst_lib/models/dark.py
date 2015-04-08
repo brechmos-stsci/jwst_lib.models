@@ -12,7 +12,7 @@ class DarkModel(model_base.DataModel):
     """
     schema_url = "dark.schema.json"
 
-    def __init__(self, init=None, data=None, dq=None, err=None, 
+    def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):
         super(DarkModel, self).__init__(init=init, **kwargs)
 
@@ -29,3 +29,7 @@ class DarkModel(model_base.DataModel):
             self.err = err
 
         self.dq = dynamic_mask(self)
+
+        # Implicitly create arrays
+        self.dq = self.dq
+        self.err = self.err

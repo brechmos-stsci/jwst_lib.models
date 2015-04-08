@@ -24,3 +24,7 @@ class CubeModel(model_base.DataModel, wcs.HasFitsWcs):
 
         if err is not None:
             self.err = err
+
+        # Implicitly create arrays
+        self.dq = self.dq
+        self.err = self.err

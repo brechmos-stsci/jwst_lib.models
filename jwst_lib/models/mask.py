@@ -23,6 +23,9 @@ class MaskModel(model_base.DataModel):
 
         self.dq = dynamic_mask(self)
 
+        # Implicitly create arrays
+        self.dq = self.dq
+
     def get_primary_array_name(self):
         """
         Returns the name "primary" array for this model, which

@@ -28,3 +28,7 @@ class ImageModel(model_base.DataModel, wcs.HasFitsWcs):
 
         if relsens is not None:
             self.relsens = relsens
+
+        # Implicitly create arrays
+        self.dq = self.dq
+        self.err = self.err

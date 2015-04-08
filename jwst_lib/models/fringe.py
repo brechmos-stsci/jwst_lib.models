@@ -31,3 +31,7 @@ class FringeModel(model_base.DataModel, wcs.HasFitsWcs):
             self.dq_def = dq_def
 
         self.dq = dynamic_mask(self)
+
+        # Implicitly create arrays
+        self.dq = self.dq
+        self.err = self.err
