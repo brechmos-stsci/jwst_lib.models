@@ -32,3 +32,9 @@ class MIRIRampModel(ramp.RampModel, wcs.HasFitsWcs):
 
         if refout is not None:
             self.refout = refout
+
+        # Implicitly create arrays
+        self.pixeldq = self.pixeldq
+        self.groupdq = self.groupdq
+        self.err = self.err
+

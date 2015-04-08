@@ -28,3 +28,9 @@ class RampModel(model_base.DataModel, wcs.HasFitsWcs):
 
         if err is not None:
             self.err = err
+
+        # Implicitly create arrays
+        self.pixeldq = self.pixeldq
+        self.groupdq = self.groupdq
+        self.err = self.err
+
