@@ -30,4 +30,4 @@ class LinearityModel(model_base.DataModel):
 
         # Implicitly create arrays
         self.dq = self.dq
-        seld.err = self.err
+        self.err = self.err
