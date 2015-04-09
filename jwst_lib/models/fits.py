@@ -664,6 +664,8 @@ class FitsStorage(storage.Storage):
                 try:
                     hdu = self._get_hdu(name, hdu_name, index=index)
                 except AttributeError:
+                    if prop.fits_keyword in ('COMMENT', 'HISTORY') and not len(val):
+                        return
                     hdu = fits.ImageHDU(name=hdu_name)
                     if index is not None:
                         hdu.ver = index + 1
