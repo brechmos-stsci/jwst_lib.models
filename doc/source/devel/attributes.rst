@@ -207,36 +207,36 @@ Calling sequences and model-specific attributes
 
     - `init`: The name of the output file.
     - `phot_table`: A table-like object containing row selection criteria
-    made up of instrument mode parameters and photometric conversion factors
-    associated with those modes.
+      made up of instrument mode parameters and photometric conversion factors
+      associated with those modes.
 
 `NirissPhotomModel(init=None, phot_table=None, **kwargs)`
 
     - `init`: The name of the output file.
     - `phot_table`: A table-like object containing row selection criteria
-    made up of instrument mode parameters and photometric conversion factors
-    associated with those modes.
+      made up of instrument mode parameters and photometric conversion factors
+      associated with those modes.
 
 `NirspecPhotomModel(init=None, phot_table=None, **kwargs)`
 
     - `init`: The name of the output file.
     - `phot_table`: A table-like object containing row selection criteria
-    made up of instrument mode parameters and photometric conversion factors
-    associated with those modes.
+      made up of instrument mode parameters and photometric conversion factors
+      associated with those modes.
 
 `MiriImgPhotomModel(init=None, phot_table=None, **kwargs)`
 
     - `init`: The name of the output file.
     - `phot_table`: A table-like object containing row selection criteria
-    made up of instrument mode parameters and photometric conversion factors
-    associated with those modes.
+      made up of instrument mode parameters and photometric conversion factors
+      associated with those modes.
 
 `MiriMrsPhotomModel(init=None, phot_table=None, **kwargs)`
 
     - `init`: The name of the output file.
     - `phot_table`: A table-like object containing row selection criteria
-    made up of instrument mode parameters and photometric conversion factors
-    associated with those modes.
+      made up of instrument mode parameters and photometric conversion factors
+      associated with those modes.
 
 `RampFitOutputModel(init=None, slope=None, sigslope=None, yint=None, sigyint=None, pedestal=None, weights=None, crmag=None, **kwargs)`
 
