@@ -30,6 +30,6 @@ class LastFrameModel(model_base.DataModel):
 
         self.dq = dynamic_mask(self)
 
-        x# Implicitly create arrays
+        # Implicitly create arrays
         self.dq = self.dq
         self.err = self.err
