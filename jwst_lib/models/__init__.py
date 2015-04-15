@@ -145,11 +145,14 @@ def open(init=None):
             new_class = MIRIRampModel
             return new_class(init)
 
+        shape = ()
         try:
             hdu = hdulist[fits_header_name('SCI')]
-            shape = hdu.shape
         except KeyError:
-            shape = ()
+            pass
+        else:
+            if hasattr(hdu, 'shape'):
+                shape = hdu.shape
 
     # Here, we try to be clever about which type to
     # return, otherwise, just return a new instance of the
