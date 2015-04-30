@@ -61,6 +61,7 @@ from .reset import ResetModel
 from .saturation import SaturationModel
 from .spec import SpecModel
 from .straylight import StrayLightModel
+from .superbias import SuperBiasModel
 from .util import fits_header_name
 
 import sys
