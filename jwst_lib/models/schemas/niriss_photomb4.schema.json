@@ -1,7 +1,7 @@
 {
     "title" : "NIRISS photometric flux conversion data model",
     "allOf" : [
-        {"$ref" : "photom.schema.json"},
+        {"$ref" : "photomb4.schema.json"},
         {
             "type" : "object",
             "properties" : {
@@ -13,8 +13,7 @@
                     "dtype": [
                         {"name": "filter", "dtype": "string12"},
                         {"name": "pupil", "dtype": "string12"},
-                        {"name": "photmjsr", "dtype": "float32"},
-                        {"name": "uncertainty", "dtype": "float32"},
+                        {"name": "photflam", "dtype": "float32"},
                         {"name": "nelem", "dtype": "int16"},
                         {"name": "wavelength", "dtype": "float32", "shape": [5000]},
                         {"name": "relresponse", "dtype": "float32", "shape": [5000]}

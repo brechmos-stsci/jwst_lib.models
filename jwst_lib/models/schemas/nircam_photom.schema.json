@@ -13,7 +13,8 @@
                     "dtype": [
                         {"name": "filter", "dtype": "string12"},
                         {"name": "pupil", "dtype": "string12"},
-                        {"name": "photflam", "dtype": "float32"},
+                        {"name": "photmjsr", "dtype": "float32"},
+                        {"name": "uncertainty", "dtype": "float32"},
                         {"name": "nelem", "dtype": "int16"},
                         {"name": "wavelength", "dtype": "float32", "shape": [50]},
                         {"name": "relresponse", "dtype": "float32", "shape": [50]}

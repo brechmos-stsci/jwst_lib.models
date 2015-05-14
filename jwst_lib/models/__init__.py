@@ -54,6 +54,8 @@ from .multislit import MultiSlitModel
 from .multispec import MultiSpecModel
 from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
 from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
+from .photom_b4 import PhotomModelB4, NircamPhotomModelB4, NirissPhotomModelB4
+from .photom_b4 import NirspecPhotomModelB4, MiriImgPhotomModelB4, MiriMrsPhotomModelB4
 from .ramp import RampModel
 from .rampfitoutput import RampFitOutputModel
 from .readnoise import ReadnoiseModel
