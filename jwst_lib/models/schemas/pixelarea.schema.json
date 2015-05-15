@@ -1,0 +1,40 @@
+{
+    "allOf": [
+        {
+            "$ref": "core.schema.json"
+        },
+        {
+            "$ref" : "referencefile.schema.json"
+        },
+        {
+            "type" : "object",
+            "properties" : {
+                "data" : {
+                    "type" : "data",
+                    "title" : "The pixel area array",
+                    "fits_hdu" : "SCI",
+                    "default" : 1.0,
+                    "ndim" : 2,
+                    "dtype" : "float32"
+                },
+
+                "meta" : {
+                    "type": "object",
+                    "properties" : {
+                        "pixel_area_sr" : {
+                            "title" : "Nominal pixel area in steradians",
+                            "type" : "number",
+                            "fits_keyword" : "PIXAR_SR"
+                        },
+
+                        "pixel_area_a2" : {
+                            "title" : "Nominal pixel area in square arcsec",
+                            "type" : "number",
+                            "fits_keyword" : "PIXAR_A2"
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -52,6 +52,7 @@ from .mask import MaskModel
 from .miri_ramp import MIRIRampModel
 from .multislit import MultiSlitModel
 from .multispec import MultiSpecModel
+from .pixelarea import PixelAreaModel
 from .photom import PhotomModel, NircamPhotomModel, NirissPhotomModel
 from .photom import NirspecPhotomModel, MiriImgPhotomModel, MiriMrsPhotomModel
 from .photom_b4 import PhotomModelB4, NircamPhotomModelB4, NirissPhotomModelB4
