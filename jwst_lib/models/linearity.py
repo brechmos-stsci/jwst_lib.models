@@ -11,7 +11,7 @@ class LinearityModel(model_base.DataModel):
     """
     A data model for linearity correction information.
     """
-    schema_url = "linearity.schema.json"
+    schema_url = "linearity.schema.yaml"
 
     def __init__(self, init=None, coeffs=None, dq=None, dq_def=None,
                  **kwargs):

@@ -1,14 +1,13 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 from .spec import SpecModel
 
 
 __all__ = ['MultiSpecModel']
 
 
-class MultiSpecModel(model_base.DataModel, wcs.HasFitsWcs):
+class MultiSpecModel(model_base.DataModel):
     """
     A data model for multi-spec images.
 
@@ -19,7 +18,7 @@ class MultiSpecModel(model_base.DataModel, wcs.HasFitsWcs):
        >>> multispec_model.spec[0]
        <SpecModel>
     """
-    schema_url = "multispec.schema.json"
+    schema_url = "multispec.schema.yaml"
 
     def __init__(self, init=None, **kwargs):
         if isinstance(init, SpecModel):

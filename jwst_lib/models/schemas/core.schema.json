@@ -63,11 +63,6 @@
                     }
                 },
 
-                "wcs" : {
-                    "title" : "General WCS information",
-                    "type" : "pickle"
-                },
-
                 "program" : {
                     "title" : "Programmatic information",
                     "type" : "object",
@@ -848,7 +843,7 @@
 
                         "time" : {
                             "title" : "UTC time from ephemeris start time (sec)",
-                            "type" : "number",
+                            "type" : "string",
                             "fits_keyword" : "EPH_TIME"
                         },
 

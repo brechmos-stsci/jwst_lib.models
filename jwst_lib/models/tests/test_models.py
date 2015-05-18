@@ -114,17 +114,17 @@ def test_from_fits_write(dm):
     return DataModel.from_fits(TMP_FITS)
 
 
-@knownfailureif(not has_yaml)
-@roundtrip
-def test_from_fits_to_yaml(dm):
-    dm.to_yaml(TMP_YAML)
-    return DataModel.from_yaml(TMP_YAML)
+# @knownfailureif(not has_yaml)
+# @roundtrip
+# def test_from_fits_to_yaml(dm):
+#     dm.to_yaml(TMP_YAML)
+#     return DataModel.from_yaml(TMP_YAML)
 
 
-@roundtrip
-def test_from_fits_to_json(dm):
-    dm.to_json(TMP_JSON)
-    return DataModel.from_json(TMP_JSON)
+# @roundtrip
+# def test_from_fits_to_json(dm):
+#     dm.to_json(TMP_JSON)
+#     return DataModel.from_json(TMP_JSON)
 
 
 def test_delete():
@@ -314,7 +314,7 @@ def test_model_with_nonstandard_primary_array():
 
     class NonstandardPrimaryArrayModel(DataModel):
         schema_url = os.path.join(
-            ROOT_DIR, "nonstandard_primary_array.schema.json")
+            ROOT_DIR, "nonstandard_primary_array.schema.yaml")
 
         def __init__(self, init=None, wavelength=None, alpha=None, **kwargs):
             super(NonstandardPrimaryArrayModel, self).__init__(init=init, **kwargs)
@@ -349,7 +349,7 @@ def test_image_with_extra_keyword_to_multislit():
 
     with ImageModel(TMP_FITS) as im:
         with MultiSlitModel() as ms:
-            ms.update(im, primary_only=True)
+            ms.update(im)
             for i in range(3):
                 ms.slits.append(ImageModel(data=np.empty((4, 4))))
             assert len(ms.slits) == 3

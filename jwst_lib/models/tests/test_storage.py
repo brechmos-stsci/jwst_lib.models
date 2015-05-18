@@ -1,23 +1,7 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
-from .. import DataModel, open
 import numpy as np
 from .. import util
-
-
-def test_copyied_model():
-    def oops():
-        raise AssertionError()
-
-    def ok():
-        pass
-
-    with DataModel() as dm:
-        dm.storage.close = oops
-        with open(dm) as dm2:
-            pass
-        dm.storage.close = ok
-
 
 
 def test_gentle_asarray():

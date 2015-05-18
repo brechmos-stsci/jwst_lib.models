@@ -7,7 +7,7 @@ import sys
 
 import numpy as np
 
-IS_PY3K = sys.version_info[0] >= 3
+from astropy.extern import six
 
 def can_broadcast(a, b):
     """
@@ -27,7 +27,7 @@ def to_camelcase(token):
     return ''.join(x.capitalize() for x in token.split('_-'))
 
 
-if sys.version_info[0] >= 3:
+if six.PY3:
     def fits_header_name(name):
         """
         Returns a FITS header name in the correct form for the current
@@ -87,3 +87,22 @@ def gentle_asarray(a, dtype):
             return a.view(dtype=np.dtype(new_dtype))
 
     return np.asarray(a, dtype=out_dtype)
+
+
+def get_short_doc(schema):
+    title = schema.get('title', None)
+    description = schema.get('description', None)
+    if description is None:
+        description = title or ''
+    else:
+        if title is not None:
+            description = title + '\n\n' + description
+    return description.partition('\n')[0]
+
+
+def ensure_ascii(s):
+    if isinstance(s, six.text_type):
+        s = s.encode('ascii', 'replace')
+        if six.PY3:
+            s = s.decode('ascii')
+    return s

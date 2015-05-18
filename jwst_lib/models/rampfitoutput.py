@@ -1,17 +1,16 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 
 
 __all__ = ['RampFitOutputModel']
 
 
-class RampFitOutputModel(model_base.DataModel, wcs.HasFitsWcs):
+class RampFitOutputModel(model_base.DataModel):
     """
     A data model for the optional output of the ramp fitting step.
     """
-    schema_url = "rampfitoutput.schema.json"
+    schema_url = "rampfitoutput.schema.yaml"
 
     def __init__(self, init=None,
                  slope=None,
@@ -44,4 +43,3 @@ class RampFitOutputModel(model_base.DataModel, wcs.HasFitsWcs):
 
         if crmag is not None:
             self.crmag = crmag
-

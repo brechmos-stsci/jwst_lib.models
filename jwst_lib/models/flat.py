@@ -1,18 +1,17 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 from .dynamicdq import dynamic_mask
 
 
 __all__ = ['FlatModel']
 
 
-class FlatModel(model_base.DataModel, wcs.HasFitsWcs):
+class FlatModel(model_base.DataModel):
     """
     A data model for 2D flat-field images.
     """
-    schema_url = "flat.schema.json"
+    schema_url = "flat.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):

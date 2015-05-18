@@ -1,17 +1,16 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 
 
 __all__ = ['CubeModel']
 
 
-class CubeModel(model_base.DataModel, wcs.HasFitsWcs):
+class CubeModel(model_base.DataModel):
     """
     A data model for 3D image cubes.
     """
-    schema_url = "cube.schema.json"
+    schema_url = "cube.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, err=None, zeroframe=None,
                  relsens=None, area=None, **kwargs):

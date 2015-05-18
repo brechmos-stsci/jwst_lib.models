@@ -10,7 +10,7 @@ class MaskModel(model_base.DataModel):
     """
     A data model for 2D masks
     """
-    schema_url = "mask.schema.json"
+    schema_url = "mask.schema.yaml"
 
     def __init__(self, init=None, dq=None, dq_def=None, **kwargs):
         super(MaskModel, self).__init__(init=init, **kwargs)
@@ -21,7 +21,8 @@ class MaskModel(model_base.DataModel):
         if dq_def is not None:
             self.dq_def = dq_def
 
-        self.dq = dynamic_mask(self)
+        if self.dq or self.dq_def:
+            self.dq = dynamic_mask(self)
 
         # Implicitly create arrays
         self.dq = self.dq

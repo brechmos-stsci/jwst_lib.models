@@ -1,0 +1,55 @@
+allOf:
+- $ref: core.schema.yaml
+- type: object
+  properties:
+    slits:
+      type: array
+      title: An array of slits
+      items:
+        type: object
+        properties:
+          data:
+            fits_hdu: SCI
+            default: 0.0
+            ndim: 2
+            datatype: float32
+          dq:
+            fits_hdu: DQ
+            default: 0
+            datatype: uint32
+          err:
+            fits_hdu: ERR
+            default: 0.0
+            datatype: float32
+          relsens:
+            $ref: relsens.schema.yaml
+          name:
+            title: Name of the slit
+            type: string
+            fits_keyword: SLTNAME
+            fits_hdu: SCI
+          xstart:
+            title: Starting pixel in x direction
+            type: number
+            default: 1
+            fits_keyword: SLTSTRT1
+            fits_hdu: SCI
+          xsize:
+            title: Number of pixels in x direction
+            type: number
+            default: 0
+            fits_keyword: SLTSIZE1
+            fits_hdu: SCI
+          ystart:
+            title: Starting pixel in y direction
+            type: number
+            default: 1
+            fits_keyword: SLTSTRT2
+            fits_hdu: SCI
+          ysize:
+            title: Number of pixels in y direction
+            type: number
+            default: 0
+            fits_keyword: SLTSIZE2
+            fits_hdu: SCI
+$schema: http://stsci.edu/schemas/fits-schema/fits-schema

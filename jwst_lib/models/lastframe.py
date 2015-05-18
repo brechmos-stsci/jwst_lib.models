@@ -10,7 +10,7 @@ class LastFrameModel(model_base.DataModel):
     """
     A data model for Last frame correction reference files.
     """
-    schema_url = "lastframe.schema.json"
+    schema_url = "lastframe.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):

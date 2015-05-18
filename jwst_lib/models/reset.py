@@ -10,7 +10,7 @@ class ResetModel(model_base.DataModel):
     """
     A data model for reset correction reference files.
     """
-    schema_url = "reset.schema.json"
+    schema_url = "reset.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):

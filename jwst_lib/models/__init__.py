@@ -68,10 +68,6 @@ from .straylight import StrayLightModel
 from .superbias import SuperBiasModel
 from .util import fits_header_name
 
-import sys
-if sys.version_info[0] >= 3:
-    from . import py3k_compat
-
 from .version import (__version__, __svn_revision__, __svn_full_info__, __setup_datetime__)
 
 
@@ -86,8 +82,6 @@ __all__ = [
     'MiriImgPhotomModel', 'MiriMrsPhotomModel', 'RampModel', 'RampFitOutputModel',
     'ReadnoiseModel', 'ResetModel', 'SaturationModel', 'SpecModel',
     'StrayLightModel']
-
-__all__ = [str(x) for x in __all__]
 
 
 def open(init=None):

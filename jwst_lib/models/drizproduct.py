@@ -1,17 +1,16 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 
 
 __all__ = ['DrizProductModel']
 
 
-class DrizProductModel(model_base.DataModel, wcs.HasFitsWcs):
+class DrizProductModel(model_base.DataModel):
     """
     A data model for drizzle-generated products.
     """
-    schema_url = "drizproduct.schema.json"
+    schema_url = "drizproduct.schema.yaml"
 
     def __init__(self, init=None, data=None, con=None, wht=None, hdrtab=None,
                     relsens=None, **kwargs):

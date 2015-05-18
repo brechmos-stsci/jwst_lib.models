@@ -1,18 +1,17 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import ramp
-from . import wcs
 
 
 __all__ = ['MIRIRampModel']
 
 
-class MIRIRampModel(ramp.RampModel, wcs.HasFitsWcs):
+class MIRIRampModel(ramp.RampModel):
     """
     A data model for MIRI ramps.
     Includes the REFOUT extension
     """
-    schema_url = "miri_ramp.schema.json"
+    schema_url = "miri_ramp.schema.yaml"
 
     def __init__(self, init=None, data=None, pixeldq=None, groupdq=None,
                  err=None, refout=None, zeroframe=None, **kwargs):

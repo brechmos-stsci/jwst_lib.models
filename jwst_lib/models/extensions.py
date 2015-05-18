@@ -27,6 +27,9 @@ import datetime
 import time
 
 
+import jsonschema
+
+
 class FitsDateTime(object):
     """
     Proxy class for serializing datetime.datetime objects.
@@ -131,11 +134,20 @@ class FitsTime(object):
 
 
 
-# Map a URL (which doesn't have to exist, it just has to be unique) to
-# each of the classes in this module.  These correspond to custom
-# "format" values in the JSON Schema.
-extensions = {
-    'http://www.stsci.edu/types/fits-date': FitsDate,
-    'http://www.stsci.edu/types/fits-time': FitsTime,
-    'http://www.stsci.edu/types/fits-date-time': FitsDateTime
-    }
+class FormatChecker(object):
+    # Map a URL (which doesn't have to exist, it just has to be unique) to
+    # each of the classes in this module.  These correspond to custom
+    # "format" values in the JSON Schema.
+    extensions = {
+        'http://www.stsci.edu/types/fits-date': FitsDate,
+        'http://www.stsci.edu/types/fits-time': FitsTime,
+        'http://www.stsci.edu/types/fits-date-time': FitsDateTime
+        }
+
+    @classmethod
+    def check(cls, instance, format):
+        if format in cls.extensions:
+            try:
+                cls.extensions[format].validate(instance)
+            except ValueError as e:
+                raise jsonschema.FormatError(str(e))

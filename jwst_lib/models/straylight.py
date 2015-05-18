@@ -10,7 +10,7 @@ class StrayLightModel(model_base.DataModel):
     """
     A data model for 2D straylight mask
     """
-    schema_url = "straylight.schema.json"
+    schema_url = "straylight.schema.yaml"
 
     def __init__(self, init=None, data=None, **kwargs):
         super(StrayLightModel, self).__init__(init=init, **kwargs)

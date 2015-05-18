@@ -1,0 +1,13 @@
+title: IPC kernel model
+allOf:
+- $ref: core.schema.yaml
+- type: object
+  properties:
+    data:
+      title: IPC deconvolution kernel
+      fits_hdu: SCI
+      default: 1.0
+      datatype: float32
+    meta:
+      $ref: referencefile.schema.yaml
+$schema: http://stsci.edu/schemas/fits-schema/fits-schema

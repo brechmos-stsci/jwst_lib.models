@@ -10,7 +10,7 @@ class DarkModel(model_base.DataModel):
     """
     A data model for dark current reference files.
     """
-    schema_url = "dark.schema.json"
+    schema_url = "dark.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):

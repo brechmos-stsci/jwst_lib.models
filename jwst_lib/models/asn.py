@@ -10,7 +10,7 @@ class AsnModel(model_base.DataModel):
     """
     A data model for association tables.
     """
-    schema_url = "asn.schema.json"
+    schema_url = "asn.schema.yaml"
     supported_formats = ['yaml','json','fits']
 
     def __init__(self, init=None, asn_table=None, **kwargs):
@@ -36,14 +36,14 @@ class AsnModel(model_base.DataModel):
             if 'prod' in etype.lower():
                 self.output_rootname = self.asn_table.expname[i]
                 for fmt in self.supported_formats:
-                    fname = "{0}.{1}".format(self.output_rootname,fmt)
+                    fname = "{0}.{1}".format(self.output_rootname, fmt)
                     if os.path.exists(fname):
                         self.output = fname
                         break
             else:
                 rootname = self.asn_table.expname[i]
                 for fmt in self.supported_formats:
-                    fname = "{0}.{1}".format(rootname,fmt)
+                    fname = "{0}.{1}".format(rootname, fmt)
                     if os.path.exists(fname):
                         self.inputs.append(fname)
                         break

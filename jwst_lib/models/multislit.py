@@ -1,14 +1,13 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 from .image import ImageModel
 
 
 __all__ = ['MultiSlitModel']
 
 
-class MultiSlitModel(model_base.DataModel, wcs.HasFitsWcs):
+class MultiSlitModel(model_base.DataModel):
     """
     A data model for multi-slit images.
 
@@ -19,7 +18,7 @@ class MultiSlitModel(model_base.DataModel, wcs.HasFitsWcs):
        >>> multislit_model.slits[0]
        <ImageModel>
     """
-    schema_url = "multislit.schema.json"
+    schema_url = "multislit.schema.yaml"
 
     def __init__(self, init=None, **kwargs):
         if isinstance(init, ImageModel):

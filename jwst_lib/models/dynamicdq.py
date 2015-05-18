@@ -8,7 +8,10 @@ def dynamic_mask(input_model):
 
     dq_table = input_model.dq_def
     # Get the DQ array and the flag definitions
-    if dq_table is not None and len(dq_table) > 0:
+    if (dq_table is not None and
+        not np.isscalar(dq_table) and
+        len(dq_table.shape) and
+        len(dq_table)):
         #
         # Make an empty mask
         dqmask = np.zeros(input_model.dq.shape, dtype=input_model.dq.dtype)

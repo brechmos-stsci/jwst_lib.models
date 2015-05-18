@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Data model class heirarchy
 """
@@ -7,29 +8,32 @@ import copy
 import datetime
 import inspect
 import os
+import sys
 
 import numpy as np
 
+from astropy.extern import six
+from astropy.io import fits
+from astropy.wcs import WCS
+
+from pyasdf import AsdfFile
+from pyasdf import yamlutil
+from pyasdf import schema as pyasdf_schema
+
+from . import fits_support
+from . import properties
 from . import schema as mschema
-from . import storage as mstorage
-from .util import IS_PY3K
 
 
-__all__ = ['DataModel']
-
-
-class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
+class DataModel(properties.ObjectNode):
     """
     Base class of all of the data models.
-
-    The actual storage of values in the data model is performed by a
-    pluggable storage backend (in self.storage).  See storage.py for
-    more information.
     """
-    schema_url = "core.schema.json"
+    schema_url = "core.schema.yaml"
 
     def __init__(self, init=None, schema=None):
-        """Parameters
+        """
+        Parameters
         ----------
         init : shape tuple, file path, file object, astropy.io.fits.HDUList, numpy array, None
 
@@ -46,102 +50,82 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             - ``astropy.io.fits.HDUList``: Initialize from the given
               `~astropy.io.fits.HDUList`.
 
-            - Storage instance: Use the given storage backend
-              (internal use)
-
             - A numpy array: Used to initialize the data array
+
+            - dict: The JSON/YAML object model tree for the data model
 
         schema : tree of objects representing a JSON schema, or string naming a schema, optional
             The schema to use to understand the elements on the model.
             If not provided, the schema associated with this class
             will be used.
-
         """
-        self._owns_storage = True
+        filename = os.path.abspath(inspect.getfile(self.__class__))
+        base_url = os.path.join(
+            os.path.dirname(filename), 'schemas', '')
+        if schema is None:
+            schema_path = os.path.join(base_url, self.schema_url)
+            schema = pyasdf_schema.load_schema(
+                schema_path, resolve_references=True)
+
+        self._schema = mschema.flatten_combiners(schema)
+
+        self._asdf_file = None
+        self._fits_file = None
         is_array = False
+        is_shape = False
         shape = None
         if init is None:
-            storage = mstorage.TreeStorage()
+            instance = {}
+        elif isinstance(init, dict):
+            instance = init
         elif isinstance(init, np.ndarray):
-            storage = mstorage.TreeStorage()
+            instance = {}
             shape = init.shape
             is_array = True
         elif isinstance(init, self.__class__):
-            self.__dict__.update(init.__dict__)
-            self._owns_storage = False
+            self._shape = init._shape
+            self._instance = init._instance
+            self._ctx = self
             self.__class__ = init.__class__
-            self._parent = init
             return
         elif isinstance(init, DataModel):
             raise TypeError(
                 "Passed in {0!r} is not of the expected subclass {1!r}".format(
-                init.__class__.__name__, self.__class__.__name__))
-        elif isinstance(init, mstorage.Storage):
-            storage = init
-            self._owns_storage = False
+                    init.__class__.__name__, self.__class__.__name__))
+        elif isinstance(init, AsdfFile):
+            instance = init.tree
         elif isinstance(init, tuple):
             for item in init:
                 if not isinstance(item, int):
                     raise ValueError("shape must be a tuple of ints")
             shape = init
-            storage = mstorage.TreeStorage()
-        else:
-            from astropy.io.fits import HDUList
-            if (isinstance(init, HDUList) or
-                isinstance(init, (unicode, bytes)) and
-                init.lower().endswith('.fits')):
-                from . import fits
+            instance = {}
+            is_shape = True
+        elif isinstance(init, fits.HDUList):
+            instance = fits_support.from_fits(init, self._schema, validate=False)
+        elif isinstance(init, six.string_types):
+            if isinstance(init, bytes):
+                init = init.decode(sys.getfilesystemencoding())
+            try:
+                hdulist = fits.open(init)
+            except IOError:
                 try:
-                    storage = fits.FitsStorage(init)
-                except IOError as e:
-                    raise IOError("Failed to read from file path: {0}".format(
-                        str(e)))
-                except:
-                    raise TypeError(
-                        "First argument must be None, shape tuple, file path, "
-                        "readable file object or Storage instance")
-            elif isinstance(init, (unicode, bytes)) and init.lower().endswith('.json'):
-                import json
-                with open(init) as fd:
-                    tree = json.load(fd)
-                storage = mstorage.TreeStorage(tree)
+                    self._asdf_file = AsdfFile.read(init)
+                    # TODO: Add json support
+                except ValueError:
+                    raise IOError("File does not appear to be a FITS or ASDF file.")
+                else:
+                    instance = self._asdf_file.tree
             else:
-                raise TypeError("Unsupported initializer '{0}'".format(init))
+                self._fits_file = hdulist
+                instance = fits_support.from_fits(hdulist, self._schema, validate=False)
 
-        mschema.HasArrayProperties.__init__(self)
-        mstorage.HasStorage.__init__(self, storage=storage)
         self._shape = shape
+        self._ctx = self
+        self._instance = instance
 
-        filename = os.path.abspath(inspect.getfile(self.__class__))
-        base_url = os.path.join(
-            os.path.dirname(filename), 'schemas', '')
-        if schema is None:
-            schema = mschema.get_schema(self.schema_url, base_url)
-        elif isinstance(schema, basestring):
-            schema = mschema.get_schema(schema, base_url)
-        elif isinstance(schema, dict):
-            schema = mschema.resolve_references(schema, base_url)
-        else:
-            raise TypeError("schema must be str, dict or None")
-
-        self._schema = schema
-
-        tree = mschema.schema_to_tree(schema, self.storage)
-
-        # Create a new class on the fly that combines this class and the
-        # custom schema-built class
-        real_cls = self.__class__
-        new_cls = type(real_cls.__name__, (real_cls, tree.__class__), dict())
-        self.__class__ = new_cls
-        self._real_cls = real_cls
-
-        self._storage.extract_extra_elements(self)
-
-        self.meta.date = datetime.datetime.utcnow()
-
-        # NIRISS was changed to NIS on 03/23/15
-        if self.meta.instrument.detector == 'NIRISS':
-            self.meta.instrument.detector = 'NIS'
+        # TODO
+        # self.meta.date = datetime.datetime.now()
 
         if is_array:
             primary_array_name = self.get_primary_array_name()
@@ -151,27 +135,31 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
                     "array in its schema")
             setattr(self, primary_array_name, init)
 
-    def __del__(self):
-        try:
-            self.close()
-        except RuntimeError:
-            pass
+        if is_shape:
+            getattr(self, self.get_primary_array_name())
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def close(self):
+        if self._fits_file:
+            self._fits_file.close()
+        if self._asdf_file:
+            self._asdf_file.close()
 
     def copy(self):
         """
         Returns a deep copy of this model.
         """
-        new = self._real_cls(schema=self._schema)
+        result = self.__class__(
+            init=copy.deepcopy(self._instance), schema=self._schema)
+        result._shape = self._shape
+        return result
 
-        for obj, prop, val in self.iter_properties(include_empty_arrays=False):
-            if val is not None:
-                if isinstance(val, np.ndarray):
-                    c = val.copy()
-                else:
-                    c = copy.deepcopy(val)
-            new.storage.__set__(prop, obj, c)
-
-        return new
+    __copy__ = __deepcopy__ = copy
 
     def get_primary_array_name(self):
         """
@@ -201,11 +189,60 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             self.meta.filename = os.path.basename(path)
 
     def save(self, path, *args, **kwargs):
+        """
+        TODO
+        """
         self.on_save(path)
 
-        # TODO: For now, this just saves to fits
-        kwargs.setdefault('clobber', True)
-        self.to_fits(path, *args, **kwargs)
+        base, ext = os.path.splitext(path)
+        if isinstance(ext, bytes):
+            ext = ext.decode('ascii')
+
+        # TODO: Support gzip-compressed fits
+        if ext == '.fits':
+            kwargs.setdefault('clobber', True)
+            self.to_fits(path, *args, **kwargs)
+        elif ext == '.asdf':
+            self.to_asdf(path, *args, **kwargs)
+        else:
+            raise ValueError("unknown filetype {0}".format(ext))
+
+    @classmethod
+    def from_asdf(cls, init, schema=None):
+        """
+        Load a model from a ASDF file.
+
+        Parameters
+        ----------
+        init : file path, file object, pyasdf.AsdfFile object
+            - file path: Initialize from the given file
+            - readable file object: Initialize from the given file object
+            - pyasdf.AsdfFile: Initialize from the given
+              `~pyasdf.AsdfFile`.
+
+        schema :
+            Same as for `__init__`
+
+        Returns
+        -------
+        model : DataModel instance
+        """
+        return cls(init, schema=schema)
+
+    def to_asdf(self, init, *args, **kwargs):
+        """
+        Write a DataModel to a ASDF file.
+
+        Parameters
+        ----------
+        init : file path or file object
+
+        *args, **kwargs
+            Any additional arguments are passed along to
+            `pyasdf.AsdfFile.write_to`.
+        """
+        with AsdfFile(self._instance).write_to(init, *args, **kwargs):
+            pass
 
     @classmethod
     def from_fits(cls, init, schema=None):
@@ -241,89 +278,23 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             Any additional arguments are passed along to
             `astropy.io.fits.writeto`.
         """
-        from . import fits
-
-        if isinstance(self._storage, fits.FitsStorage):
-            self._storage.save_metadata_extension(self)
-            self._storage.writeto(init, *args, **kwargs)
-        else:
-            fits.FitsStorage.write_model_to(self, init, *args, **kwargs)
-
-    @classmethod
-    def from_json(cls, init, schema=None):
-        """
-        Load the metadata for a DataModel from a JSON file.
-
-        Note that arrays can not be loaded/saved from JSON.
-
-        Parameters
-        ----------
-        init : file path or file object
-
-        schema :
-            Same as for `__init__`
-
-        Returns
-        -------
-        model : DataModel instance
-        """
-        from . import json_yaml
-
-        tree = json_yaml.load(init)
-        tree = {'meta': tree}
-        storage = mstorage.TreeStorage(tree)
-        self = cls(storage, schema=schema)
-        self.validate_tree(tree)
-        return self
-    from_yaml = from_json
-
-    def to_json(self, init):
-        """
-        Write a DataModel to a JSON file.
-
-        Note that arrays can not be loaded/saved from a JSON file.
-
-        Parameters
-        ----------
-        init : file path or file object
-        """
-        from . import json_yaml
-
-        self.storage.validate(self)
-
-        if isinstance(self.storage, mstorage.TreeStorage):
-            tree = self.storage.tree
-        else:
-            tree = self.to_tree()
-
-        json_yaml.dump(tree.get('meta', {}), init, format="json")
-
-    def to_yaml(self, path):
-        """
-        Write a DataModel to a YAML file.
-
-        Note that arrays can not be loaded/saved from a JSON file.
-
-        Parameters
-        ----------
-        init : file path or file object
-        """
-        from . import json_yaml
-
-        self.storage.validate(self)
-
-        if isinstance(self.storage, mstorage.TreeStorage):
-            tree = self.storage.tree
-        else:
-            tree = self.to_tree()
-
-        json_yaml.dump(tree['meta'], path, format="yaml")
+        with fits_support.to_fits(None, self._instance, self._schema) as hdulist:
+            hdulist.writeto(init, *args, **kwargs)
 
     @property
     def shape(self):
         if self._shape is None:
-            return self._storage.__get_shape__()
+            if self.get_primary_array_name() in self._instance:
+                return getattr(self, self.get_primary_array_name()).shape
+            else:
+                return None
         return self._shape
+
+    def __setattr__(self, attr, value):
+        if attr == 'shape':
+            object.__setattr__(self, attr, value)
+        else:
+            super(DataModel, self).__setattr__(attr, value)
 
     def extend_schema(self, new_schema):
         """
@@ -335,19 +306,8 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         new_schema : schema tree
         """
         schema = {'allOf': [self._schema, new_schema]}
-
-        tree = mschema.schema_to_tree(schema, self.storage)
-
-        # Replace the MetaBase base class with the new one
-        bases = list(self.__class__.__bases__)
-        bases[1] = tree.__class__
-        self.__class__.__bases__ = tuple(bases)
-
-        # Validate ourselves
-        self.storage.validate(self)
-
-        self._schema = schema
-
+        self._schema = mschema.flatten_combiners(schema)
+        self._validate()
         return self
 
     def add_schema_entry(self, position, new_schema):
@@ -367,7 +327,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             schema = {'type': 'object', 'properties': {part: schema}}
         return self.extend_schema(schema)
 
-    def find_fits_keyword(self, keyword, return_result=False):
+    def find_fits_keyword(self, keyword):
         """
         Utility function to find a reference to a FITS keyword in this
         model's schema.  This is intended for interactive use, and not
@@ -378,9 +338,6 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         keyword : str
             A FITS keyword name
 
-        return_result : bool, optional
-            If `False` (default) print result to stdout.  If `True`,
-            return the result as a list.
         Returns
         -------
         locations : list of str
@@ -394,10 +351,10 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         >>> model.find_fits_keyword('DATE-OBS')
         ['observation.date']
         """
-        return mschema.find_fits_keyword(
-            self.schema, keyword, return_result=return_result)
+        from . import schema
+        return schema.find_fits_keyword(self.schema, keyword)
 
-    def search_schema(self, substring, return_result=False, verbose=False):
+    def search_schema(self, substring):
         """
         Utility function to search the metadata schema for a
         particular phrase.
@@ -427,8 +384,8 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             If `return_result` is `True`, returns tuples of the form
             (*location*, *description*)
         """
-        return mschema.search_schema(
-            self.schema, substring, return_result=return_result, verbose=verbose)
+        from . import schema
+        return schema.search_schema(self.schema, substring)
 
     def __getitem__(self, key):
         """
@@ -451,14 +408,12 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         assert isinstance(key, basestring)
         meta = self
         parts = key.split('.')
-        for part in parts[:-1]:
+        for part in parts:
             try:
                 meta = getattr(meta, part)
             except AttributeError:
                 raise KeyError(repr(key))
-        last_part = parts[-1]
-        prop = getattr(type(meta), last_part)
-        return prop.to_basic_type(getattr(meta, last_part))
+        return yamlutil.custom_tree_to_tagged_tree(meta, self._instance)
 
     def __setitem__(self, key, value):
         """
@@ -469,14 +424,24 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         parts = key.split('.')
         for part in parts[:-1]:
             try:
-                meta = getattr(meta, part)
-            except AttributeError:
-                raise KeyError(repr(key))
-        part = parts[-1]
-        setattr(meta, part, value)
+                part = int(part)
+            except ValueError:
+                try:
+                    meta = getattr(meta, part)
+                except AttributeError:
+                    raise KeyError(repr(key))
+            else:
+                meta = meta[part]
 
-    def iteritems(self, include_arrays=False, primary_only=False,
-                  everything=False):
+        part = parts[-1]
+        try:
+            part = int(part)
+        except ValueError:
+            setattr(meta, part, value)
+        else:
+            meta[part] = value
+
+    def iteritems(self):
         """
         Iterates over all of the schema items in a flat way.
 
@@ -484,35 +449,27 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         dot-separated name.  For example, the schema element
         `meta.observation.date` will end up in the result as::
 
-            ( "meta.observation.date": "2012-04-22" )
-
-        Parameters
-        ----------
-        include_arrays : bool, optional
-            When `True`, include numpy arrays in the result.  Default
-            is `False`.
-
-        primary_only : bool, optional
-            When `True`, only return values from the PRIMARY FITS HDU.
-
-        everything : bool, optional
-            When `True`, include even non-serializable items.
+            ( "meta.observation.date": "2012-04-22T03:22:05.432" )
         """
-        for obj, prop, val in self.iter_properties(include_arrays=include_arrays):
-            if (include_arrays or (
-                (isinstance(val, (bytes, unicode, int, long, float, bool))
-                 or everything) and
-                    not prop.is_data())):
+        def recurse(tree, path=[]):
+            if isinstance(tree, dict):
+                for key, val in six.iteritems(tree):
+                    for x in recurse(val, path + [key]):
+                        yield x
+            elif isinstance(tree, (list, tuple)):
+                for i, val in enumerate(tree):
+                    for x in recurse(val, path + [i]):
+                        yield x
+            elif tree is not None:
+                yield ('.'.join(six.text_type(x) for x in path), tree)
 
-                if (primary_only and
-                    prop.schema.get('fits_hdu', 'PRIMARY') != 'PRIMARY'):
-                    continue
-                yield ('.'.join(prop.path), val)
+        for x in recurse(self._instance):
+            yield x
 
-    if IS_PY3K:
+    if six.PY3:
         items = iteritems
     else:
-        def items(self, include_arrays=False, primary_only=False, everything=False):
+        def items(self):
             """
             Get all of the schema items in a flat way.
 
@@ -520,26 +477,11 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             dot-separated name.  For example, the schema element
             `meta.observation.date` will end up in the result as::
 
-                ( "meta.observation.date": "2012-04-22" )
-
-            Parameters
-            ----------
-            include_arrays : bool, optional
-                When `True`, include numpy arrays in the result.
-                Default is `False`.
-
-            primary_only : bool, optional
-                When `True`, only return values from the PRIMARY FITS
-                HDU.
-
-            everything : bool, optional
-                When `True`, include even non-serializable items.
+                ( "meta.observation.date": "2012-04-22T03:22:05.432" )
             """
-            return list(self.iteritems(include_arrays=include_arrays,
-                                       primary_only=primary_only,
-                                       everything=everything))
+            return list(self.iteritems())
 
-    def iterkeys(self, include_arrays=False, primary_only=False):
+    def iterkeys(self):
         """
         Iterates over all of the schema keys in a flat way.
 
@@ -547,24 +489,14 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         dot-separated name.  For example, the schema element
         `meta.observation.date` will end up in the result as the
         string `"meta.observation.date"`.
-
-        Parameters
-        ----------
-        include_arrays : bool, optional
-            When `True`, include keys that point to numpy arrays
-            in the result.  Default is `False`.
-
-        primary_only : bool, optional
-            When `True`, only return values from the PRIMARY FITS HDU.
         """
-        for key, val in self.items(include_arrays=include_arrays,
-                                   primary_only=primary_only):
+        for key, val in self.iteritems():
             yield key
 
-    if IS_PY3K:
+    if six.PY3:
         keys = iterkeys
     else:
-        def keys(self, include_arrays=False, primary_only=False):
+        def keys(self):
             """
             Gets all of the schema keys in a flat way.
 
@@ -572,58 +504,26 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             dot-separated name.  For example, the schema element
             `meta.observation.date` will end up in the result as the
             string `"meta.observation.date"`.
-
-            Parameters
-            ----------
-            include_arrays : bool, optional
-                When `True`, include keys that point to numpy arrays
-                in the result.  Default is `False`.
-
-
-            primary_only : bool, optional
-                When `True`, only return values from the PRIMARY FITS
-                HDU.
             """
-            return list(self.iterkeys(include_arrays=include_arrays,
-                                      primary_only=primary_only))
+            return list(self.iterkeys())
 
-    def itervalues(self, include_arrays=False, primary_only=False):
+    def itervalues(self):
         """
         Iterates over all of the schema values in a flat way.
-
-        Parameters
-        ----------
-        include_arrays : bool, optional
-            When `True`, include numpy arrays in the result.  Default
-            is `False`.
-
-        primary_only : bool, optional
-            When `True`, only return values from the PRIMARY FITS HDU.
         """
-        for key, val in self.items(include_arrays=include_arrays,
-                                   primary_only=primary_only):
+        for key, val in self.iteritems():
             yield val
 
-    if IS_PY3K:
+    if six.PY3:
         values = itervalues
     else:
-        def values(self, include_arrays=False, primary_only=False):
+        def values(self):
             """
             Gets all of the schema values in a flat way.
-
-            Parameters
-            ----------
-            include_arrays : bool, optional
-                When `True`, include numpy arrays in the result.  Default
-                is `False`.
-
-            primary_only : bool, optional
-                When `True`, only return values from the PRIMARY FITS
-                HDU.
             """
-            return list(self.itervalues(include_arrays=include_arrays))
+            return list(self.itervalues())
 
-    def update(self, d, include_arrays=False, primary_only=False):
+    def update(self, d):
         """
         Updates this model with the metadata elements from another model.
 
@@ -634,36 +534,11 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             dictionary-like, it must have an `items` method that
             returns (key, value) pairs where the keys are
             dot-separated paths to metadata elements.
-
-        include_arrays : bool, optional
-            When `True`, update numpy array elements.  Default
-            is `False`.
-
-        primary_only : bool, optional
-            When `True`, only transfer values from the PRIMARY FITS
-            HDU.
         """
-        if hasattr(d, '_extra_fits'):
-            self.extend_schema(
-                {'type': 'object',
-                 'properties': {'_extra_fits': d._extra_fits.__class__._schema}})
+        # TODO: This needs to be recursive
+        self._instance.update(copy.deepcopy(d._instance))
 
-        if isinstance(d, DataModel):
-            items = d.items(include_arrays=include_arrays,
-                            primary_only=primary_only,
-                            everything=True)
-        else:
-            items = d.iteritems()
-
-        for key, val in items:
-            if isinstance(val, mschema.PickleProxy):
-                val = val.x
-            self[key] = val
-
-        if hasattr(d, 'history'):
-            self.history.extend(d.history)
-
-    def to_flat_dict(self, include_arrays=False):
+    def to_flat_dict(self):
         """
         Returns a dictionary of all of the schema items as a flat dictionary.
 
@@ -671,15 +546,10 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
         schema element `meta.observation.date` will end up in the
         dictionary as::
 
-            { "meta.observation.date": "2012-04-22" }
+            { "meta.observation.date": "2012-04-22T03:22:05.432" }
 
-        Parameters
-        ----------
-        include_arrays : bool, optional
-            When `True`, include numpy arrays in the dictionary.
-            Default is `False`.
         """
-        return dict(self.items(include_arrays=include_arrays))
+        return dict(self.iteritems())
 
     @property
     def schema(self):
@@ -688,10 +558,81 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
     def get_fileext(self):
         return 'fits'
 
+    # TODO: This is just here for backward compatibility
+    @property
+    def _extra_fits(self):
+        return self.extra_fits
+
+    # TODO: For backward compatibility
+    def get_section(self, name):
+        return getattr(self, name)
+
     @property
     def history(self):
-        return self._storage.history
+        return self._instance.setdefault('history', [])
 
     @history.setter
     def history(self, v):
-        self._storage.history = v
+        self._instance['history'] = v
+
+    def get_fits_wcs(self, hdu_name='PRIMARY', key=' '):
+        """
+        Get a `astropy.wcs.WCS` object created from the FITS WCS
+        information in the model.
+
+        Note that modifying the returned WCS object will not modify
+        the data in this model.  To update the model, use `set_fits_wcs`.
+
+        Parameters
+        ----------
+        hdu_name : str, optional
+            The name of the HDU to get the WCS from.  This must use
+            named HDU's, not numerical order HDUs.  To get the primary HDU,
+            pass ``'PRIMARY'`` (default).
+
+        key : str, optional
+            The name of a particular WCS transform to use.  This may
+            be either ``' '`` or ``'A'``-``'Z'`` and corresponds to
+            the ``"a"`` part of the ``CTYPEia`` cards.  *key* may only
+            be provided if *header* is also provided.
+
+        Returns
+        -------
+        wcs : `astropy.wcs.WCS` or `pywcs.WCS` object
+            The type will depend on what libraries are installed on
+            this system.
+        """
+        hdulist = fits_support.to_fits(None, self._instance, self._schema)
+        hdu = fits_support.get_hdu(hdulist, hdu_name)
+        header = hdu.header
+
+        return WCS(header, key=key, relax=True, fix=True)
+
+    def set_fits_wcs(self, wcs, hdu_name='PRIMARY'):
+        """
+        Sets the FITS WCS information on the model using the given
+        `astropy.wcs.WCS` object.
+
+        Note that the "key" of the WCS is stored in the WCS object
+        itself, so it can not be set as a parameter to this method.
+
+        Parameters
+        ----------
+        wcs : `astropy.wcs.WCS` or `pywcs.WCS` object
+            The object containing FITS WCS information
+
+        hdu_name : str, optional
+            The name of the HDU to set the WCS from.  This must use
+            named HDU's, not numerical order HDUs.  To set the primary
+            HDU, pass ``'PRIMARY'`` (default).
+        """
+        header = wcs.to_header()
+        if hdu_name == 'PRIMARY':
+            hdu = fits.PrimaryHDU(header=header)
+        else:
+            hdu = fits.ImageHDU(name=hdu_name, header=header)
+        hdulist = fits.HDUList([hdu])
+
+        tree = fits_support.from_fits(hdulist, self._schema, validate=False)
+
+        self._instance = properties.merge_tree(self._instance, tree)

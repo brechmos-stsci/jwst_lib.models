@@ -32,7 +32,7 @@ def SchemaAsJson():
     pass
 
 fd = urllib.urlopen(schema.get_schema_path(
-    'schemas/core.schema.json', os.path.dirname(__file__))[0])
+    'schemas/core.schema.yaml', os.path.dirname(__file__))[0])
 try:
     SchemaAsJson.__doc__ = (
         textwrap.dedent(SchemaAsJson.__doc__).format(
@@ -55,7 +55,7 @@ def SchemaAsYaml():
     pass
 
 tree = schema.get_schema(
-    'schemas/core.schema.json', os.path.dirname(__file__))
+    'schemas/core.schema.yaml', os.path.dirname(__file__))
 
 
 def yaml_representer(dumper, obj):

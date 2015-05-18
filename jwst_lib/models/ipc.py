@@ -8,7 +8,7 @@ class IPCModel(model_base.DataModel):
     """
     A data model for IPC kernel checking information.
     """
-    schema_url = "ipc.schema.json"
+    schema_url = "ipc.schema.yaml"
 
     def __init__(self, init=None, data=None, **kwargs):
         super(IPCModel, self).__init__(init=init, **kwargs)

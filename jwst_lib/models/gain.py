@@ -10,7 +10,7 @@ class GainModel(model_base.DataModel):
     """
     A data model for 2D gain
     """
-    schema_url = "gain.schema.json"
+    schema_url = "gain.schema.yaml"
 
     def __init__(self, init=None, data=None, **kwargs):
         super(GainModel, self).__init__(init=init, **kwargs)

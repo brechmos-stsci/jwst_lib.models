@@ -1,0 +1,15 @@
+get_section is removed
+
+_extra_fits --> extra_fits
+
+stringX type --> ('ascii', 7)
+
+METADATA extension is saved in YAML, not JSON
+
+unsafe conversions raise an exception
+
+Removed support for pywcs, pyfits -- both must now use astropy
+
+dtype -> datatype
+
+ValueError -> ValidationError

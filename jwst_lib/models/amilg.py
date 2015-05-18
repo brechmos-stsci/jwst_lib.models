@@ -9,12 +9,12 @@ class AmiLgModel(model_base.DataModel):
     """
     A data model for AMI LG analysis results.
     """
-    schema_url = "amilg.schema.json"
+    schema_url = "amilg.schema.yaml"
 
     def __init__(self, init=None,
                  fit_image=None,
                  resid_image=None,
-                 closure_amp_table=None, 
+                 closure_amp_table=None,
                  closure_phase_table=None,
                  fringe_amp_table=None,
                  fringe_phase_table=None,
@@ -45,4 +45,3 @@ class AmiLgModel(model_base.DataModel):
 
         if solns_table is not None:
             self.solns_table = solns_table
-

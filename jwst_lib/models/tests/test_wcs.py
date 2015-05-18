@@ -1,17 +1,19 @@
+# Licensed under a 3-clause BSD style license - see LICENSE.rst
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, unicode_literals, print_function
+
 import os
 import shutil
 import tempfile
 
-from nose.tools import raises
-
 import numpy as np
-from numpy.testing.decorators import knownfailureif
 from numpy.testing import assert_array_almost_equal
 
 from .. import ImageModel
-from .. import storage
 
 
+TMP_DIR = None
 FITS_FILE = None
 TMP_FITS = None
 
@@ -29,12 +31,14 @@ def teardown():
     shutil.rmtree(TMP_DIR)
 
 
+def _header_to_dict(x):
+    return dict((a, b) for (a, b, c) in x)
+
+
 def test_wcs():
     with ImageModel(FITS_FILE) as dm:
         wcs1 = dm.get_fits_wcs()
-
         dm2 = dm.copy()
-        assert isinstance(dm2.storage, storage.TreeStorage)
         wcs2 = dm2.get_fits_wcs()
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
@@ -43,20 +47,21 @@ def test_wcs():
 
     assert_array_almost_equal(world1, world2)
 
-    wcs1.wcs.crpix[0] = 0.0
+    wcs1.wcs.crpix[0] = 42.0
 
     dm2.set_fits_wcs(wcs1)
-    assert dm2._extra_fits.PRIMARY.CRPIX1 == 0.0
+    header = _header_to_dict(dm2.extra_fits.PRIMARY.header)
+    assert header['CRPIX1'] == 42.0
 
     wcs2 = dm2.get_fits_wcs()
-    assert wcs2.wcs.crpix[0] == 0.0
+    assert wcs2.wcs.crpix[0] == 42.0
 
     dm2.to_fits(TMP_FITS, clobber=True)
 
     with ImageModel(TMP_FITS) as dm3:
         wcs3 = dm3.get_fits_wcs()
 
-    assert wcs3.wcs.crpix[0] == 0.0
+    assert wcs3.wcs.crpix[0] == 42.0
 
     x = np.random.rand(2 ** 16, wcs1.wcs.naxis)
     world1 = wcs1.all_pix2world(x, 1)
@@ -69,4 +74,4 @@ def test_wcs():
     with ImageModel(TMP_FITS) as dm5:
         wcs5 = dm5.get_fits_wcs()
 
-    assert wcs5.wcs.crpix[0] == 0.0
+    assert wcs5.wcs.crpix[0] == 42.0

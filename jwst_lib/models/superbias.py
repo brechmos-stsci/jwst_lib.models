@@ -1,18 +1,17 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
 from . import model_base
-from . import wcs
 from .dynamicdq import dynamic_mask
 
 
 __all__ = ['SuperBiasModel']
 
 
-class SuperBiasModel(model_base.DataModel, wcs.HasFitsWcs):
+class SuperBiasModel(model_base.DataModel):
     """
     A data model for 2D super-bias images.
     """
-    schema_url = "superbias.schema.json"
+    schema_url = "superbias.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, err=None,
                  dq_def=None, **kwargs):

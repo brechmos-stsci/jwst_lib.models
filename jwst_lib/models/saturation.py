@@ -9,7 +9,7 @@ class SaturationModel(model_base.DataModel):
     """
     A data model for saturation checking information.
     """
-    schema_url = "saturation.schema.json"
+    schema_url = "saturation.schema.yaml"
 
     def __init__(self, init=None, data=None, dq=None, dq_def=None, **kwargs):
         super(SaturationModel, self).__init__(init=init, **kwargs)
