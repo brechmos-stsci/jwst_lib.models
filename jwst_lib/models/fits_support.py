@@ -257,6 +257,8 @@ def _fits_array_writer(validator, _, instance, schema):
 
     if 'ndim' in schema:
         ndarray.validate_ndim(validator, schema['ndim'], instance, schema)
+    if 'max_ndim' in schema:
+        ndarray.validate_max_ndim(validator, schema['max_ndim'], instance, schema)
     if 'dtype' in schema:
         ndarray.validate_dtype(validator, schema['dtype'], instance, schema)
 
@@ -280,7 +282,6 @@ def _fits_item_recurse(validator, items, instance, schema):
 
     if validator.is_type(items, "object"):
         for index, item in enumerate(instance):
-            print(index, item)
             validator.sequence_index = index
             for error in validator.descend(item, items, path=index):
                 yield error
@@ -305,6 +306,7 @@ FITS_VALIDATORS = pyasdf_schema.YAML_VALIDATORS.copy()
 FITS_VALIDATORS.update({
     'fits_keyword': _fits_element_writer,
     'ndim': _fits_array_writer,
+    'max_ndim': _fits_array_writer,
     'datatype': _fits_array_writer,
     'items': _fits_item_recurse,
     'properties': _fits_comment_section_handler,
@@ -500,7 +502,7 @@ def _load_from_schema(hdulist, schema, tree, validate=True):
                 else:
                     properties.put_value(path, result, tree)
 
-        elif 'ndim' in schema or 'datatype' in schema:
+        elif 'max_ndim' in schema or 'ndim' in schema or 'datatype' in schema:
             result = _fits_array_loader(
                 hdulist, schema, ctx.get('hdu_index', 0), known_datas)
             if result is not None:
@@ -515,7 +517,10 @@ def _load_from_schema(hdulist, schema, tree, validate=True):
             has_fits_hdu = _schema_has_fits_hdu(schema)
             if has_fits_hdu:
                 for i in range(len(hdulist)):
-                    recurse(schema['items'], path + [i], combiner, {'hdu_index': i})
+                    recurse(schema['items'],
+                            path + [i],
+                            combiner,
+                            {'hdu_index': i})
                 return True
 
     mschema.walk_schema(schema, callback, {'hdu_index': 0})

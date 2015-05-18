@@ -12,8 +12,8 @@ allOf:
       title: 2-D data quality array for all planes
       fits_hdu: DQ
       default: 0
+      ndim: 2
       datatype: uint32
-      max_ndim: 2
     dq_def:
       $ref: dq_def.schema.yaml
     meta:

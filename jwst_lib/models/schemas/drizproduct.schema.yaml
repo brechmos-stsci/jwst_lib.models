@@ -6,8 +6,8 @@ allOf:
       title: The science data
       fits_hdu: SCI
       default: 0.0
+      ndim: 2
       datatype: float32
-      max_ndim: 2
     con:
       title: Drizzle Context array
       fits_hdu: CON

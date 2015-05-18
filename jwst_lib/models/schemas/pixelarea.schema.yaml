@@ -7,8 +7,8 @@ allOf:
       title: The pixel area array
       fits_hdu: SCI
       default: 1.0
+      ndim: 2
       datatype: float32
-      max_ndim: 2
     meta:
       type: object
       properties:

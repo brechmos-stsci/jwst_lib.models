@@ -7,8 +7,8 @@ allOf:
       title: Fitted image
       fits_hdu: FIT
       default: 0.0
+      ndim: 2
       datatype: float32
-      max_ndim: 2
     resid_image:
       title: Residual image
       fits_hdu: RESID

@@ -143,7 +143,7 @@ def test_fits_without_sci():
                 "type": "object",
                 "properties": {
                     "coeffs": {
-                        'ndim': 1,
+                        'max_ndim': 1,
                         'fits_hdu': 'COEFFS',
                         'datatype': 'float32'
                     }

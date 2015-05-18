@@ -7,8 +7,8 @@ allOf:
       title: Linearity coefficients
       fits_hdu: COEFFS
       default: 0.0
+      ndim: 3
       datatype: float32
-      max_ndim: 3
     dq:
       title: Data quality flags
       fits_hdu: DQ

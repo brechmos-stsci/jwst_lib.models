@@ -6,42 +6,42 @@ allOf:
       title: Segment-specific slope
       fits_hdu: SLOPE
       default: 0.0
+      ndim: 4
       datatype: float32
-      max_ndim: 4
     sigslope:
       title: Sigma for segment-specific slope
       fits_hdu: SIGSLOPE
       default: 0.0
+      ndim: 4
       datatype: float32
-      max_ndim: 4
     yint:
       title: Segment-specific y-intercept
       fits_hdu: YINT
       default: 0.0
+      ndim: 4
       datatype: float32
-      max_ndim: 4
     sigyint:
       title: Sigma for segment-specific y-intercept
       fits_hdu: SIGYINT
       default: 0.0
+      ndim: 4
       datatype: float32
-      max_ndim: 4
     pedestal:
       title: Pedestal array
       fits_hdu: PEDESTAL
       default: 0.0
+      ndim: 3
       datatype: float32
-      max_ndim: 3
     weights:
       title: Weights for segment-specific fits
       fits_hdu: WEIGHTS
       default: 0.0
+      ndim: 4
       datatype: float32
-      max_ndim: 4
     crmag:
       title: Approximate CR magnitudes
       fits_hdu: CRMAG
       default: 0.0
+      ndim: 4
       datatype: float32
-      max_ndim: 4
 $schema: http://stsci.edu/schemas/fits-schema/fits-schema

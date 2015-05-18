@@ -444,7 +444,7 @@ def test_data_array():
                                 "data" : {
                                     "fits_hdu" : "FOO",
                                     "default" : 0.0,
-                                    "ndim" : 2,
+                                    "max_ndim" : 2,
                                     "datatype" : "float64"
                                 },
                                 "dq" : {

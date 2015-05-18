@@ -6,8 +6,8 @@ allOf:
       title: Read noise
       fits_hdu: SCI
       default: 0.0
+      ndim: 2
       datatype: float32
-      max_ndim: 2
     meta:
       $ref: referencefile.schema.yaml
 $schema: http://stsci.edu/schemas/fits-schema/fits-schema

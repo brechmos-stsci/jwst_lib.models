@@ -30,6 +30,8 @@ def _cast(val, schema):
             val, ndarray.asdf_datatype_to_numpy_dtype(schema['datatype']))
     if 'ndim' in schema and len(val.shape) != schema['ndim']:
         raise ValueError("Array is wrong shape")
+    if 'max_ndim' in schema and len(val.shape) > schema['max_ndim']:
+        raise ValueError("Array is wrong shape")
     return val
 
 
@@ -37,7 +39,7 @@ def _make_default_array(attr, schema, ctx):
     dtype = schema.get('datatype')
     if dtype is not None:
         dtype = ndarray.asdf_datatype_to_numpy_dtype(dtype)
-    ndim = schema.get('ndim')
+    ndim = schema.get('ndim', schema.get('max_ndim'))
     default = schema.get('default', None)
     primary_array_name = ctx.get_primary_array_name()
 
@@ -76,7 +78,7 @@ def _make_default_array(attr, schema, ctx):
 
 
 def _make_default(attr, schema, ctx):
-    if 'ndim' in schema or 'datatype' in schema:
+    if 'max_ndim' in schema or 'ndim' in schema or 'datatype' in schema:
         return _make_default_array(attr, schema, ctx)
     elif 'default' in schema:
         return schema['default']
