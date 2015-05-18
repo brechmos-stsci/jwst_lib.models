@@ -7,20 +7,20 @@ allOf:
       title: Reset Correction array
       fits_hdu: SCI
       default: 0.0
-      ndim: 4
       datatype: float32
+      max_ndim: 4
     dq:
       title: 2-D data quality array for each integration
       fits_hdu: DQ
       default: 0
-      ndim: 2
       datatype: uint32
+      max_ndim: 2
     err:
       title: Error array
       fits_hdu: ERR
       default: 0.0
-      ndim: 4
       datatype: float32
+      max_ndim: 4
     dq_def:
       $ref: dq_def.schema.yaml
     meta:

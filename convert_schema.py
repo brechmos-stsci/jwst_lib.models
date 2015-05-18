@@ -66,6 +66,13 @@ def convert(in_path, out_path):
         return node
     tree = treeutil.walk_and_modify(tree, convert_datatypes)
 
+    def convert_ndim(node):
+        if isinstance(node, dict) and 'ndim' in node:
+            node['max_ndim'] = node['ndim']
+            del node['ndim']
+        return node
+    tree = treeutil.walk_and_modify(tree, convert_ndim)
+
     tree['$schema'] = 'http://stsci.edu/schemas/fits-schema/fits-schema'
 
     with open(out_path, 'wb') as fd:

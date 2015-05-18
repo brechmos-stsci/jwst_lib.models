@@ -7,24 +7,24 @@ allOf:
       title: Y-intercept
       fits_hdu: YINT
       default: 0.0
-      ndim: 3
       datatype: float32
+      max_ndim: 3
     sigyint:
       title: Sigma for Y-intercept
       fits_hdu: SIGYINT
       default: 0.0
-      ndim: 3
       datatype: float32
+      max_ndim: 3
     crmag:
       title: CR magnitudes
       fits_hdu: CRMAG
       default: 0.0
-      ndim: 4
       datatype: float32
+      max_ndim: 4
     sigcrmag:
       title: Sigma for CR magnitudes
       fits_hdu: SIGCRMAG
       default: 0.0
-      ndim: 4
       datatype: float32
+      max_ndim: 4
 $schema: http://stsci.edu/schemas/fits-schema/fits-schema

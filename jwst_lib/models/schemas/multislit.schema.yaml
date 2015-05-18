@@ -11,8 +11,8 @@ allOf:
           data:
             fits_hdu: SCI
             default: 0.0
-            ndim: 2
             datatype: float32
+            max_ndim: 2
           dq:
             fits_hdu: DQ
             default: 0

@@ -7,8 +7,8 @@ allOf:
       title: Straylight mask
       fits_hdu: MASK
       default: 0.0
-      ndim: 2
       datatype: uint8
+      max_ndim: 2
     meta:
       $ref: referencefile.schema.yaml
 $schema: http://stsci.edu/schemas/fits-schema/fits-schema
