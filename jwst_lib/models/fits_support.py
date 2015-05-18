@@ -15,6 +15,7 @@ from astropy.extern import six
 from astropy.io import fits
 
 from pyasdf import AsdfFile
+from pyasdf import fits_embed
 from pyasdf import resolver
 from pyasdf import schema as pyasdf_schema
 from pyasdf.tags.core import ndarray
@@ -373,39 +374,22 @@ def _save_extra_fits(hdulist, tree):
             hdu.data = parts['data']
 
 
-def _save_metadata_extension(hdulist, tree):
-    def remove_arrays(node):
-        if isinstance(node, np.ndarray):
-            return None
-        return node
-    tree = treeutil.walk_and_modify(tree, remove_arrays)
-
-    # Saves the tree as a raw YAML dump in a special extension called "METADATA"
-    yaml_buffer = io.BytesIO()
-    af = AsdfFile(tree)
-    af.write_to(yaml_buffer)
-    array = np.frombuffer(yaml_buffer.getvalue(), dtype='u1')
-    _get_or_make_hdu(
-        hdulist, b'METADATA', hdu_type=fits.ImageHDU, value=array)
-
-
 def _save_history(hdulist, tree):
     history = tree.get('history', [])
     for entry in history:
         hdulist[0].header['HISTORY'] = entry
 
 
-def to_fits(hdulist, tree, schema):
-    if hdulist is None:
-        hdulist = fits.HDUList()
-        hdulist.append(fits.PrimaryHDU())
+def to_fits(tree, schema):
+    hdulist = fits.HDUList()
+    hdulist.append(fits.PrimaryHDU())
 
     _save_from_schema(hdulist, tree, schema)
     _save_extra_fits(hdulist, tree)
-    _save_metadata_extension(hdulist, tree)
     _save_history(hdulist, tree)
 
-    return hdulist
+    asdf = fits_embed.AsdfInFits(hdulist, tree)
+    return asdf
 
 
 ##############################################################################
@@ -458,19 +442,6 @@ def _schema_has_fits_hdu(schema):
             has_fits_hdu[0] = True
     treeutil.walk(schema, walker)
     return has_fits_hdu[0]
-
-
-def _load_metadata_extension(hdulist, schema):
-    try:
-        hdu = get_hdu(hdulist, b'METADATA')
-    except AttributeError:
-        return {}
-    else:
-        yaml_buffer = io.BytesIO(hdu.data.tostring())
-        yaml_buffer.seek(0)
-        with AsdfFile.open(yaml_buffer) as af:
-            tree = af.tree
-        return tree
 
 
 def _load_from_schema(hdulist, schema, tree, validate=True):
@@ -566,9 +537,16 @@ def _load_history(hdulist, tree):
 
 
 def from_fits(hdulist, schema, validate=True):
-    tree = _load_metadata_extension(hdulist, schema)
-    known_keywords, known_datas = _load_from_schema(hdulist, schema, tree, validate)
+    if b'ASDF' in hdulist:
+        ff = fits_embed.AsdfInFits.open(hdulist)
+        tree = ff.tree
+    else:
+        tree = {}
+        ff = None
+
+    known_keywords, known_datas = _load_from_schema(
+        hdulist, schema, tree, validate)
     _load_extra_fits(hdulist, known_keywords, known_datas, tree)
     _load_history(hdulist, tree)
 
-    return tree
+    return ff, tree

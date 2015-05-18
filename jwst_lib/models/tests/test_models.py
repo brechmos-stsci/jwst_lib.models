@@ -282,7 +282,8 @@ def test_multislit_metadata():
 def test_multislit_copy():
     with MultiSlitModel() as input:
         for i in range(4):
-            input.slits.append(input.slits.item())
+            input.slits.append(input.slits.item(
+                data=np.empty((50, 50), dtype=np.float32)))
 
         i = 0
         for slit in input.slits:
@@ -298,6 +299,10 @@ def test_multislit_copy():
         for slit in output.slits:
             i += 1
         assert i == 4
+
+    from astropy.io import fits
+    with fits.open(TMP_FITS) as hdulist:
+        assert len(hdulist) == 6
 
     with MultiSlitModel(TMP_FITS) as input:
         i = 0

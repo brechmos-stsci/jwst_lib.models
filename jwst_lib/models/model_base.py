@@ -69,8 +69,7 @@ class DataModel(properties.ObjectNode):
 
         self._schema = mschema.flatten_combiners(schema)
 
-        self._asdf_file = None
-        self._fits_file = None
+        self._files_to_close = []
         is_array = False
         is_shape = False
         shape = None
@@ -102,7 +101,9 @@ class DataModel(properties.ObjectNode):
             instance = {}
             is_shape = True
         elif isinstance(init, fits.HDUList):
-            instance = fits_support.from_fits(init, self._schema, validate=False)
+            file_to_close, instance = fits_support.from_fits(
+                init, self._schema, validate=False)
+            self._files_to_close.append(file_to_close)
         elif isinstance(init, six.string_types):
             if isinstance(init, bytes):
                 init = init.decode(sys.getfilesystemencoding())
@@ -110,15 +111,17 @@ class DataModel(properties.ObjectNode):
                 hdulist = fits.open(init)
             except IOError:
                 try:
-                    self._asdf_file = AsdfFile.read(init)
+                    fd = AsdfFile.read(init)
                     # TODO: Add json support
                 except ValueError:
                     raise IOError("File does not appear to be a FITS or ASDF file.")
                 else:
+                    self._files_to_close.append(fd)
                     instance = self._asdf_file.tree
             else:
-                self._fits_file = hdulist
-                instance = fits_support.from_fits(hdulist, self._schema, validate=False)
+                self._files_to_close.append(hdulist)
+                fd, instance = fits_support.from_fits(hdulist, self._schema, validate=False)
+                self._files_to_close.append(fd)
 
         self._shape = shape
         self._ctx = self
@@ -145,10 +148,9 @@ class DataModel(properties.ObjectNode):
         self.close()
 
     def close(self):
-        if self._fits_file:
-            self._fits_file.close()
-        if self._asdf_file:
-            self._asdf_file.close()
+        for fd in self._files_to_close:
+            if fd is not None:
+                fd.close()
 
     def copy(self):
         """
@@ -278,8 +280,8 @@ class DataModel(properties.ObjectNode):
             Any additional arguments are passed along to
             `astropy.io.fits.writeto`.
         """
-        with fits_support.to_fits(None, self._instance, self._schema) as hdulist:
-            hdulist.writeto(init, *args, **kwargs)
+        with fits_support.to_fits(self._instance, self._schema) as ff:
+            ff.write_to(init, *args, **kwargs)
 
     @property
     def shape(self):
@@ -602,8 +604,8 @@ class DataModel(properties.ObjectNode):
             The type will depend on what libraries are installed on
             this system.
         """
-        hdulist = fits_support.to_fits(None, self._instance, self._schema)
-        hdu = fits_support.get_hdu(hdulist, hdu_name)
+        ff = fits_support.to_fits(self._instance, self._schema)
+        hdu = fits_support.get_hdu(ff._hdulist, hdu_name)
         header = hdu.header
 
         return WCS(header, key=key, relax=True, fix=True)
@@ -633,6 +635,6 @@ class DataModel(properties.ObjectNode):
             hdu = fits.ImageHDU(name=hdu_name, header=header)
         hdulist = fits.HDUList([hdu])
 
-        tree = fits_support.from_fits(hdulist, self._schema, validate=False)
+        ff, tree = fits_support.from_fits(hdulist, self._schema, validate=False)
 
         self._instance = properties.merge_tree(self._instance, tree)

@@ -314,7 +314,7 @@ def test_table_with_metadata():
     assert isinstance(hdulist[1], fits.BinTableHDU)
     assert hdulist[1].name == 'FLUX'
     assert isinstance(hdulist[2], fits.ImageHDU)
-    assert hdulist[2].name == 'METADATA'
+    assert hdulist[2].name == 'ASDF'
 
 
 def test_replace_table():
@@ -406,7 +406,7 @@ def test_metadata_from_fits():
         dm.save(TMP_FITS2)
 
     with fits.open(TMP_FITS2) as hdulist:
-        assert hdulist[2].name == 'METADATA'
+        assert hdulist[2].name == 'ASDF'
 
 
 # def test_float_as_int():

@@ -509,7 +509,7 @@ def test_data_array():
                    hdu.header.get('EXTVER')))
         print(x)
         assert x == set(
-            [('FOO', 2), ('FOO', 1), ('METADATA', None), ('DQ', 2),
+            [('FOO', 2), ('FOO', 1), ('ASDF', None), ('DQ', 2),
              (None, None)])
 
 
