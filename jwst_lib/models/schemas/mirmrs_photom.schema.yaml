@@ -9,7 +9,9 @@ allOf:
       datatype:
       - name: band
         datatype: [ascii, 12]
-      - name: photflam
+      - name: photmjsr
+        datatype: float32
+      - name: uncertainty
         datatype: float32
       - name: nelem
         datatype: int16

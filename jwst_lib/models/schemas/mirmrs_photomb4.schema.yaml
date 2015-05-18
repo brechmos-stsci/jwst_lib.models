@@ -1,19 +1,15 @@
-title: NIRCam photometric flux conversion data model
+title: MIRI MRS photometric flux conversion data model
 allOf:
-- $ref: photom.schema.yaml
+- $ref: photomb4.schema.yaml
 - type: object
   properties:
     phot_table:
       title: Photometric flux conversion factors table
       fits_hdu: PHOTOM
       datatype:
-      - name: filter
+      - name: band
         datatype: [ascii, 12]
-      - name: pupil
-        datatype: [ascii, 12]
-      - name: photmjsr
-        datatype: float32
-      - name: uncertainty
+      - name: photflam
         datatype: float32
       - name: nelem
         datatype: int16
