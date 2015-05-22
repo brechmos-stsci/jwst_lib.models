@@ -1,7 +1,12 @@
 {
     "title" : "IPC kernel model",
     "allOf" : [
-        {"$ref": "core.schema.json"},
+        {
+            "$ref": "core.schema.json"
+        },
+        {
+            "$ref" : "referencefile.schema.json"
+        },
         {
             "type" : "object",
             "properties" : {
@@ -12,10 +17,7 @@
                     "fits_hdu" : "SCI",
                     "default" : 1.0,
                     "dtype" : "float32"
-                },
-
-                "meta" : {"$ref" : "referencefile.schema.json"}
-
+                }
             }
         }
     ]

@@ -1,6 +1,7 @@
 {
     "allOf": [
         {"$ref": "core.schema.json"},
+        {"$ref": "referencefile.schema.json"},
         {
             "type" : "object",
             "properties" : {
@@ -12,10 +13,7 @@
                     "default" : 0.0,
                     "ndim" : 2,
                     "dtype" : "float32"
-                },
-
-                "meta" : {"$ref" : "referencefile.schema.json"}
-
+                }
             }
         }
     ]

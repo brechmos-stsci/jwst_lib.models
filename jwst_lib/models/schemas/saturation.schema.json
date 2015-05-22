@@ -2,6 +2,7 @@
     "title": "Saturation checking data",
     "allOf" : [
         {"$ref": "core.schema.json"},
+        {"$ref": "referencefile.schema.json"},
         {
             "type" : "object",
             "properties" : {
@@ -25,9 +26,8 @@
                     "dtype" : "uint32"
                 },
 
-		"dq_def" : {"$ref" : "dq_def.schema.json"},
+		"dq_def" : {"$ref" : "dq_def.schema.json"}
 
-                "meta" : {"$ref" : "referencefile.schema.json"}
             }
         }
     ]

@@ -1,11 +1,7 @@
 {
     "allOf": [
-        {
-            "$ref": "core.schema.json"
-        },
-        {
-            "$ref" : "referencefile.schema.json"
-        },
+        {"$ref": "core.schema.json"},
+        {"$ref": "referencefile.schema.json"},
         {
             "type" : "object",
             "properties" : {

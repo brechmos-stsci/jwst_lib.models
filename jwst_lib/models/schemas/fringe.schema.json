@@ -1,6 +1,7 @@
 {
     "allOf": [
         {"$ref": "core.schema.json"},
+        {"$ref": "referencefile.schema.json"},
         {
             "type" : "object",
             "properties" : {
@@ -32,9 +33,7 @@
                     "dtype" : "float32"
                 },
 
-		"dq_def" : {"$ref" : "dq_def.schema.json"},
-
-                "meta" : {"$ref" : "referencefile.schema.json"}
+		"dq_def" : {"$ref" : "dq_def.schema.json"}
             }
         }
     ]

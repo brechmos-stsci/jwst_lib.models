@@ -2,6 +2,7 @@
     "title" : "Photometric flux conversion data model",
     "allOf" : [
         {"$ref" : "core.schema.json"},
+        {"$ref" : "referencefile.schema.json"},
         {
             "type" : "object",
             "properties" : {
@@ -19,10 +20,7 @@
                         {"name": "response", "dtype": "float32", "shape": [50]},
                         {"name": "resperr", "dtype": "float32", "shape": [50]}
                     ]
-                },
-
-                "meta" :
-                {"$ref" : "referencefile.schema.json"}
+                }
             }
         }
     ]
