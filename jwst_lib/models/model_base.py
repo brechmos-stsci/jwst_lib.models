@@ -119,8 +119,8 @@ class DataModel(properties.ObjectNode):
                     self._files_to_close.append(fd)
                     instance = self._asdf_file.tree
             else:
-                self._files_to_close.append(hdulist)
-                fd, instance = fits_support.from_fits(hdulist, self._schema, validate=False)
+                fd, instance = fits_support.from_fits(hdulist, self._schema,
+                                                      validate=False)
                 self._files_to_close.append(fd)
 
         self._shape = shape
