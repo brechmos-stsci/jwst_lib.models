@@ -2,7 +2,6 @@
 
 from __future__ import absolute_import, division, unicode_literals, print_function
 
-import io
 import os
 import re
 import warnings
@@ -14,7 +13,6 @@ import jsonschema
 from astropy.extern import six
 from astropy.io import fits
 
-from pyasdf import AsdfFile
 from pyasdf import fits_embed
 from pyasdf import resolver
 from pyasdf import schema as pyasdf_schema

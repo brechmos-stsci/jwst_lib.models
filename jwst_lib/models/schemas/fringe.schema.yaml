@@ -1,5 +1,6 @@
 allOf:
 - $ref: core.schema.yaml
+- $ref: referencefile.schema.yaml
 - type: object
   properties:
     data:
@@ -20,6 +21,4 @@ allOf:
       datatype: float32
     dq_def:
       $ref: dq_def.schema.yaml
-    meta:
-      $ref: referencefile.schema.yaml
 $schema: http://stsci.edu/schemas/fits-schema/fits-schema

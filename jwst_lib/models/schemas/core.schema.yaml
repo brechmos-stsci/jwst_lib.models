@@ -750,6 +750,10 @@ properties:
             title: Data Quality Initialization
             type: string
             fits_keyword: S_DQINIT
+          superbias:
+            title: Superbias Subtraction
+            type: string
+            fits_keyword: S_SUPERB
           bias_drift:
             title: Reference Pixel Correction
             type: string
