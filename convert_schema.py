@@ -41,21 +41,21 @@ def convert(in_path, out_path):
 
     yaml.SafeDumper.add_representer(None, yaml_representer)
 
-    def convert_references(node):
+    def convert_references(node, json_id):
         if isinstance(node, six.string_types):
             if node.endswith('schema.json'):
                 return node[:-4] + 'yaml'
         return node
     tree = treeutil.walk_and_modify(tree, convert_references)
 
-    def remove_type_of_data(node):
+    def remove_type_of_data(node, json_id):
         if isinstance(node, dict):
             if node.get('type') == 'data':
                 del node['type']
         return node
     tree = treeutil.walk_and_modify(tree, remove_type_of_data)
 
-    def convert_datatypes(node):
+    def convert_datatypes(node, json_id):
         if isinstance(node, dict) and 'dtype' in node:
             node['datatype'] = node['dtype']
             del node['dtype']
