@@ -74,14 +74,15 @@ class DataModel(properties.ObjectNode):
         is_shape = False
         shape = None
         if init is None:
-            instance = {}
+            asdf = AsdfFile()
         elif isinstance(init, dict):
-            instance = init
+            asdf = AsdfFile(init)
         elif isinstance(init, np.ndarray):
-            instance = {}
+            asdf = AsdfFile()
             shape = init.shape
             is_array = True
         elif isinstance(init, self.__class__):
+            # TODO
             self._shape = init._shape
             self._instance = init._instance
             self._ctx = self
@@ -92,18 +93,17 @@ class DataModel(properties.ObjectNode):
                 "Passed in {0!r} is not of the expected subclass {1!r}".format(
                     init.__class__.__name__, self.__class__.__name__))
         elif isinstance(init, AsdfFile):
-            instance = init.tree
+            asdf = init
         elif isinstance(init, tuple):
             for item in init:
                 if not isinstance(item, int):
                     raise ValueError("shape must be a tuple of ints")
             shape = init
-            instance = {}
+            asdf = AsdfFile()
             is_shape = True
         elif isinstance(init, fits.HDUList):
-            file_to_close, instance = fits_support.from_fits(
+            asdf = fits_support.from_fits(
                 init, self._schema, validate=False)
-            self._files_to_close.append(file_to_close)
         elif isinstance(init, six.string_types):
             if isinstance(init, bytes):
                 init = init.decode(sys.getfilesystemencoding())
@@ -111,24 +111,22 @@ class DataModel(properties.ObjectNode):
                 hdulist = fits.open(init)
             except IOError:
                 try:
-                    fd = AsdfFile.read(init)
+                    asdf = AsdfFile.open(init)
                     # TODO: Add json support
                 except ValueError:
-                    raise IOError("File does not appear to be a FITS or ASDF file.")
-                else:
-                    self._files_to_close.append(fd)
-                    instance = self._asdf_file.tree
+                    raise IOError(
+                        "File does not appear to be a FITS or ASDF file.")
             else:
-                fd, instance = fits_support.from_fits(hdulist, self._schema,
-                                                      validate=False)
-                self._files_to_close.append(fd)
+                asdf = fits_support.from_fits(
+                    hdulist, self._schema, validate=False)
+                self._files_to_close.append(hdulist)
 
         self._shape = shape
         self._ctx = self
-        self._instance = instance
+        self._instance = asdf.tree
+        self._asdf = asdf
 
-        # TODO
-        # self.meta.date = datetime.datetime.now()
+        self.meta.date = datetime.datetime.now()
 
         if is_array:
             primary_array_name = self.get_primary_array_name()
@@ -635,6 +633,6 @@ class DataModel(properties.ObjectNode):
             hdu = fits.ImageHDU(name=hdu_name, header=header)
         hdulist = fits.HDUList([hdu])
 
-        ff, tree = fits_support.from_fits(hdulist, self._schema, validate=False)
+        ff = fits_support.from_fits(hdulist, self._schema, validate=False)
 
-        self._instance = properties.merge_tree(self._instance, tree)
+        self._instance = properties.merge_tree(self._instance, ff.tree)

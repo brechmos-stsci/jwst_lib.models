@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals, division, print_function
 
+import datetime
 import os
 import shutil
 import tempfile
@@ -276,7 +277,8 @@ def test_multislit_metadata():
     with MultiSlitModel() as ms:
         ms.slits.append(ms.slits.item())
         for key, val in ms.iteritems():
-            assert isinstance(val, (bytes, unicode, int, long, float, bool))
+            assert isinstance(val, (bytes, unicode, int, long, float, bool,
+                                    datetime.datetime))
 
 
 def test_multislit_copy():

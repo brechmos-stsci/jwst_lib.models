@@ -6,10 +6,10 @@ properties:
     type: object
     properties:
       date:
-        title: Date this file was created (UTC)
-        type: string
-        format: http://www.stsci.edu/types/fits-date-time
-        fits_keyword: DATE
+        allOf:
+        - $ref: http://stsci.edu/schemas/asdf/0.1.0/time/time
+        - title: Date this file was created (UTC)
+          fits_keyword: DATE
       origin:
         title: Organization responsible for creating file
         type: string
@@ -76,14 +76,13 @@ properties:
         type: object
         properties:
           date:
-            title: UTC date at the start of the exposure
-            type: string
-            format: http://www.stsci.edu/types/fits-date
-            fits_keyword: DATE-OBS
+            allOf:
+            - $ref: http://stsci.edu/schemas/asdf/0.1.0/time/time
+            - title: UTC date at the start of the exposure
+              fits_keyword: DATE-OBS
           time:
             title: UTC time at the start of the exposure
             type: string
-            format: http://www.stsci.edu/types/fits-time
             fits_keyword: TIME-OBS
           obs_id:
             title: Programmatic observation identifier

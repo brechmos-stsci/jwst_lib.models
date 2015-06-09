@@ -14,9 +14,9 @@ from astropy.extern.six.moves import xrange
 from astropy.utils.compat.misc import override__dir__
 
 from pyasdf import schema
+from pyasdf import yamlutil
 from pyasdf.tags.core import ndarray
 
-from . import extensions
 from . import util
 
 
@@ -137,8 +137,10 @@ class Node(object):
         self._ctx = ctx
 
     def _validate(self):
-        schema.validate(self._instance, schema=self._schema,
-                        format_checker=extensions.FormatChecker)
+        instance = yamlutil.custom_tree_to_tagged_tree(
+            self._instance, self._ctx._asdf)
+        schema.validate(
+            instance, schema=self._schema)
 
 
 class ObjectNode(Node):

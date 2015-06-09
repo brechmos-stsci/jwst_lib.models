@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import, division, unicode_literals, print_function
 
+import datetime
 import os
 import shutil
 import tempfile
@@ -66,12 +67,11 @@ def test_date():
         dm.meta.date = 'Not an acceptable date'
 
 
-# TODO
-# def test_date2():
-#     import datetime
+def test_date2():
+    from astropy import time
 
-#     with ImageModel((50, 50)) as dm:
-#         assert isinstance(dm.meta.date, datetime.datetime)
+    with ImageModel((50, 50)) as dm:
+        assert isinstance(dm.meta.date, (time.Time, datetime.datetime))
 
 
 transformation_schema = {

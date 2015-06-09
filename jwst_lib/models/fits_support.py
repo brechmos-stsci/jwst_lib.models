@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import, division, unicode_literals, print_function
 
+import datetime
 import os
 import re
 import warnings
@@ -12,12 +13,14 @@ import jsonschema
 
 from astropy.extern import six
 from astropy.io import fits
+from astropy import time
 
 from pyasdf import fits_embed
 from pyasdf import resolver
 from pyasdf import schema as pyasdf_schema
 from pyasdf.tags.core import ndarray
 from pyasdf import treeutil
+from pyasdf.util import HashableDict
 
 from jsonschema import validators
 
@@ -299,7 +302,7 @@ def _fits_type(validator, items, instance, schema):
     return validators._validators.type_draft4(validator, items, instance, schema)
 
 
-FITS_VALIDATORS = pyasdf_schema.YAML_VALIDATORS.copy()
+FITS_VALIDATORS = HashableDict(pyasdf_schema.YAML_VALIDATORS)
 
 
 FITS_VALIDATORS.update({
@@ -317,28 +320,11 @@ META_SCHEMA_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), 'metaschema'))
 
 
-FITS_SCHEMA_URL_MAPPING = resolver.Resolver([
-    ('http://stsci.edu/schemas/fits-schema/',
-     'file://' + META_SCHEMA_PATH + '/{url_suffix}.yaml')], 'url')
-
-
-_fits_saver = None
-def _get_fits_saver():
-    global _fits_saver
-    if _fits_saver is not None:
-        return _fits_saver
-
-    validator = validators.create(
-        meta_schema=pyasdf_schema.load_schema(
-            'http://stsci.edu/schemas/fits-schema/fits-schema',
-            FITS_SCHEMA_URL_MAPPING),
-        validators=FITS_VALIDATORS)
-
-    _fits_saver = validator
-    return _fits_saver
-
-
-# print(validators.meta_schemas)
+FITS_SCHEMA_URL_MAPPING = resolver.Resolver(
+    [
+        ('http://stsci.edu/schemas/fits-schema/',
+         'file://' + META_SCHEMA_PATH + '/{url_suffix}.yaml')
+    ] + resolver.DEFAULT_URL_MAPPING, 'url')
 
 
 # TODO
@@ -347,15 +333,22 @@ def _get_fits_saver():
 
 
 def _save_from_schema(hdulist, tree, schema):
-    fits_saver = _get_fits_saver()
+    def convert_datetimes(node, json_id):
+        if isinstance(node, datetime.datetime):
+            node = time.Time(node)
+        if isinstance(node, time.Time):
+            node = six.text_type(time.Time(node, format='iso'))
+        return node
+    tree = treeutil.walk_and_modify(tree, convert_datetimes)
 
-    validator = fits_saver(schema)
+    validator = pyasdf_schema.get_validator(
+        schema, None, FITS_VALIDATORS, FITS_SCHEMA_URL_MAPPING)
 
     validator.hdulist = hdulist
     # TODO: Handle comment stack on per-hdu-basis
     validator.comment_stack = []
     # This actually kicks off the saving
-    validator.validate(tree)
+    validator.validate(tree, _schema=schema)
 
 
 def _save_extra_fits(hdulist, tree):
@@ -401,9 +394,6 @@ def _fits_keyword_loader(hdulist, fits_keyword, schema, hdu_index, known_keyword
     except AttributeError:
         return None
 
-    if schema['type'] == 'data':
-        return hdu.data
-
     try:
         val = hdu.header[fits_keyword]
     except KeyError:
@@ -435,10 +425,10 @@ def _fits_array_loader(hdulist, schema, hdu_index, known_datas):
 def _schema_has_fits_hdu(schema):
     has_fits_hdu = [False]
 
-    def walker(node):
+    for node in treeutil.iter_tree(schema):
         if isinstance(node, dict) and 'fits_hdu' in node:
             has_fits_hdu[0] = True
-    treeutil.walk(schema, walker)
+
     return has_fits_hdu[0]
 
 
@@ -471,7 +461,8 @@ def _load_from_schema(hdulist, schema, tree, validate=True):
                 else:
                     properties.put_value(path, result, tree)
 
-        elif 'max_ndim' in schema or 'ndim' in schema or 'datatype' in schema:
+        elif 'fits_hdu' in schema and (
+                'max_ndim' in schema or 'ndim' in schema or 'datatype' in schema):
             result = _fits_array_loader(
                 hdulist, schema, ctx.get('hdu_index', 0), known_datas)
             if result is not None:
@@ -535,16 +526,11 @@ def _load_history(hdulist, tree):
 
 
 def from_fits(hdulist, schema, validate=True):
-    if b'ASDF' in hdulist:
-        ff = fits_embed.AsdfInFits.open(hdulist)
-        tree = ff.tree
-    else:
-        tree = {}
-        ff = None
+    ff = fits_embed.AsdfInFits.open(hdulist)
 
     known_keywords, known_datas = _load_from_schema(
-        hdulist, schema, tree, validate)
-    _load_extra_fits(hdulist, known_keywords, known_datas, tree)
-    _load_history(hdulist, tree)
+        hdulist, schema, ff.tree, validate)
+    _load_extra_fits(hdulist, known_keywords, known_datas, ff.tree)
+    _load_history(hdulist, ff.tree)
 
-    return ff, tree
+    return ff
