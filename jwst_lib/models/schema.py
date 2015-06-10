@@ -233,7 +233,9 @@ class ValidatingList(object):
     def extend(self, other):
         other = self.__cast(other)
         for item in other:
-            self.append(item)
+            self._check(item)
+        for item in other:
+            self._x.append(self._check(item))
 
 
 class schema_property(object):

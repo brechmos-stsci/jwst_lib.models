@@ -168,7 +168,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
                 if isinstance(val, np.ndarray):
                     c = val.copy()
                 else:
-                    c = copy.copy(val)
+                    c = copy.deepcopy(val)
             new.storage.__set__(prop, obj, c)
 
         return new

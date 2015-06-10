@@ -594,3 +594,27 @@ def test_add_schema_entry():
 def test_table_size_zero():
     with AsnModel() as dm:
         assert len(dm.asn_table) == 0
+
+
+def test_copy_multslit():
+    model1 = MultiSlitModel()
+    model2 = MultiSlitModel()
+
+    model1.slits.append(ImageModel(np.ones((1024, 1024))))
+    model2.slits.append(ImageModel(np.ones((1024, 1024)) * 2))
+
+    # Create the ouput model as a copy of the first input
+    output = model1.copy()
+
+    assert len(model1.slits) == 1
+    assert len(model2.slits) == 1
+    assert len(output.slits) == 1
+
+    assert model1.slits[0].data[330, 330] == 1
+    assert output.slits[0].data[330, 330] == 1
+    assert id(model1.slits[0].data) != id(output.slits[0].data)
+
+    output.slits[0].data = model1.slits[0].data - model2.slits[0].data
+
+    assert model1.slits[0].data[330, 330] == 1
+    assert output.slits[0].data[330, 330] == -1
