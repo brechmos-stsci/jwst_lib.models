@@ -82,9 +82,9 @@ class DataModel(properties.ObjectNode):
             shape = init.shape
             is_array = True
         elif isinstance(init, self.__class__):
-            # TODO
             self._shape = init._shape
             self._instance = init._instance
+            self._asdf = None
             self._ctx = self
             self.__class__ = init.__class__
             return
@@ -122,9 +122,9 @@ class DataModel(properties.ObjectNode):
                 self._files_to_close.append(hdulist)
 
         self._shape = shape
-        self._ctx = self
         self._instance = asdf.tree
         self._asdf = asdf
+        self._ctx = self
 
         self.meta.date = datetime.datetime.now()
 
@@ -190,13 +190,15 @@ class DataModel(properties.ObjectNode):
 
     def save(self, path, *args, **kwargs):
         """
-        TODO
-        """
-        self.on_save(path)
+        Save to either a FITS or ASDF file, depending on the path.
 
+        Parameters
+        ----------
+        path : string
+        """
         base, ext = os.path.splitext(path)
         if isinstance(ext, bytes):
-            ext = ext.decode('ascii')
+            ext = ext.decode(sys.getfilesystemencoding())
 
         # TODO: Support gzip-compressed fits
         if ext == '.fits':
@@ -241,8 +243,9 @@ class DataModel(properties.ObjectNode):
             Any additional arguments are passed along to
             `pyasdf.AsdfFile.write_to`.
         """
-        with AsdfFile(self._instance).write_to(init, *args, **kwargs):
-            pass
+        self.on_save(init)
+
+        AsdfFile(self._instance).write_to(init, *args, **kwargs)
 
     @classmethod
     def from_fits(cls, init, schema=None):
@@ -278,6 +281,8 @@ class DataModel(properties.ObjectNode):
             Any additional arguments are passed along to
             `astropy.io.fits.writeto`.
         """
+        self.on_save(init)
+
         with fits_support.to_fits(self._instance, self._schema) as ff:
             ff.write_to(init, *args, **kwargs)
 
@@ -535,8 +540,17 @@ class DataModel(properties.ObjectNode):
             returns (key, value) pairs where the keys are
             dot-separated paths to metadata elements.
         """
-        # TODO: This needs to be recursive
-        self._instance.update(copy.deepcopy(d._instance))
+        def recurse(a, b):
+            for key, val in b.iteritems():
+                if key in a and isinstance(a[key], dict) and isinstance(val, dict):
+                    recurse(a[key], val)
+                else:
+                    a[key] = val
+
+        if isinstance(d, DataModel):
+            d = d._instance
+
+        recurse(self._instance, d)
 
     def to_flat_dict(self):
         """

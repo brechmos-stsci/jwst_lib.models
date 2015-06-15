@@ -24,11 +24,11 @@ MASK_FILE = None
 TMP_FITS = None
 TMP_FITS2 = None
 TMP_YAML = None
-TMP_JSON = None
+TMP_ASDF = None
 TMP_DIR = None
 
 def setup():
-    global FITS_FILE, MASK_FILE, TMP_DIR, TMP_FITS, TMP_YAML, TMP_JSON, TMP_FITS2
+    global FITS_FILE, MASK_FILE, TMP_DIR, TMP_FITS, TMP_YAML, TMP_ASDF, TMP_FITS2
     ROOT_DIR = os.path.dirname(__file__)
     FITS_FILE = os.path.join(ROOT_DIR, 'test.fits')
     MASK_FILE = os.path.join(ROOT_DIR, 'mask.fits')
@@ -37,7 +37,7 @@ def setup():
     TMP_FITS = os.path.join(TMP_DIR, 'tmp.fits')
     TMP_FITS2 = os.path.join(TMP_DIR, 'tmp2.fits')
     TMP_YAML = os.path.join(TMP_DIR, 'tmp.yaml')
-    TMP_JSON = os.path.join(TMP_DIR, 'tmp.json')
+    TMP_ASDF = os.path.join(TMP_DIR, 'tmp.asdf')
 
 
 def teardown():
@@ -135,65 +135,14 @@ def test_list2():
              'coeff': 2.0})
 
 
-# TODO
-# def test_list3():
-#     with DataModel(schema=transformation_schema) as dm:
-#         assert dm.meta.transformations == []
-#         trans = dm.meta.transformations.item(
-#             type = "SIN",
-#             coeff = 2.0)
-#         l = dm.meta.transformations
-#         l.append(trans)
-#         l.append(
-#             {'type': 'TAN', 'coeff': 42.0})
-#         r = repr(l)
-#         assert r[0] == '[' and r[-1] == ']'
-#         dm.to_json(TMP_JSON)
+def test_ad_hoc_json():
+    with DataModel() as dm:
+        dm.meta.foo = {'a': 42, 'b': ['a', 'b', 'c']}
 
-#         with DataModel.from_json(
-#                 TMP_JSON, schema=transformation_schema) as dm2:
-#             l2 = dm2.meta.transformations
-#             assert len(l2) == 2
-#             assert l2[0].type == 'SIN'
-#             assert l2[1].type == 'TAN'
+        dm.save(TMP_ASDF)
 
-#             assert not l < l2
-#             assert not l > l2
-#             assert l <= l2
-#             assert l >= l2
-#             assert l == l2
-#             assert not l != l2
-
-#             assert trans in l2
-#             assert {'type': 'TAN', 'coeff': 42.0} in l2
-#             assert l2.index({'type': 'TAN', 'coeff': 42.0}) == 1
-
-#             l3 = l + l2
-#             assert len(l3) == len(l) + len(l2)
-#             assert {'type': 'TAN', 'coeff': 42.0} in l3
-
-#             l4 = l * 5
-#             assert len(l4) == len(l) * 5
-#             assert l4.count({'type': 'TAN', 'coeff': 42.0}) == 5
-#             item = l4.pop()
-#             l4.remove({'type': 'TAN', 'coeff': 42.0})
-#             # TODO: Reinstate assert l4[0] == l[1]
-
-#             l2[1] = {'type': 'SIN', 'coeff': 72.0}
-#             assert {'type': 'TAN', 'coeff': 42.0} not in l2
-#             del l2[1]
-#             assert {'type': 'SIN', 'coeff': 72.0} not in l2
-
-
-# TODO
-# def test_ad_hoc_json():
-#     with DataModel() as dm:
-#         dm.meta.foo = {'a': 42, 'b': ['a', 'b', 'c']}
-
-#         dm.to_json(TMP_JSON)
-
-#     with DataModel.from_json(TMP_JSON) as dm2:
-#         assert dm2.meta.foo == {'a': 42, 'b': ['a', 'b', 'c']}
+    with DataModel(TMP_ASDF) as dm2:
+        assert dm2.meta.foo == {'a': 42, 'b': ['a', 'b', 'c']}
 
 
 def test_ad_hoc_fits():

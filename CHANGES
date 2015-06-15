@@ -13,3 +13,5 @@ Removed support for pywcs, pyfits -- both must now use astropy
 dtype -> datatype
 
 ValueError -> ValidationError
+
+to_json -> removed -- used save('*.asdf')

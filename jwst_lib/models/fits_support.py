@@ -327,11 +327,6 @@ FITS_SCHEMA_URL_MAPPING = resolver.Resolver(
     ] + resolver.DEFAULT_URL_MAPPING, 'url')
 
 
-# TODO
-# validators.meta_schemas['http://stsci.edu/schemas/fits-schema/fits-schema'] = \
-#     validators.meta_schemas['http://stsci.edu/schemas/asdf-schema/0.1.0/asdf-schema']
-
-
 def _save_from_schema(hdulist, tree, schema):
     def convert_datetimes(node, json_id):
         if isinstance(node, datetime.datetime):
