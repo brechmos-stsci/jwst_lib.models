@@ -8,7 +8,18 @@ __all__ = ['MaskModel']
 
 class MaskModel(model_base.DataModel):
     """
-    A data model for 2D masks
+    A data model for 2D masks.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    dq : numpy array
+        The data quality array.
+
+    dq_def : numpy array
+        The data quality definitions table.
     """
     schema_url = "mask.schema.yaml"
 

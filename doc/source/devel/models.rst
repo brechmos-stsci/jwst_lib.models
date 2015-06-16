@@ -3,8 +3,8 @@ Data models
 
 The purpose of the data model is to abstract away the peculiarities of
 the underlying file format.  The same data model may be used for data
-created from scratch in memory, or loaded from FITS files or some
-future FITS-replacement format.
+created from scratch in memory, or loaded from FITS or ASDF files or
+some future file format.
 
 About models
 ============
@@ -13,11 +13,6 @@ Hierarchy of models
 -------------------
 
 There are different data model classes for different kinds of data.
-
-.. note::
-
-    TODO: This currently only includes image and ramp, but will grow
-    to include spectral types etc.
 
 One model instance, many arrays
 -------------------------------
@@ -53,9 +48,9 @@ the arrays are accessed.  This is useful if, for example, you don’t
 need a data quality array -- the memory for such an array will not be
 consumed::
 
-        # Print out the data array.  It is allocated here on first access
-        # and defaults to being filled with zeros.
-        print im.data
+  # Print out the data array.  It is allocated here on first access
+  # and defaults to being filled with zeros.
+  print im.data
 
 If you already have data in a numpy array, you can also create a model
 using that array by passing it in as a data keyword argument::
@@ -72,8 +67,9 @@ The `jwst_lib.models.open` function is a convenient way to create a
 model from a file on disk.  It may be passed any of the following:
 
     - a path to a FITS file
-    - a path to a FINF file (TODO: At some future date)
+    - a path to an ASDF file
     - a `astropy.io.fits.HDUList` object
+    - a readable file-like object
 
 The file will be opened, and based on the nature of the data in the
 file, the correct data model class will be returned.  For example, if
@@ -109,6 +105,10 @@ save into will either be deduced from the filename (if provided) or
 the `format` keyword argument::
 
     im.save("myimage.fits")
+
+.. note::
+
+   Unlike ``astropy.io.fits``, `save` always clobbers the output file.
 
 It also accepts a writable file-like object (opened in binary mode).
 In that case, a format must be specified::
@@ -187,26 +187,6 @@ use::
 
     model.data
 
-Accessing a section of the data
--------------------------------
-
-To access only a section of the data from disk, replace::
-
-    hdulist['SCI'].section[0:5,:]
-
-with::
-
-    model.get_section('data')[0:5,:]
-
-Furthermore, the use of `section` or `get_section` may not be
-necessary in most cases, since the file is, by default, memory mapped
-from disk, and the full penalty of loading in the entire array is not
-incurred.  In most cases, the performance of simply doing::
-
-    model.data[0:5,:]
-
-should be adequate.
-
 Accessing keywords
 ------------------
 
@@ -235,14 +215,12 @@ Extra FITS keywords
 
 When loading arbitrary FITS files, there will inevitably by keywords
 that the schema doesn't know about.  These "extra" FITS keywords are
-put under the model in the `_extra_fits` namespace.  The preceding
-underscore indicates that this is an implementation detail and may
-change in the future.  No code should rely on its continued existence.
+put under the model in the `extra_fits` namespace.
 
-Under `_extra_fits` namespace is a section for each header data unit,
-and under those are the extra FITS keywords.  For example, if the FITS
-file contains a keyword `FOO` in the primary header, its value can be
-obtained using::
+Under the `extra_fits` namespace is a section for each header data
+unit, and under those are the extra FITS keywords.  For example, if
+the FITS file contains a keyword `FOO` in the primary header, its
+value can be obtained using::
 
     model._extra_fits.PRIMARY.FOO
 

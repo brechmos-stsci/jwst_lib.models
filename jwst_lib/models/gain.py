@@ -8,7 +8,15 @@ __all__ = ['GainModel']
 
 class GainModel(model_base.DataModel):
     """
-    A data model for 2D gain
+    A data model for 2D gain.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    data : numpy array
+        The 2-D gain array
     """
     schema_url = "gain.schema.yaml"
 

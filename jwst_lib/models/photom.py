@@ -7,7 +7,7 @@ __all__ = ['PhotomModel']
 
 class PhotomModel(model_base.DataModel):
     """
-    A data model for photom reference files.
+    A base class for photometric reference file models.
     """
     schema_url = "photom.schema.yaml"
 
@@ -21,6 +21,16 @@ class PhotomModel(model_base.DataModel):
 class NircamPhotomModel(PhotomModel):
     """
     A data model for NIRCam photom reference files.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    phot_table : numpy array
+        A table-like object containing row selection criteria made up
+        of instrument mode parameters and photometric conversion
+        factors associated with those modes.
     """
     schema_url = "nircam_photom.schema.yaml"
 
@@ -34,6 +44,16 @@ class NircamPhotomModel(PhotomModel):
 class NirissPhotomModel(PhotomModel):
     """
     A data model for NIRISS photom reference files.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    phot_table : numpy array
+        A table-like object containing row selection criteria made up
+        of instrument mode parameters and photometric conversion
+        factors associated with those modes.
     """
     schema_url = "niriss_photom.schema.yaml"
 
@@ -47,6 +67,16 @@ class NirissPhotomModel(PhotomModel):
 class NirspecPhotomModel(PhotomModel):
     """
     A data model for NIRSpec photom reference files.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    phot_table : numpy array
+        A table-like object containing row selection criteria made up
+        of instrument mode parameters and photometric conversion
+        factors associated with those modes.
     """
     schema_url = "nirspec_photom.schema.yaml"
 
@@ -60,6 +90,16 @@ class NirspecPhotomModel(PhotomModel):
 class MiriImgPhotomModel(PhotomModel):
     """
     A data model for MIRI imaging photom reference files.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    phot_table : numpy array
+        A table-like object containing row selection criteria made up
+        of instrument mode parameters and photometric conversion
+        factors associated with those modes.
     """
     schema_url = "mirimg_photom.schema.yaml"
 
@@ -73,6 +113,16 @@ class MiriImgPhotomModel(PhotomModel):
 class MiriMrsPhotomModel(PhotomModel):
     """
     A data model for MIRI MRS photom reference files.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    phot_table : numpy array
+        A table-like object containing row selection criteria made up
+        of instrument mode parameters and photometric conversion
+        factors associated with those modes.
     """
     schema_url = "mirmrs_photom.schema.yaml"
 

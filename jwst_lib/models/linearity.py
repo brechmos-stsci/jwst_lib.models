@@ -10,6 +10,20 @@ __all__ = ['LinearityModel']
 class LinearityModel(model_base.DataModel):
     """
     A data model for linearity correction information.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    coeffs : numpy array
+        Coefficients defining the nonlinearity function.
+
+    dq : numpy array
+        The data quality array.
+
+    dq_def : numpy array
+        The data quality definitions table.
     """
     schema_url = "linearity.schema.yaml"
 

@@ -9,6 +9,23 @@ __all__ = ['ImageModel']
 class ImageModel(model_base.DataModel):
     """
     A data model for 2D images.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    data : numpy array
+        The science data.
+
+    dq : numpy array
+        The data quality array.
+
+    err : numpy array
+        The error array.
+
+    relsens : numpy array
+        The relative sensitivity table.
     """
     schema_url = "image.schema.yaml"
 

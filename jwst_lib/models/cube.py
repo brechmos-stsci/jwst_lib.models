@@ -9,6 +9,20 @@ __all__ = ['CubeModel']
 class CubeModel(model_base.DataModel):
     """
     A data model for 3D image cubes.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    data : numpy array
+        The science data.  3-D.
+
+    dq : numpy array
+        The data quality array.  3-D.
+
+    err : numpy array
+        The error array.  3-D
     """
     schema_url = "cube.schema.yaml"
 

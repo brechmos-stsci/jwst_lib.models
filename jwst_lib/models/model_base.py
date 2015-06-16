@@ -42,7 +42,7 @@ class DataModel(properties.ObjectNode):
             - shape tuple: Initialize with empty data of the given
               shape
 
-            - file path: Initialize from the given file
+            - file path: Initialize from the given file (FITS or ASDF)
 
             - readable file object: Initialize from the given file
               object
@@ -52,7 +52,7 @@ class DataModel(properties.ObjectNode):
 
             - A numpy array: Used to initialize the data array
 
-            - dict: The JSON/YAML object model tree for the data model
+            - dict: The object model tree for the data model
 
         schema : tree of objects representing a JSON schema, or string naming a schema, optional
             The schema to use to understand the elements on the model.

@@ -17,6 +17,17 @@ class MultiSlitModel(model_base.DataModel):
        >>> multislit_model.slits.append(image_model)
        >>> multislit_model.slits[0]
        <ImageModel>
+
+    If `init` is a file name or an `ImageModel` instance, an empty
+    `ImageModel` will be created and assigned to attribute `slits[0]`,
+    and the `data`, `dq`, `err`, and `relsens` attributes from the
+    input file or `ImageModel` will be copied to the first element of
+    `slits`.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
     """
     schema_url = "multislit.schema.yaml"
 

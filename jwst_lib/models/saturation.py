@@ -8,6 +8,20 @@ __all__ = ['SaturationModel']
 class SaturationModel(model_base.DataModel):
     """
     A data model for saturation checking information.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    data : numpy array
+        The science data.
+
+    dq : numpy array
+        The data quality array.
+
+    dq_def : numpy array
+        The data quality definitions table.
     """
     schema_url = "saturation.schema.yaml"
 

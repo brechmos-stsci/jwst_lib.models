@@ -39,7 +39,7 @@ custom model is as below::
   |   +-- __init__.py
   |   +-- bad_pixel_mask.py
   |   +-- schemas
-  |   |   +-- bad_pixel_mask.schema.json
+  |   |   +-- bad_pixel_mask.schema.yaml
   |   +-- tests
   |       +-- __init__.py
   |       +-- test_bad_pixel_mask.py
@@ -47,7 +47,7 @@ custom model is as below::
   |           +-- bad_pixel_mask.fits
   +-- setup.py
 
-The main pieces are the new schema in ``bad_pixel_mask.schema.json``,
+The main pieces are the new schema in ``bad_pixel_mask.schema.yaml``,
 the custom model class in ``bad_pixel_mask.py``, a distutils-based
 `setup.py` file to install the package, and some unit tests and
 associated data.  Normally, you would also have some code that *uses*
@@ -57,7 +57,7 @@ this minimal example.
 The schema file
 ---------------
 
-Let's start with the schema file, ``bad_pixel_mask.schema.json``.
+Let's start with the schema file, ``bad_pixel_mask.schema.yaml``.
 There are a few things it needs to do:
 
    1) It should contain all of the core metadata from the core schema
@@ -76,32 +76,20 @@ There are a few things it needs to do:
       identify it, and one with a human-readable description.
 
 At the top level, every JSON schema must be a mapping (dictionary) of
-type "object".  That's done by enclosing the entire thing in this:
+type "object", and should include the core schema:
 
-.. code-block:: javascript
+.. code-block:: yaml
 
-  {
-      "type": "object",
+  allOf:
+     - $ref: "http://jwst_lib.stsci.edu/schemas/core.schema.yaml"
+     - type: object
+       properties:
+          ...
 
-      ... the rest of the schema goes here ...
-  }
-
-Then, we inherit everything from the core schema, by declaring that
-this schema "extends" it:
-
-.. code-block:: javascript
-
-      "extends": {
-          "$ref": "http://jwst_lib.stsci.edu/schemas/core.schema.json"
-      },
-
-There's a lot going on in this one item.  ``extends`` declares the
-schema fragment that we want to extend (the "base class" schema).
-That schema fragment could have been included inline right here, but
-in order to extend something from another file, the ``$ref`` feature
-is used.  Here, the ``$ref`` mapping causes the system to go out and
-fetch the content at the given URL, and then replace the mapping with
-that content.
+There's a lot going on in this one item.  ``$ref`` declares the schema
+fragment that we want to include (the "base class" schema).  Here, the
+``$ref`` mapping causes the system to go out and fetch the content at
+the given URL, and then replace the mapping with that content.
 
 The ``$ref`` URL can be a relative URL, in which case it is relative
 to the schema file where ``$ref`` is used.  In our case, however, it's
@@ -113,13 +101,13 @@ Python code.  For example, to refer to a (hypothetical)
 ``my_instrument`` schema that ships with a Python package called
 ``astroboy``, use the following URL::
 
-  http://jwst_lib.stsci.edu/schemas/astroboy/my_instrument.schema.json
+  http://jwst_lib.stsci.edu/schemas/astroboy/my_instrument.schema.yaml
 
 The "package" portion may be omitted to refer to schemas in the
 `jwst_lib.models` core, which is how we arrive at the URL we're using
 here::
 
-  http://jwst_lib.stsci.edu/schemas/core.schema.json
+  http://jwst_lib.stsci.edu/schemas/core.schema.yaml
 
 .. note::
 
@@ -138,17 +126,15 @@ FITS side.
 First, we describe the main ``"dq"`` array.  It's declared to be
 2-dimensional, and each element is an unsigned 32-bit integer:
 
-.. code-block:: javascript
+.. code-block:: yaml
 
-    "properties" : {
-        "dq" : {
-            "type" : "data",
-            "title" : "Bad pixel mask",
-            "fits_hdu" : "DQ",
-            "default" : 0,
-            "ndim" : 2,
-            "dtype" : "uint16"
-        },
+    properties:
+      dq:
+        title: Bad pixel mask
+        fits_hdu: DQ
+        default: 0
+        ndim: 2
+        datatype: uint16
 
 The next entry describes a table that will store the mapping between
 bit fields and their meanings.  This table has four columns:
@@ -161,19 +147,20 @@ bit fields and their meanings.  This table has four columns:
 
    - ``DESCRIPTION``: A longer, human-readable description of the bit field
 
-.. code-block:: javascript
+.. code-block:: yaml
 
-        "dq_def" : {
-            "type" : "data",
-            "title" : "DQ flag definitions",
-            "fits_hdu" : "DQ_DEF",
-            "dtype" : [
-                {"name" : "BIT", "dtype" : "uint32"},
-                {"name" : "VALUE", "dtype" : "uint32"},
-                {"name" : "NAME", "dtype" : "string40"},
-                {"name" : "DESCRIPTION", "dtype" : "string80"}
-            ]
-        },
+        dq_def:
+          title: DQ flag definitions
+          fits_hdu: DQ_DEF
+          dtype:
+            - name: BIT
+              datatype: uint32
+            - name: VALUE
+              datatype: uint32
+            - name: NAME
+              datatype: [ascii, 40]
+            - name: DESCRIPTION
+              datatype: [ascii, 80]
 
 And finally, we add a metadata element that is specific to this
 format.  To avoid recomputing it repeatedly, we'd like to store a sum
@@ -182,17 +169,14 @@ mask array.  In the model, we want to refer to this value as
 ``model.meta.bad_pixel_count``.  In the FITS file, lets store this in
 the primary header in a keyword named ``BPCOUNT``:
 
-.. code-block:: javascript
+.. code-block:: yaml
 
-        "meta" : {
-            "properties": {
-                "bad_pixel_count" : {
-                    "type" : "integer",
-                    "title" : "Total count of all bad pixels",
-                    "fits_keyword" : "BPCOUNT"
-                }
-            }
-        }
+        meta:
+          properties:
+            bad_pixel_count:
+              type: integer
+              title: Total count of all bad pixels
+              fits_keyword: BPCOUNT
 
 That's all there is to the schema file, and that's the hardest part.
 
@@ -212,21 +196,21 @@ set its `schema_url` class member to point to the schema that we just
 defined above::
 
   class MiriBadPixelMaskModel(DataModel):
-      schema_url = "bad_pixel_mask.schema.json"
+      schema_url = "bad_pixel_mask.schema.yaml"
 
 Here, the `schema_url` has all of the "magical" URL abilities
-described above when we used the ``"extends"`` feature.  However, here
-we are using a relative URL.  In this case, it is relative to the file
-in which this class is defined, with a small twist to avoid
-intermingling Python code and schema files: It looks for the given
-file in a directory called ``schemas`` inside the directory containing
-the Python module in which the class is defined.
+described above when we used the ``$ref`` feature.  However, here we
+are using a relative URL.  In this case, it is relative to the file in
+which this class is defined, with a small twist to avoid intermingling
+Python code and schema files: It looks for the given file in a
+directory called ``schemas`` inside the directory containing the
+Python module in which the class is defined.
 
 As an alternative, we could just as easily have said that we want to
 use the ``image`` schema from the core without defining any extra
 elements, by setting `schema_url` to::
 
-  schema_url = "http://jwst_lib.stsci.edu/schemas/image.schema.json"
+  schema_url = "http://jwst_lib.stsci.edu/schemas/image.schema.yaml"
 
 .. note::
 
@@ -257,6 +241,20 @@ creating a model from scratch.  If you don't need to do that, then
 technically writing a new constructor for the model is optional::
 
     def __init__(self, init=None, dq=None, dq_def=None, **kwargs):
+        """
+        A data model to represent MIRI bad pixel masks.
+
+        Parameters
+        ----------
+        init : any
+            Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+        dq : numpy array
+            The data quality array.
+
+        dq_def : numpy array
+            The data quality definitions table.
+        """
         super(MiriBadPixelMaskModel, self).__init__(init=init, **kwargs)
 
         if dq is not None:
@@ -361,7 +359,7 @@ minimal, ``setup.py`` is presented below::
       description='Custom model example for jwst_lib.models',
       packages=['custom_model', 'custom_model.tests'],
       package_dir={'custom_model': 'lib'},
-      package_data={'custom_model': ['schemas/*.schema.json'],
+      package_data={'custom_model': ['schemas/*.schema.yaml'],
                     'custom_model.tests' : ['data/*.fits']}
       )
 
@@ -384,33 +382,34 @@ data. For example, the photometric correction reference file used in the
 JWST calibration pipeline consists of a table with 7 columns. The schema
 file for this model looks like this:
 
-.. code-block:: javascript
+.. code-block:: yaml
 
-    {
-        "title" : "Photometric flux conversion data model",
-        "allOf" : [
-            {"$ref" : "core.schema.json"},
-            {
-                "type" : "object",
-                "properties" : {
-                    "phot_table": {
-                        "type": "data",
-                        "title": "Photometric flux conversion factors table",
-                        "fits_hdu": "PHOTOM",
-                        "dtype": [
-                            {"name": "filter", "dtype": "string12"},
-                            {"name": "photflam", "dtype": "float32"},
-                            {"name": "photerr", "dtype": "float32"},
-                            {"name": "nelem", "dtype": "int16"},
-                            {"name": "wavelength", "dtype": "float32", "shape": [50]},
-                            {"name": "response", "dtype": "float32", "shape": [50]},
-                            {"name": "resperr", "dtype": "float32", "shape": [50]}
-                        ]
-                    }
-                }
-            }
-        ]
-    }
+    title: Photometric flux conversion data model
+    allOf:
+      - $ref: "core.schema.yaml"
+      - type: object
+        properties:
+          phot_table:
+            title: Photometric flux conversion factors table
+            fits_hdu: PHOTOM
+            datatype:
+              - name: filter
+                datatype: [ascii, 12]
+              - name: photflam
+                datatype: float32
+              - name: photerr
+                datatype: float32
+              - name: nelem
+                datatype: int16
+              - name: wavelength
+                datatype: float32
+                shape: [50]
+              - name: response
+                datatype: float32
+                shape: [50]
+              - name: resperr
+                datatype: float32
+                shape: [50]
 
 In this particular table the first 4 columns contain scalar entries of types
 string, float, and integer. The entries in the final 3 columns, on the other
@@ -418,20 +417,16 @@ hand, contain 1-D float arrays (vectors). The "shape" attribute is used to
 designate the dimensions of the arrays.
 
 The corressponding python module containing the data model class is quite
-simple:
-
-.. code-block:: javascript
+simple::
 
     class PhotomModel(model_base.DataModel):
         """
         A data model for photom reference files.
         """
         schema_url = "photom.schema.json"
-    
+
         def __init__(self, init=None, phot_table=None, **kwargs):
             super(PhotomModel, self).__init__(init=init, **kwargs)
-    
+
             if phot_table is not None:
                 self.phot_table = phot_table
-
-

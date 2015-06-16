@@ -72,16 +72,17 @@ from .version import (__version__, __svn_revision__, __svn_full_info__, __setup_
 
 
 __all__ = [
-    'open', 'DataModel', 'AmiLgModel', 'AsnModel', 'ContrastModel', 'CubeModel',
-    'DarkModel', 'DrizParsModel', 'NircamDrizParsModel', 'MiriImgDrizParsModel',
-    'DrizProductModel', 'FilterModel', 'FlatModel', 'FringeModel', 'GainModel',
-    'GLS_RampFitModel',
-    'ImageModel', 'IPCModel', 'LastFrameModel', 'LinearityModel', 'MaskModel',
-    'MIRIRampModel', 'MultiSlitModel', 'MultiSpecModel', 'PhotomModel',
-    'NircamPhotomModel', 'NirissPhotomModel', 'NirspecPhotomModel',
-    'MiriImgPhotomModel', 'MiriMrsPhotomModel', 'RampModel', 'RampFitOutputModel',
-    'ReadnoiseModel', 'ResetModel', 'SaturationModel', 'SpecModel',
-    'StrayLightModel']
+    'open',
+    'DataModel', 'AmiLgModel', 'AsnModel', 'ContrastModel',
+    'CubeModel', 'DarkModel', 'DrizParsModel', 'NircamDrizParsModel',
+    'MiriImgDrizParsModel', 'DrizProductModel', 'FilterModel',
+    'FlatModel', 'FringeModel', 'GainModel', 'GLS_RampFitModel',
+    'ImageModel', 'IPCModel', 'LastFrameModel', 'LinearityModel',
+    'MaskModel', 'MIRIRampModel', 'MultiSlitModel', 'MultiSpecModel',
+    'PhotomModel', 'NircamPhotomModel', 'NirissPhotomModel',
+    'NirspecPhotomModel', 'MiriImgPhotomModel', 'MiriMrsPhotomModel',
+    'RampModel', 'RampFitOutputModel', 'ReadnoiseModel', 'ResetModel',
+    'SaturationModel', 'SpecModel', 'StrayLightModel']
 
 
 def open(init=None):
@@ -91,13 +92,13 @@ def open(init=None):
     Parameters
     ----------
 
-    init : shape tuple, file path, file object, astropy.io.fits.HDUList, numpy array, None
+    init : shape tuple, file path, file object, astropy.io.fits.HDUList, numpy array, dict, None
 
         - None: A default data model with no shape
 
         - shape tuple: Initialize with empty data of the given shape
 
-        - file path: Initialize from the given file
+        - file path: Initialize from the given file (FITS or ASDF)
 
         - readable file object: Initialize from the given file object
 
@@ -106,6 +107,8 @@ def open(init=None):
 
         - A numpy array: A new model with the data array initialized
           to what was passed in.
+
+        - dict: The object model tree for the data model
 
     Results
     -------

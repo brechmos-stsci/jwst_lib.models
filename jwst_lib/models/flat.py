@@ -10,6 +10,23 @@ __all__ = ['FlatModel']
 class FlatModel(model_base.DataModel):
     """
     A data model for 2D flat-field images.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    data : numpy array
+        The science data.  2-D.
+
+    dq : numpy array
+        The data quality array.  2-D.
+
+    err : numpy array
+        The error array.  2-D.
+
+    dq_def : numpy array
+        The data quality definitions table.
     """
     schema_url = "flat.schema.yaml"
 

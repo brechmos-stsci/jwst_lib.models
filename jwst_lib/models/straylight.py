@@ -8,7 +8,15 @@ __all__ = ['StrayLightModel']
 
 class StrayLightModel(model_base.DataModel):
     """
-    A data model for 2D straylight mask
+    A data model for 2D straylight mask.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    data : numpy array
+        2-D straylight mask array.
     """
     schema_url = "straylight.schema.yaml"
 

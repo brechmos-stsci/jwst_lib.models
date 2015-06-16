@@ -9,6 +9,14 @@ __all__ = ['SpecModel']
 class SpecModel(model_base.DataModel):
     """
     A data model for 1D spectra.
+
+    Parameters
+    ----------
+    init : any
+        Any of the initializers supported by `~jwst_lib.models.DataModel`.
+
+    spec_table : numpy array
+        A table with 3 columns: pixel number, wavelength, and count rate.
     """
     schema_url = "spec.schema.yaml"
 
