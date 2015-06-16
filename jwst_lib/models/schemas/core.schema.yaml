@@ -211,14 +211,14 @@ properties:
           name:
             title: Instrument used to acquire the data
             type: string
-            enum: [NIRCAM, NIRSPEC, MIRI, TFI, FGS, NIRISS]
+            enum: [NIRCAM, NIRSPEC, MIRI, TFI, FGS, NIRISS, ANY, N/A]
             fits_keyword: INSTRUME
           detector:
             title: Name of detector used to acquire the data
             type: string
             enum: [NRCA1, NRCA2, NRCA3, NRCA4, NRCALONG, NRCB1, NRCB2, NRCB3, NRCB4,
-              NRCBLONG, NRS1, NRS2, MIRIMAGE, MIRIFULONG, MIRIFUSHORT, NIRISS, NIS,
-              GUIDER1, GUIDER2]
+              NRCBLONG, NRS1, NRS2, ANY, MIRIMAGE, MIRIFULONG, MIRIFUSHORT, NIRISS,
+              NIS, GUIDER1, GUIDER2, N/A]
             description: '''NIRISS'' is deprecated in favor of ''NIS'''
             fits_keyword: DETECTOR
           module:
@@ -228,14 +228,26 @@ properties:
           channel:
             title: 'NIRCam channel: long or short'
             type: string
+            enum: [LONG, SHORT, '12', '34', '1', '2', '3', '4', ANY, N/A]
             fits_keyword: CHANNEL
           filter:
             title: Name of the filter element used
             type: string
+            enum: [ANY, CLEAR, F070LP, F070W, F090W, F1000W, F100LP, F1060C, F1065C,
+              F110W, F1130W, F1140C, F115W, F1280W, F140M, F140X, F1500W, F150W, F150W2,
+              F1550C, F162M, F164N, F170LP, F1800W, F182M, F187N, F200W, F2100W, F210M,
+              F212N, F227W, F2300C, F250M, F2550W, F2550WR, F277W, F290LP, F300M,
+              F322W2, F323N, F335M, F356W, F360M, F380M, F405N, F410M, F430M, F444W,
+              F460M, F466N, F470N, F480M, F560W, F770W, FLENS, FND, FNDP750L, GR150C,
+              GR150R, OPAQUE, P750L, WL3, WLP4, N/A]
             fits_keyword: FILTER
           pupil:
             title: Name of the pupil element used
             type: string
+            enum: [ANY, CLEAR, CLEARP, F090W, F115W, F140M, F150W, F158M, F162M, F164N,
+              F200W, F323N, F405N, F466N, F470N, FLAT, GDHS, GDHS0, GDHS60, GR700XD,
+              GRISMC, GRISMR, GRISMV2, GRISMV3, MASKBAR, MASKIPR, NRM, WLM8, WLP8,
+              N/A]
             fits_keyword: PUPIL
           pupil_imaging_lens:
             title: Pupil imaging lens in the optical path?
@@ -277,6 +289,22 @@ properties:
             title: Internal lamp state
             type: string
             fits_keyword: LAMP
+          gwa_xtilt:
+            title: Grating Y tilt angle relative to mirror
+            oneOf:
+            - type: string
+              enum: [N/A]
+            - type: number
+            fits_keyword: GWAXTILT
+            default: N/A
+          gwa_ytilt:
+            title: Grating X tilt angle relative to mirror
+            oneOf:
+            - type: string
+              enum: [N/A]
+            - type: number
+            fits_keyword: GWAYTILT
+            default: N/A
       exposure:
         title: Exposure parameters
         type: object
@@ -292,25 +320,34 @@ properties:
           type:
             title: Type of data in the exposure
             type: string
+            enum: [FGS_DARK, FGS_FOCUS, FGS_IMAGE, FGS_INTFLAT, FGS_SKYFLAT, MIR_IMAGE,
+              MIR_TACQ, MIR_LYOT, MIR_4QPM, MIR_LRS-FIXEDSLIT, MIR_LRS-SLITLESS, MIR_MRS,
+              MIR_DARK, MIR_FLAT-IMAGE, MIR_FLAT-MRS, MIR_CORONCAL, NIS_AMI, NIS_DARK,
+              NIS_FOCUS, NIS_IMAGE, NIS_LAMP, NIS_SOSS, NIS_WFSS, N/A, ANY, NRC_IMAGE,
+              NRC_SLITLESS, NRC_TACQ, NRC_CORON, NRC_FOCUS, NRC_DARK, NRC_FLAT, NRC_LED,
+              NRC_WFSC, NRS_AUTOFLAT, NRS_AUTOWAVE, NRS_BOTA, NRS_BRIGHTOBJ, NRS_CONFIRM,
+              NRS_DARK, NRS_FIXEDSLIT, NRS_FOCUS, NRS_IFU, NRS_IMAGE, NRS_LAMP, NRS_MIMF,
+              NRS_MSASPEC, NRS_TACONFIRM, NRS_TACQ, NRS_TASLIT]
             fits_keyword: EXP_TYPE
           start_time:
             title: UTC exposure start time
-            type: string
-            format: http://www.stsci.edu/types/fits-date-time
+            type: number
             fits_keyword: EXPSTART
           mid_time:
             title: UTC exposure mid time
-            type: string
-            format: http://www.stsci.edu/types/fits-date-time
+            type: number
             fits_keyword: EXPMID
           end_time:
             title: UTC exposure end time
-            type: string
-            format: http://www.stsci.edu/types/fits-date-time
+            type: number
             fits_keyword: EXPEND
           readpatt:
             title: Readout pattern
             type: string
+            enum: [ACQ1, ACQ2, BRIGHT1, BRIGHT2, DEEP2, DEEP8, FAST, FASTGRPAVG, FASTINTAVG,
+              FGS, FGS60, FGS8370, FGS840, FGSRAPID, FINEGUIDE, ID, MEDIUM2, MEDIUM8,
+              NIS, NISRAPID, NRS, NRSN16R4, NRSN32R8, NRSN8R2, NRSRAPID, NRSSLOW,
+              RAPID, SHALLOW2, SHALLOW4, SLOW, TRACK, ANY, N/A]
             fits_keyword: READPATT
           nints:
             title: Number of integrations in exposure
@@ -383,6 +420,11 @@ properties:
           name:
             title: Subarray used
             type: string
+            enum: [1024X16, 128X128, 128X2048, 2048X128, 2048X64, 32X32, 64X2048,
+              8X8, ALLSLITS, BRIGHTSKY, FULL, GENERIC, MASK1065, MASK1140, MASK1550,
+              MASKLYOT, S200A1, S200A2, S200B1, S400A1, SLITLESSPRISM, SUB128, SUB16,
+              SUB160, SUB1A, SUB1B, SUB256, SUB32, SUB320, SUB64, SUB640, SUB96, SUBPRISM,
+              N/A]
             fits_keyword: SUBARRAY
           xstart:
             title: Starting pixel in axis 1 direction
@@ -609,6 +651,22 @@ properties:
             title: Flux density (ergs/cm^2/s/ang) producing 1 cps
             type: number
             fits_keyword: PHOTFLAM
+          conversion_megajanskys:
+            title: Flux density (MJy/steradian) producing 1 cps
+            type: number
+            fits_keyword: PHOTMJSR
+          conversion_microjanskys:
+            title: Flux density (uJy/arcsec2) producing 1 cps
+            type: number
+            fits_keyword: PHOTUJA2
+          pixelarea_steradians:
+            title: Nominal pixel area in steradians
+            type: number
+            fits_keyword: PIXAR_SR
+          pixelarea_arcsecsq:
+            title: Nominal pixel area in arcsec^2
+            type: number
+            fits_keyword: PIXAR_A2
       ref_file:
         title: Reference file information
         type: object
@@ -625,6 +683,14 @@ properties:
                 title: CRDS context (.pmap) used to select ref files
                 type: string
                 fits_keyword: CRDS_CTX
+          area:
+            title: Pixel area reference file information
+            type: object
+            properties:
+              name:
+                title: Pixel area reference file name
+                type: string
+                fits_keyword: R_AREA
           dark:
             title: Dark reference file information
             type: object
@@ -641,14 +707,6 @@ properties:
                 title: Flat reference file name
                 type: string
                 fits_keyword: R_FLAT
-          straylight:
-            title: Straylight reference file information
-            type: object
-            properties:
-              name:
-                title: Straylight reference file name
-                type: string
-                fits_keyword: R_STRAY
           fringe:
             title: Fringe reference file information
             type: object
@@ -673,14 +731,6 @@ properties:
                 title: IPC reference file name
                 type: string
                 fits_keyword: R_IPC
-          reset:
-            title: Reset reference file information
-            type: object
-            properties:
-              name:
-                title: Reset reference file name
-                type: string
-                fits_keyword: R_RESET
           lastframe:
             title: Last frame reference file information
             type: object
@@ -721,6 +771,14 @@ properties:
                 title: Read noise reference file name
                 type: string
                 fits_keyword: R_READNO
+          reset:
+            title: Reset reference file information
+            type: object
+            properties:
+              name:
+                title: Reset reference file name
+                type: string
+                fits_keyword: R_RESET
           saturation:
             title: Saturation reference file information
             type: object
@@ -729,6 +787,14 @@ properties:
                 title: Saturation reference file name
                 type: string
                 fits_keyword: R_SATURA
+          straylight:
+            title: Straylight reference file information
+            type: object
+            properties:
+              name:
+                title: Straylight reference file name
+                type: string
+                fits_keyword: R_STRAY
       cal_step:
         title: Calibration step information
         type: object
@@ -821,6 +887,10 @@ properties:
             title: 2-D Spectral Extraction
             type: string
             fits_keyword: S_EXTR2D
+          combine_1d:
+            title: 1-D Spectral Combination
+            type: string
+            fits_keyword: S_COMB1D
           resample:
             title: Image resampling
             type: string
