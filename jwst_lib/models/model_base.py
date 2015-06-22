@@ -14,6 +14,7 @@ import numpy as np
 
 from astropy.extern import six
 from astropy.io import fits
+from astropy.time import Time
 from astropy.wcs import WCS
 
 from pyasdf import AsdfFile
@@ -82,9 +83,11 @@ class DataModel(properties.ObjectNode):
             shape = init.shape
             is_array = True
         elif isinstance(init, self.__class__):
+            instance = copy.deepcopy(init._instance)
+            self._schema = init._schema
             self._shape = init._shape
-            self._instance = init._instance
-            self._asdf = None
+            self._asdf = AsdfFile(instance)
+            self._instance = instance
             self._ctx = self
             self.__class__ = init.__class__
             return
@@ -332,7 +335,8 @@ class DataModel(properties.ObjectNode):
             schema = {'type': 'object', 'properties': {part: schema}}
         return self.extend_schema(schema)
 
-    def find_fits_keyword(self, keyword):
+    # return_result retained for backward compatibility
+    def find_fits_keyword(self, keyword, return_result=True):
         """
         Utility function to find a reference to a FITS keyword in this
         model's schema.  This is intended for interactive use, and not
@@ -374,20 +378,9 @@ class DataModel(properties.ObjectNode):
         substring : str
             The substring to search for.
 
-        return_result : bool, optional
-            If `False` (default) print result to stdout.  If `True`,
-            return the result as a list.
-
-        verbose : bool, optional
-            If `False` (default) display a one-line description of
-            each match.  If `True`, display the complete description
-            of each match.
-
         Returns
         -------
         locations : list of tuples
-            If `return_result` is `True`, returns tuples of the form
-            (*location*, *description*)
         """
         from . import schema
         return schema.search_schema(self.schema, substring)
@@ -552,7 +545,7 @@ class DataModel(properties.ObjectNode):
 
         recurse(self._instance, d)
 
-    def to_flat_dict(self):
+    def to_flat_dict(self, include_arrays=True):
         """
         Returns a dictionary of all of the schema items as a flat dictionary.
 
@@ -563,7 +556,18 @@ class DataModel(properties.ObjectNode):
             { "meta.observation.date": "2012-04-22T03:22:05.432" }
 
         """
-        return dict(self.iteritems())
+	def convert_val(val):
+	    if isinstance(val, datetime.datetime):
+	        return val.isoformat()
+	    elif isinstance(val, Time):
+                return str(val)
+            return val
+
+        if include_arrays:
+            return dict((key, convert_val(val)) for (key, val) in self.iteritems())
+        else:
+            return dict((key, convert_val(val)) for (key, val) in self.iteritems()
+                        if not isinstance(val, np.ndarray))
 
     @property
     def schema(self):

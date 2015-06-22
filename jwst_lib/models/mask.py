@@ -32,7 +32,7 @@ class MaskModel(model_base.DataModel):
         if dq_def is not None:
             self.dq_def = dq_def
 
-        if self.dq or self.dq_def:
+        if self.dq is not None or self.dq_def is not None:
             self.dq = dynamic_mask(self)
 
         # Implicitly create arrays

@@ -1,5 +1,4 @@
 type: object
-title: root
 properties:
   meta:
     title: Level 1b Schema Metadata
@@ -553,7 +552,7 @@ properties:
             fits_keyword: COORDSYS
           time:
             title: UTC time from ephemeris start time (sec)
-            type: string
+            type: number
             fits_keyword: EPH_TIME
           spatial_x:
             title: X spatial coordinate of JWST (km)

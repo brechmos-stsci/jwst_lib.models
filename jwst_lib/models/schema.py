@@ -8,7 +8,8 @@ from astropy.extern import six
 from astropy.utils.compat.odict import OrderedDict
 
 
-def find_fits_keyword(schema, keyword):
+# return_result included for backward compatibility
+def find_fits_keyword(schema, keyword, return_result=False):
     """
     Utility function to find a reference to a FITS keyword in a given
     schema.  This is intended for interactive use, and not for use
@@ -25,9 +26,6 @@ def find_fits_keyword(schema, keyword):
     Returns
     -------
     locations : list of str
-        If `return_result` is `True, a list of the locations in the
-        schema where this FITS keyword is used.  Each element is a
-        dot-separated path.
     """
     def find_fits_keyword(subschema, path, combiner, ctx, recurse):
         if len(path) and path[0] == 'extra_fits':
@@ -76,8 +74,6 @@ def search_schema(schema, substring):
     Returns
     -------
     locations : list of tuples
-        If `return_result` is `True`, returns tuples of the form
-        (*location*, *description*)
     """
     substring = substring.lower()
 
