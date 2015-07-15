@@ -80,7 +80,7 @@ Calling sequences and model-specific attributes
     - `schema`: A tree of objects representing a JSON schema, or a string
       naming a schema (optional).
 
-`CubeModel(init=None, data=None, dq=None, err=None, **kwargs)`
+`CubeModel(init=None, data=None, dq=None, err=None, zeroframe=None, **kwargs)`
 
     `CubeModel` is for a file (suffix '_integ') of integration-specific
     results.
@@ -89,6 +89,7 @@ Calling sequences and model-specific attributes
     - `data`: The science data, a 3-D array.
     - `dq`: The data quality array, a 3-D array.
     - `err`: The error array, a 3-D array.
+    - `zeroframe`: The zeroframe array, a 2-D array.
 
 `DarkModel(init=None, data=None, dq=None, err=None, dq_def=None, **kwargs)`
 
@@ -119,13 +120,14 @@ Calling sequences and model-specific attributes
     - `init`: The name of the gain reference file.
     - `data`: The 2-D gain array.
 
-`ImageModel(init=None, data=None, dq=None, err=None, relsens=None, **kwargs)`
+`ImageModel(init=None, data=None, dq=None, err=None, relsens=None, zeroframe=None, **kwargs)`
 
     - `init`: The name of the input file.
     - `data`: The science data.
     - `dq`: The data quality array.
     - `err`: The error array.
     - `relsens`: The relative sensitivity table.
+    - `zeroframe`: The zeroframe array.
 
 `IPCModel(init=None, data=None, **kwargs)`
 
@@ -153,7 +155,7 @@ Calling sequences and model-specific attributes
     - `dq`: The data quality array.
     - `dq_def`: The data quality definitions table.
 
-`MIRIRampModel(init=None, data=None, pixeldq=None, groupdq=None, err=None, refout=None, **kwargs)`
+`MIRIRampModel(init=None, data=None, pixeldq=None, groupdq=None, err=None, refout=None, zeroframe=None, **kwargs)`
 
     - `init`: The name of the input file.
     - `data`: The science data.
@@ -161,6 +163,7 @@ Calling sequences and model-specific attributes
     - `groupdq`: 3-D or 4-D data quality array.
     - `err`: The error array.
     - `refout`: The array of reference output data.
+    - `zeroframe`: The zeroframe array.
 
 `MultiSlitModel(init=None, **kwargs)`
 
@@ -256,13 +259,14 @@ Calling sequences and model-specific attributes
     - `weights`: Array of shape (n_int, max_seg, ny, nx).
     - `crmag`: Array of shape (n_int, nreads, ny, nx).
 
-`RampModel(init=None, data=None, pixeldq=None, groupdq=None, err=None, **kwargs)`
+`RampModel(init=None, data=None, pixeldq=None, groupdq=None, err=None, zeroframe=None, **kwargs)`
 
     - `init`: The name of the input file.
     - `data`: The science data.
     - `pixeldq`: 2-D data quality array.
     - `groupdq`: 3-D or 4-D data quality array.
     - `err`: The error array.
+    - `zeroframe`: The zeroframe array, a 3-D array.
 
 `ReadnoiseModel(init=None, data=None, **kwargs)`
 

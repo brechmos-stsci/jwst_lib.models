@@ -32,6 +32,15 @@
                     "dtype" : "float32"
                 },
 
+                "zeroframe" :
+                {
+                    "type" : "data",
+                    "title" : "Zeroframe array",
+                    "fits_hdu" : "ZEROFRAME",
+                    "default" : 0.0,
+                    "dtype" : "float32"
+                },
+
                 "relsens" : {"$ref": "relsens.schema.json"}
             }
         }

@@ -14,7 +14,7 @@ class ImageModel(model_base.DataModel, wcs.HasFitsWcs):
     schema_url = "image.schema.json"
 
     def __init__(self, init=None, data=None, dq=None, err=None, relsens=None,
-                 **kwargs):
+                 zeroframe=None, **kwargs):
         super(ImageModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
@@ -29,6 +29,10 @@ class ImageModel(model_base.DataModel, wcs.HasFitsWcs):
         if relsens is not None:
             self.relsens = relsens
 
+        if zeroframe is not None:
+            self.zeroframe = zeroframe
+
         # Implicitly create arrays
         self.dq = self.dq
         self.err = self.err
+        self.zeroframe = self.zeroframe 

@@ -30,6 +30,15 @@
                     "fits_hdu" : "ERR",
                     "default" : 0.0,
                     "dtype" : "float32"
+                },
+
+                "zeroframe" :
+                {
+                    "type" : "data",
+                    "title" : "Zero frame array",
+                    "fits_hdu" : "ZEROFRAME",
+                    "default" : 0.0,
+                    "dtype" : "float32"
                 }
             }
         }

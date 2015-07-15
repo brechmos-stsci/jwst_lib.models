@@ -15,7 +15,7 @@ class MIRIRampModel(ramp.RampModel, wcs.HasFitsWcs):
     schema_url = "miri_ramp.schema.json"
 
     def __init__(self, init=None, data=None, pixeldq=None, groupdq=None,
-                 err=None, refout=None, **kwargs):
+                 err=None, refout=None, zeroframe=None, **kwargs):
         super(MIRIRampModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
@@ -33,8 +33,11 @@ class MIRIRampModel(ramp.RampModel, wcs.HasFitsWcs):
         if refout is not None:
             self.refout = refout
 
+        if zeroframe is not None:
+            self.zeroframe = zeroframe
+            
         # Implicitly create arrays
         self.pixeldq = self.pixeldq
         self.groupdq = self.groupdq
         self.err = self.err
-
+        self.zeroframe = self.zeroframe

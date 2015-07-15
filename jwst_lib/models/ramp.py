@@ -14,7 +14,7 @@ class RampModel(model_base.DataModel, wcs.HasFitsWcs):
     schema_url = "ramp.schema.json"
 
     def __init__(self, init=None, data=None, pixeldq=None, groupdq=None,
-                 err=None, **kwargs):
+                 err=None, zeroframe=None, **kwargs):
         super(RampModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
@@ -29,8 +29,12 @@ class RampModel(model_base.DataModel, wcs.HasFitsWcs):
         if err is not None:
             self.err = err
 
+        if zeroframe is not None:
+            self.zeroframe = zeroframe
+
         # Implicitly create arrays
         self.pixeldq = self.pixeldq
         self.groupdq = self.groupdq
         self.err = self.err
+        self.zeroframe = self.zeroframe
 
