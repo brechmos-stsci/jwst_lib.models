@@ -32,4 +32,4 @@ class CubeModel(model_base.DataModel, wcs.HasFitsWcs):
         # Implicitly create arrays
         self.dq = self.dq
         self.err = self.err
-        self.zeroframe = self.zeroframe
+

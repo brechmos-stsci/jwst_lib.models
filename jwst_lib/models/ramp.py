@@ -36,5 +36,4 @@ class RampModel(model_base.DataModel, wcs.HasFitsWcs):
         self.pixeldq = self.pixeldq
         self.groupdq = self.groupdq
         self.err = self.err
-        self.zeroframe = self.zeroframe
 

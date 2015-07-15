@@ -40,4 +40,3 @@ class MIRIRampModel(ramp.RampModel, wcs.HasFitsWcs):
         self.pixeldq = self.pixeldq
         self.groupdq = self.groupdq
         self.err = self.err
-        self.zeroframe = self.zeroframe
