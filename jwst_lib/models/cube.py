@@ -14,7 +14,7 @@ class CubeModel(model_base.DataModel, wcs.HasFitsWcs):
     schema_url = "cube.schema.json"
 
     def __init__(self, init=None, data=None, dq=None, err=None, zeroframe=None,
-                 relsens=None, **kwargs):
+                 relsens=None, area=None, **kwargs):
         super(CubeModel, self).__init__(init=init, **kwargs)
 
         if data is not None:
@@ -31,6 +31,9 @@ class CubeModel(model_base.DataModel, wcs.HasFitsWcs):
 
         if relsens is not None:
             self.relsens = relsens
+
+        if area is not None:
+            self.area = area
 
         # Implicitly create arrays
         self.dq = self.dq

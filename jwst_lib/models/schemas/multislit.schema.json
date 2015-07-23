@@ -32,6 +32,12 @@
                             "relsens" : {
                                 "$ref" : "relsens.schema.json"
                             },
+                            "area" : {
+                                "type" : "data",
+                                "fits_hdu" : "AREA",
+                                "default" : 0.0,
+                                "dtype" : "float32"
+                            },
                             "name" : {
                                 "title" : "Name of the slit",
                                 "type" : "string",

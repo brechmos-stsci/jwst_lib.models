@@ -30,6 +30,7 @@ class MultiSlitModel(model_base.DataModel, wcs.HasFitsWcs):
             self.slits[0].dq = init.dq
             self.slits[0].err = init.err
             self.slits[0].relsens = init.relsens
+            self.slits[0].area = init.area
             return
 
         super(MultiSlitModel, self).__init__(init=init, **kwargs)

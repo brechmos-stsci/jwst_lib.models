@@ -41,6 +41,15 @@
                     "dtype" : "float32"
                 },
 
+                "area" :
+                {
+                    "type" : "data",
+                    "title" : "Pixel area map array",
+                    "fits_hdu" : "AREA",
+                    "default" : 0.0,
+                    "dtype" : "float32"
+                },
+
                 "relsens" : {"$ref": "relsens.schema.json"}
             }
         }
