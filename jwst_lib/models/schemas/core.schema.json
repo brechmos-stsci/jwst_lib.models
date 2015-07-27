@@ -908,6 +908,16 @@
                             "title" : "Flux density (ergs/cm^2/s/ang) producing 1 cps",
                             "type" : "number",
                             "fits_keyword" : "PHOTFLAM"
+                        },
+                         "pixelarea_steradians": {
+                            "title" : "Nominal pixel area in steradians",
+                            "type" : "number",
+                            "fits_keyword" : "PIXAR_SR"
+                        },
+                         "pixelarea_arcsecsq": {
+                            "title" : "Nominal pixel area in arcsec^2",
+                            "type" : "number",
+                            "fits_keyword" : "PIXAR_A2"
                         }
                     }
                 },
