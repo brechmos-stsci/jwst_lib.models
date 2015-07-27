@@ -47,6 +47,7 @@
                     "title" : "Pixel area map array",
                     "fits_hdu" : "AREA",
                     "default" : 0.0,
+                    "ndim" : 2,
                     "dtype" : "float32"
                 },
 
