@@ -124,13 +124,14 @@ class ValidatingList(object):
             return d
 
     def _check(self, item):
-        if isinstance(item, MetaBase):
+        if hasattr(item.storage, '_tree'):
             # This should only be treestorage
             item = item.storage._tree
-        try:
-            validate(item, self._schema)
-        except ValidationError as e:
-            raise ValueError(e.message)
+        if isinstance(item, dict):
+            try:
+                validate(item, self._schema)
+            except ValidationError as e:
+                raise ValueError(e.message)
         return item
 
     def __cast(self, other):
