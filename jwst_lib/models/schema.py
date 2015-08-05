@@ -94,17 +94,23 @@ class ValidatingList(object):
         >>> l.append(42)
         ValueError: 42 is not of type 'object'
     """
-    def __init__(self, schema, name, x=[]):
+    _do_not_validate = True
+
+    def __init__(self, schema, name, x=None):
         if not isinstance(schema, dict):
             raise NotImplementedError(
                 "tuple-checking on arrays is not supported")
+
+        if x is None:
+            x = []
 
         self._schema = schema
         self._name = name
         if isinstance(x, ValidatingList):
             x = x._x
-        for item in x:
-            self._check(item)
+        else:
+            for item in x:
+                self._check(item)
         self._x = x
 
     def item(self, d=None, **kwargs):
@@ -124,9 +130,8 @@ class ValidatingList(object):
             return d
 
     def _check(self, item):
-        if hasattr(item.storage, '_tree'):
-            # This should only be treestorage
-            item = item.storage._tree
+        if isinstance(item, MetaBase):
+            item = item.to_tree()
         if isinstance(item, dict):
             try:
                 validate(item, self._schema)
@@ -434,7 +439,7 @@ class schema_property(object):
                 if new_val is not val:
                     obj.storage.__set__(self, obj, new_val)
                     val = new_val
-            elif val is not None and not hasattr(val, '_skip_validation'):
+            elif val is not None and not hasattr(val, '_do_not_validate'):
                 try:
                     val = self.from_basic_type(val)
                 except ValueError as e:
@@ -449,10 +454,9 @@ class schema_property(object):
             else:
                 val = self._make_default(obj)
                 if val is not None:
-                    obj.storage.__set__(self, obj, val)
+                    self.__set__(obj, val)
                 if self.type == "array":
-                    items = self.schema.get('items')
-                    val = ValidatingList(items, self.name, val)
+                    return obj.storage.__get__(self, obj)
 
         if isinstance(val, PickleProxy):
             obj.storage.__set__(self, obj, val)
@@ -564,19 +568,17 @@ class schema_property(object):
                 val = cPickle.loads(val)
                 val = PickleProxy(val)
             else:
-                try:
-                    validate(val, self.schema)
-                except ValidationError as e:
-                    raise self._formatted_error(ValueError, e.message)
+                if self.type != 'array':
+                    try:
+                        validate(val, self.schema)
+                    except ValidationError as e:
+                        raise self._formatted_error(ValueError, e.message)
                 format = self.schema.get('format')
                 if format and format in self._extensions:
                     try:
                         val = self._extensions[format].from_basic(val)
                     except (ValueError, TypeError) as e:
                         raise self._formatted_error(ValueError, e.message)
-                if self.schema.get('type') == 'array':
-                    items = self.schema.get('items')
-                    val = ValidatingList(items, self.name, val)
         return val
 
     def to_basic_type(self, val):
@@ -586,10 +588,6 @@ class schema_property(object):
         """
         if val is not None:
             if self.schema.get('type') == 'array':
-                if isinstance(val, ValidatingList):
-                    val = val._x
-                else:
-                    val = list(val)
                 new_val = []
                 for x in val:
                     if isinstance(x, MetaBase):

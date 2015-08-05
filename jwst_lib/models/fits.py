@@ -370,7 +370,7 @@ class FitsListProxy(object):
             getattr(self._get_for_index(i), self._path_to_default)
 
     def pop(self, i=-1):
-        item = self[i]
+        item = self._get_for_index[i]
         del self[i]
         return item
 

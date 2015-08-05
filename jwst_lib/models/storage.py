@@ -81,6 +81,14 @@ class TreeStorage(Storage):
             return True
 
     def __get__(self, prop, obj):
+        val = self.__get_internal__(prop, obj)
+        if prop.type == 'array':
+            from . import schema
+            items = prop.schema.get('items')
+            return schema.ValidatingList(items, prop.name, val)
+        return val
+
+    def __get_internal__(self, prop, obj):
         cursor = self.tree
         if not prop.is_ad_hoc:
             for part in prop.path[:-1]:
@@ -181,6 +189,9 @@ class TreeStorage(Storage):
         if not hasattr(self, '_tree'):
             raise IOError("Storage has been closed.")
         return self._tree
+
+    def to_tree(self):
+        return self.tree
 
 
 class HasStorage(object):

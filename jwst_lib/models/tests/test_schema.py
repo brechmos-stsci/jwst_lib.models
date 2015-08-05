@@ -259,20 +259,16 @@ schema_extra = {
 
 
 def test_dictionary_like():
-    with DataModel(schema=schema_extra) as x:
-        assert x['meta.foo'] == 'bar'
+    with DataModel() as x:
+        x.meta.origin = 'FOO'
+        assert x['meta.origin'] == 'FOO'
 
         try:
-            x['meta.subarray.size'] = 'string'
+            x['meta.subarray.xsize'] = 'string'
         except:
             pass
         else:
             raise AssertionError()
-
-        x['meta.bar.baz'] = 'google'
-        assert x['meta.bar.baz'] == 'google'
-
-        x['meta.subarray.xstart'] = 'fubar'
 
         try:
             y = x['meta.FOO.BAR.BAZ']
@@ -283,12 +279,13 @@ def test_dictionary_like():
 
 
 def test_to_flat_dict():
-    with DataModel(schema=schema_extra) as x:
-        assert x['meta.foo'] == 'bar'
+    with DataModel() as x:
+        x.meta.origin = 'FOO'
+        assert x['meta.origin'] == 'FOO'
 
         d = x.to_flat_dict()
 
-        assert d['meta.foo'] == 'bar'
+        assert d['meta.origin'] == 'FOO'
 
 
 def test_table_array():
@@ -412,7 +409,7 @@ def test_schema_url():
 
 def test_mask_model():
     with MaskModel(MASK_FILE) as dm:
-        assert dm.dq.dtype == np.uint8
+        assert dm.dq.dtype == np.uint32
 
 
 def test_data_array():
@@ -471,14 +468,14 @@ def test_data_array():
 
     with DataModel(TMP_FITS, schema=data_array_schema) as x:
         assert len(x.arr) == 2
-        assert len(x._storage._fits) == 4
+        assert len(x._storage._fits) == 6
         assert_array_almost_equal(x.arr[0].data, array1)
         assert_array_almost_equal(x.arr[1].data, array3)
 
         del x.arr[0]
-        assert len(x._storage._fits) == 3
+        assert len(x._storage._fits) == 4
         assert len(x.arr) == 1
-        assert len(x._storage._fits) == 3
+        assert len(x._storage._fits) == 4
 
         x.arr = []
         assert len(x.arr) == 0
@@ -618,3 +615,22 @@ def test_copy_multslit():
 
     assert model1.slits[0].data[330, 330] == 1
     assert output.slits[0].data[330, 330] == -1
+
+
+def test_multislit_move_from_fits():
+    from astropy.io import fits
+
+    hdulist = fits.HDUList()
+    hdulist.append(fits.PrimaryHDU())
+    for i in range(5):
+        hdu = fits.ImageHDU(name='SCI')
+        hdu.ver = i + 1
+        hdulist.append(hdu)
+
+    hdulist.writeto(TMP_FITS, clobber=True)
+
+    n = MultiSlitModel()
+    with MultiSlitModel(TMP_FITS) as m:
+        n.slits.append(m.slits[2])
+
+        assert len(n.slits) == 1
