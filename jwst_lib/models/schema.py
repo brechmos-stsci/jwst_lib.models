@@ -132,11 +132,10 @@ class ValidatingList(object):
     def _check(self, item):
         if isinstance(item, MetaBase):
             item = item.to_tree()
-        if isinstance(item, dict):
-            try:
-                validate(item, self._schema)
-            except ValidationError as e:
-                raise ValueError(e.message)
+        try:
+            validate(item, self._schema)
+        except ValidationError as e:
+            raise ValueError(e.message)
         return item
 
     def __cast(self, other):
@@ -454,7 +453,7 @@ class schema_property(object):
             else:
                 val = self._make_default(obj)
                 if val is not None:
-                    self.__set__(obj, val)
+                    obj.storage.__set__(self, obj, val)
                 if self.type == "array":
                     return obj.storage.__get__(self, obj)
 

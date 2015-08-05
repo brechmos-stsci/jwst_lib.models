@@ -634,3 +634,9 @@ def test_multislit_move_from_fits():
         n.slits.append(m.slits[2])
 
         assert len(n.slits) == 1
+
+
+@raises(ValueError)
+def test_multislit_garbage():
+    m = MultiSlitModel()
+    m.slits.append('junk')
