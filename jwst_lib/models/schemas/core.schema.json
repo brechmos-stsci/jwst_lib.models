@@ -909,6 +909,16 @@
                             "type" : "number",
                             "fits_keyword" : "PHOTFLAM"
                         },
+                        "conversion_megajanskys" : {
+                            "title" : "Flux density (MJy/steradian) producing 1 cps",
+                            "type" : "number",
+                            "fits_keyword" : "PHOTMJSR"
+                        },
+                        "conversion_microjanskys" : {
+                            "title" : "Flux density (uJy/arcsec2) producing 1 cps",
+                            "type" : "number",
+                            "fits_keyword" : "PHOTUJA2"
+                        },
                          "pixelarea_steradians": {
                             "title" : "Nominal pixel area in steradians",
                             "type" : "number",
@@ -942,6 +952,17 @@
                                 }
                             }
                         },
+                        "area" : {
+                            "title" : "Pixel area reference file information",
+                            "type" : "object",
+                            "properties" : {
+                                "name" : {
+                                    "title" : "Pixel area reference file name",
+                                    "type" : "string",
+                                    "fits_keyword" : "R_AREA"
+                                }
+                            }
+                        },
                         "dark" : {
                             "title" : "Dark reference file information",
                             "type" : "object",
@@ -961,17 +982,6 @@
                                     "title" : "Flat reference file name",
                                     "type" : "string",
                                     "fits_keyword" : "R_FLAT"
-                                }
-                            }
-                        },
-                        "straylight" : {
-                            "title" : "Straylight reference file information",
-                            "type" : "object",
-                            "properties" : {
-                                "name" : {
-                                    "title" : "Straylight reference file name",
-                                    "type" : "string",
-                                    "fits_keyword" : "R_STRAY"
                                 }
                             }
                         },
@@ -1005,17 +1015,6 @@
                                     "title" : "IPC reference file name",
                                     "type" : "string",
                                     "fits_keyword" : "R_IPC"
-                                }
-                            }
-                        },
-                        "reset" : {
-                            "title" : "Reset reference file information",
-                            "type" : "object",
-                            "properties" : {
-                                "name" : {
-                                    "title" : "Reset reference file name",
-                                    "type" : "string",
-                                    "fits_keyword" : "R_RESET"
                                 }
                             }
                         },
@@ -1074,6 +1073,17 @@
                                 }
                             }
                         },
+                        "reset" : {
+                            "title" : "Reset reference file information",
+                            "type" : "object",
+                            "properties" : {
+                                "name" : {
+                                    "title" : "Reset reference file name",
+                                    "type" : "string",
+                                    "fits_keyword" : "R_RESET"
+                                }
+                            }
+                        },
                         "saturation" : {
                             "title" : "Saturation reference file information",
                             "type" : "object",
@@ -1082,6 +1092,17 @@
                                     "title" : "Saturation reference file name",
                                     "type" : "string",
                                     "fits_keyword" : "R_SATURA"
+                                }
+                            }
+                        },
+                        "straylight" : {
+                            "title" : "Straylight reference file information",
+                            "type" : "object",
+                            "properties" : {
+                                "name" : {
+                                    "title" : "Straylight reference file name",
+                                    "type" : "string",
+                                    "fits_keyword" : "R_STRAY"
                                 }
                             }
                         }
