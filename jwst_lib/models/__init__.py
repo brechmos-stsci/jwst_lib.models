@@ -34,6 +34,7 @@ import numpy as np
 from .model_base import DataModel
 from .amilg import AmiLgModel
 from .asn import AsnModel
+from .combinedspec import CombinedSpecModel
 from .contrast import ContrastModel
 from .cube import CubeModel
 from .dark import DarkModel
