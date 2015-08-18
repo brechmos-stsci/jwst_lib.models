@@ -1223,6 +1223,11 @@
                             "type" : "string",
                             "fits_keyword" : "S_EXTR2D"
                         },
+                        "combine_1d" : {
+                            "title" : "1-D Spectral Combination",
+                            "type" : "string",
+                            "fits_keyword" : "S_COMB1D"
+                        },
                         "resample" : {
                             "title" : "Image resampling",
                             "type" : "string",
