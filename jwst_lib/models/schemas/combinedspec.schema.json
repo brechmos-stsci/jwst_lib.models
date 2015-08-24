@@ -10,7 +10,7 @@
                 {
                     "type": "data",
                     "title": "Combined, extracted spectral data table",
-                    "fits_hdu": "COMBINED_1D",
+                    "fits_hdu": "COMBINE1D",
                     "dtype": [
                         {"name": "wavelength", "dtype": "float32"},
                         {"name": "countrate", "dtype": "float32"},
