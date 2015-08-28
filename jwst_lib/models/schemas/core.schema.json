@@ -446,22 +446,19 @@
 
                         "start_time" : {
                             "title" : "UTC exposure start time",
-                            "type" : "string",
-                            "format" : "http://www.stsci.edu/types/fits-date-time",
+                            "type" : "number",
                             "fits_keyword" : "EXPSTART"
                         },
 
                         "mid_time" : {
                             "title" : "UTC exposure mid time",
-                            "type" : "string",
-                            "format" : "http://www.stsci.edu/types/fits-date-time",
+                            "type" : "number",
                             "fits_keyword" : "EXPMID"
                         },
 
                         "end_time" : {
                             "title" : "UTC exposure end time",
-                            "type" : "string",
-                            "format" : "http://www.stsci.edu/types/fits-date-time",
+                            "type" : "number",
                             "fits_keyword" : "EXPEND"
                         },
 
