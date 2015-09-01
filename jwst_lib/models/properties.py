@@ -25,13 +25,18 @@ __all__ = ['ObjectNode', 'ListNode']
 
 def _cast(val, schema):
     val = _unmake_node(val)
-    if 'datatype' in schema:
-        val = util.gentle_asarray(
-            val, ndarray.asdf_datatype_to_numpy_dtype(schema['datatype']))
-    if 'ndim' in schema and len(val.shape) != schema['ndim']:
-        raise ValueError("Array is wrong shape")
-    if 'max_ndim' in schema and len(val.shape) > schema['max_ndim']:
-        raise ValueError("Array is wrong shape")
+    if val is not None:
+        if 'datatype' in schema:
+            val = util.gentle_asarray(
+                val, ndarray.asdf_datatype_to_numpy_dtype(schema['datatype']))
+        if 'ndim' in schema and len(val.shape) != schema['ndim']:
+            raise ValueError(
+                "Array has wrong number of dimensions.  Expected {0}, got {1}".format(
+                    schema['ndim'], len(val.shape)))
+        if 'max_ndim' in schema and len(val.shape) > schema['max_ndim']:
+            raise ValueError(
+                "Array has wrong number of dimensions.  Expected <= {0}, got {1}".format(
+                    schema['max_ndim'], len(val.shape)))
     return val
 
 

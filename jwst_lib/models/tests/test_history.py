@@ -3,12 +3,16 @@
 
 from __future__ import absolute_import, division, unicode_literals, print_function
 
+import datetime
 import os
 import shutil
 import tempfile
 
 import numpy as np
 from astropy.io import fits
+from astropy.time import Time
+
+from pyasdf.tags.core import HistoryEntry
 
 from .. import DataModel
 
@@ -29,9 +33,14 @@ def teardown():
 
 def test_history_from_model_to_fits():
     m = DataModel()
-    m.history.append("First entry")
-    m.history.append("Second entry")
-    assert m.history == ["First entry", "Second entry"]
+    m.history.append(HistoryEntry({
+        'description': 'First entry',
+        'time': Time(datetime.datetime.now())
+    }))
+    m.history.append(HistoryEntry({
+        'description': 'Second entry',
+        'time': Time(datetime.datetime.now())
+    }))
     m.save(TMP_FITS)
 
     hdulist = fits.open(TMP_FITS)
@@ -44,7 +53,8 @@ def test_history_from_model_to_fits():
     m2.history = m.history
 
     print(m2.history)
-    assert m2.history == ["First entry", "Second entry"]
+    assert m2.history == [{'description': "First entry"},
+                          {'description': "Second entry"}]
 
     m2.save(TMP_FITS)
 
@@ -60,13 +70,16 @@ def test_history_from_fits():
     fits.writeto(TMP_FITS, np.array([]), header, clobber=True)
 
     m = DataModel(TMP_FITS)
-    assert m.history == ["First entry", "Second entry"]
+    assert m.history == [{'description': 'First entry'},
+                         {'description': 'Second entry'}]
 
     del m.history[0]
-    m.history.append("Third entry")
-    assert m.history == ["Second entry", "Third entry"]
+    m.history.append(HistoryEntry({'description': "Third entry"}))
+    assert m.history == [{'description': "Second entry"},
+                         {'description': "Third entry"}]
 
     m.save(TMP_FITS)
 
     m = DataModel(TMP_FITS)
-    assert m.history == ["Second entry", "Third entry"]
+    assert m.history == [{'description': "Second entry"},
+                         {'description': "Third entry"}]

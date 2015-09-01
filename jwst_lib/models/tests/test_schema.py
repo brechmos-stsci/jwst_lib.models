@@ -428,14 +428,11 @@ def test_data_array():
 
     with DataModel(TMP_FITS, schema=data_array_schema) as x:
         assert len(x.arr) == 2
-        assert len(x._storage._fits) == 6
         assert_array_almost_equal(x.arr[0].data, array1)
         assert_array_almost_equal(x.arr[1].data, array3)
 
         del x.arr[0]
-        assert len(x._storage._fits) == 4
         assert len(x.arr) == 1
-        assert len(x._storage._fits) == 4
 
         x.arr = []
         assert len(x.arr) == 0
@@ -537,7 +534,7 @@ def test_multislit_move_from_fits():
     hdulist = fits.HDUList()
     hdulist.append(fits.PrimaryHDU())
     for i in range(5):
-        hdu = fits.ImageHDU(name='SCI')
+        hdu = fits.ImageHDU(data=np.zeros((64, 64)), name='SCI')
         hdu.ver = i + 1
         hdulist.append(hdu)
 
@@ -550,7 +547,7 @@ def test_multislit_move_from_fits():
         assert len(n.slits) == 1
 
 
-@raises(ValueError)
+@raises(jsonschema.ValidationError)
 def test_multislit_garbage():
     m = MultiSlitModel()
     m.slits.append('junk')
