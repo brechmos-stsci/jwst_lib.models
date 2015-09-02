@@ -129,7 +129,7 @@ class DataModel(properties.ObjectNode):
         self._asdf = asdf
         self._ctx = self
 
-        self.meta.date = datetime.datetime.now()
+        self.meta.date = Time(datetime.datetime.now())
 
         if is_array:
             primary_array_name = self.get_primary_array_name()

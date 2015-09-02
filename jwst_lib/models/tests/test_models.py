@@ -13,6 +13,8 @@ try:
 except ImportError:
     has_yaml = False
 
+from astropy.time import Time
+
 import numpy as np
 from numpy.testing.decorators import knownfailureif
 from numpy.testing import assert_array_equal
@@ -278,7 +280,7 @@ def test_multislit_metadata():
         ms.slits.append(ms.slits.item())
         for key, val in ms.iteritems():
             assert isinstance(val, (bytes, unicode, int, long, float, bool,
-                                    datetime.datetime))
+                                    Time))
 
 
 def test_multislit_copy():

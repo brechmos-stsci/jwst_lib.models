@@ -18,7 +18,7 @@ from astropy import time
 from pyasdf import fits_embed
 from pyasdf import resolver
 from pyasdf import schema as pyasdf_schema
-from pyasdf.tags.core import ndarray
+from pyasdf.tags.core import ndarray, HistoryEntry
 from pyasdf import treeutil
 from pyasdf.util import HashableDict
 
@@ -363,7 +363,7 @@ def _save_extra_fits(hdulist, tree):
 def _save_history(hdulist, tree):
     history = tree.get('history', [])
     for entry in history:
-        hdulist[0].header['HISTORY'] = entry
+        hdulist[0].header['HISTORY'] = entry['description']
 
 
 def to_fits(tree, schema):
@@ -517,7 +517,7 @@ def _load_history(hdulist, tree):
     history = tree['history'] = []
 
     for entry in header['HISTORY']:
-        history.append(entry)
+        history.append(HistoryEntry({'description': entry}))
 
 
 def from_fits(hdulist, schema, validate=True):
