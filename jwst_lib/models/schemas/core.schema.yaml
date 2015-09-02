@@ -329,17 +329,20 @@ properties:
               NRS_MSASPEC, NRS_TACONFIRM, NRS_TACQ, NRS_TASLIT]
             fits_keyword: EXP_TYPE
           start_time:
-            title: UTC exposure start time
-            type: number
-            fits_keyword: EXPSTART
+            allOf:
+              - $ref: http://stsci.edu/schemas/asdf/time/time-0.1.0
+              - fits_keyword: EXPSTART
+                title: UTC exposure start time
           mid_time:
-            title: UTC exposure mid time
-            type: number
-            fits_keyword: EXPMID
+            allOf:
+              - $ref: http://stsci.edu/schemas/asdf/time/time-0.1.0
+              - fits_keyword: EXPMID
+                title: UTC exposure mid time
           end_time:
-            title: UTC exposure end time
-            type: number
-            fits_keyword: EXPEND
+            allOf:
+              - $ref: http://stsci.edu/schemas/asdf/time/time-0.1.0
+                title: UTC exposure end time
+                fits_keyword: EXPEND
           readpatt:
             title: Readout pattern
             type: string
