@@ -330,7 +330,7 @@
                                       "NRCB1", "NRCB2", "NRCB3", "NRCB4", "NRCBLONG",
                                       "NRS1", "NRS2",
                                       "MIRIMAGE", "MIRIFULONG", "MIRIFUSHORT",
-                                      "NIRISS", "NIS", "GUIDER1", "GUIDER2"],
+                                      "NIRISS", "NIS", "GUIDER1", "GUIDER2", "N/A"],
                             "description": "'NIRISS' is deprecated in favor of 'NIS'",
                             "fits_keyword" : "DETECTOR"
                         },

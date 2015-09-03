@@ -13,23 +13,6 @@
                     "ndim" : 2,
                     "dtype" : "float32"
                 },
-
-                "meta" : {
-                    "type": "object",
-                    "properties" : {
-                        "pixel_area_sr" : {
-                            "title" : "Nominal pixel area in steradians",
-                            "type" : "number",
-                            "fits_keyword" : "PIXAR_SR"
-                        },
-
-                        "pixel_area_a2" : {
-                            "title" : "Nominal pixel area in square arcsec",
-                            "type" : "number",
-                            "fits_keyword" : "PIXAR_A2"
-                        }
-                    }
-                }
             }
         }
     ]
