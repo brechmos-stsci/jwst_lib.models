@@ -12,7 +12,7 @@
                     "default" : 1.0,
                     "ndim" : 2,
                     "dtype" : "float32"
-                },
+                }
             }
         }
     ]
