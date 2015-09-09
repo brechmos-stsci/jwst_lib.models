@@ -198,8 +198,7 @@ class DataModel(mschema.HasArrayProperties, mstorage.HasStorage):
             The path to the file that we're about to save to.
         """
         if isinstance(path, basestring):
-            if self.meta.filename is None:
-                self.meta.filename = os.path.basename(path)
+            self.meta.filename = os.path.basename(path)
 
     def save(self, path, *args, **kwargs):
         self.on_save(path)
