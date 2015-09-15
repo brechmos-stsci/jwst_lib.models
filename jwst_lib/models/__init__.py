@@ -142,14 +142,6 @@ def open(init=None):
                 "init must be None, shape tuple, file path, "
                 "readable file object, or astropy.io.fits.HDUList")
 
-        try:
-            refouthdu = hdulist[fits_header_name('REFOUT')]
-        except KeyError:
-            pass
-        else:
-            new_class = MIRIRampModel
-            return new_class(init)
-
         shape = ()
         try:
             hdu = hdulist[fits_header_name('SCI')]
@@ -165,8 +157,14 @@ def open(init=None):
     if len(shape) == 0:
         new_class = DataModel
     elif len(shape) == 4:
-        from . import ramp
-        new_class = ramp.RampModel
+        try:
+            refouthdu = hdulist[fits_header_name('REFOUT')]
+        except KeyError:
+	    from . import ramp
+            new_class = ramp.RampModel
+        else:
+            from . import miri_ramp
+            new_class = miri_ramp.MIRIRampModel
     elif len(shape) == 3:
         from . import cube
         new_class = cube.CubeModel
