@@ -421,13 +421,13 @@
                         "gwa_xtilt" : {
                             "title" : "Grating Y tilt angle relative to mirror",
                             "type" : "number",
-                            "fits_keyword" : "GWAXTILT"
+                            "fits_keyword" : "GWAXTILT",
                             "default": 0.0
                         },
                         "gwa_ytilt" : {
                             "title" : "Grating X tilt angle relative to mirror",
                             "type" : "number",
-                            "fits_keyword" : "GWAYTILT"
+                            "fits_keyword" : "GWAYTILT",
                             "default": 0.0
                         }
                     }
