@@ -453,6 +453,20 @@
                         "type" : {
                             "title" : "Type of data in the exposure",
                             "type" : "string",
+                            "enum" : ["FGS_DARK", "FGS_FOCUS", "FGS_IMAGE", 
+                                      "FGS_INTFLAT", "FGS_SKYFLAT", 
+                                      "MIR_CORONCAL", "MIR_DARK", 
+                                      "MIR_FLAT-IMAGE", "MIR_FLAT-MRS", 
+                                      "MIR_LRS-FIXEDSLIT", "MIR_LRS-SLITLESS", 
+                                      "MIR_MRS", "MIR_TACQ", "NIS_AMI", 
+                                      "NIS_DARK", "NIS_FOCUS", "NIS_IMAGE", 
+                                      "NIS_LAMP", "NIS_SOSS", "NIS_WFSS", 
+                                      "NRS_AUTOFLAT", "NRS_AUTOWAVECAL", 
+                                      "NRS_BOTA", "NRS_BRIGHTOBJ", "NRS_CONFIRM", 
+                                      "NRS_DARK", "NRS_FIXEDSLIT", "NRS_FOCUS", 
+                                      "NRS_IFU", "NRS_IMAGE", "NRS_LAMP", 
+                                      "NRS_MIMF", "NRS_MSASPEC", "NRS_TACONFIRM", 
+                                      "NRS_TACQ", "NRS_TASLIT"],
                             "fits_keyword" : "EXP_TYPE"
                         },
 
