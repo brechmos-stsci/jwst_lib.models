@@ -365,7 +365,7 @@
                                       "F466N", "F470N", "F480M", "F560W", 
                                       "F770W", "FLENS", "FND", "FNDP750L", 
                                       "GR150C", "GR150R", "OPAQUE", "P750L", 
-                                      "WL3", "WLP4"],
+                                      "WL3", "WLP4", "N/A"],
                             "fits_keyword" : "FILTER"
                         },
 
@@ -624,18 +624,18 @@
                 "subarray" : {
                     "title" : "Subarray parameters",
                     "type" : "object",
-                    "enum" : ["1024X16", "128X128", "128X2048", "2048X128", 
-                              "2048X64", "32X32", "64X2048", "8X8", "ALLSLITS", 
-                              "BRIGHTSKY", "FULL", "GENERIC", "MASK1065", "MASK1140", 
-                              "MASK1550", "MASKLYOT", "S200A1", "S200A2", 
-                              "S200B1", "S400A1", "SLITLESSPRISM", "SUB128", 
-                              "SUB16", "SUB160", "SUB1A", "SUB1B", "SUB256", 
-                              "SUB32", "SUB320", "SUB64", "SUB640", "SUB96", 
-                              "SUBPRISM"],
                     "properties" : {
                         "name" : {
                             "title" : "Subarray used",
                             "type" : "string",
+                            "enum" : ["1024X16", "128X128", "128X2048", "2048X128",
+                              "2048X64", "32X32", "64X2048", "8X8", "ALLSLITS",
+                              "BRIGHTSKY", "FULL", "GENERIC", "MASK1065", "MASK1140",
+                              "MASK1550", "MASKLYOT", "S200A1", "S200A2",
+                              "S200B1", "S400A1", "SLITLESSPRISM", "SUB128",
+                              "SUB16", "SUB160", "SUB1A", "SUB1B", "SUB256",
+                              "SUB32", "SUB320", "SUB64", "SUB640", "SUB96",
+                              "SUBPRISM"],
                             "fits_keyword" : "SUBARRAY"
                         },
                         "xstart" : {
