@@ -350,21 +350,21 @@
                         "filter" : {
                             "title" : "Name of the filter element used",
                             "type" : "string",
-                            "enum" : ["ANY", "CLEAR", "F070LP", "F070W", "F090W", 
-                                      "F1000W", "F100LP", "F1060C", "F1065C", 
-                                      "F110W", "F1130W", "F1140C", "F115W", 
-                                      "F1280W", "F140M", "F140X", "F1500W", 
-                                      "F150W", "F150W2", "F1550C", "F162M", 
-                                      "F164N", "F170LP", "F1800W", "F182M", 
-                                      "F187N", "F200W", "F2100W", "F210M", 
-                                      "F212N", "F227W", "F2300C", "F250M", 
-                                      "F2550W", "F2550WR", "F277W", "F290LP", 
-                                      "F300M", "F322W2", "F323N", "F335M", 
-                                      "F356W", "F360M", "F380M", "F405N", 
-                                      "F410M", "F430M", "F444W", "F460M", 
-                                      "F466N", "F470N", "F480M", "F560W", 
-                                      "F770W", "FLENS", "FND", "FNDP750L", 
-                                      "GR150C", "GR150R", "OPAQUE", "P750L", 
+                            "enum" : ["ANY", "CLEAR", "F070LP", "F070W", "F090W",
+                                      "F1000W", "F100LP", "F1060C", "F1065C",
+                                      "F110W", "F1130W", "F1140C", "F115W",
+                                      "F1280W", "F140M", "F140X", "F1500W",
+                                      "F150W", "F150W2", "F1550C", "F162M",
+                                      "F164N", "F170LP", "F1800W", "F182M",
+                                      "F187N", "F200W", "F2100W", "F210M",
+                                      "F212N", "F227W", "F2300C", "F250M",
+                                      "F2550W", "F2550WR", "F277W", "F290LP",
+                                      "F300M", "F322W2", "F323N", "F335M",
+                                      "F356W", "F360M", "F380M", "F405N",
+                                      "F410M", "F430M", "F444W", "F460M",
+                                      "F466N", "F470N", "F480M", "F560W",
+                                      "F770W", "FLENS", "FND", "FNDP750L",
+                                      "GR150C", "GR150R", "OPAQUE", "P750L",
                                       "WL3", "WLP4", "N/A"],
                             "fits_keyword" : "FILTER"
                         },
@@ -436,15 +436,31 @@
                         },
                         "gwa_xtilt" : {
                             "title" : "Grating Y tilt angle relative to mirror",
-                            "type" : "number",
+                            "oneOf":[
+                                {
+                                "type": "string",
+                                "enum": ["N/A"]
+                                 },
+                                 {
+                                "type": "number"
+                                 }
+                                ],
                             "fits_keyword" : "GWAXTILT",
-                            "default": 0.0
+                            "default": "N/A"
                         },
                         "gwa_ytilt" : {
                             "title" : "Grating X tilt angle relative to mirror",
-                            "type" : "number",
+                            "oneOf":[
+                                {
+                                "type": "string",
+                                "enum": ["N/A"]
+                                 },
+                                 {
+                                "type": "number"
+                                 }
+                                ],
                             "fits_keyword" : "GWAYTILT",
-                            "default": 0.0
+                            "default": "N/A"
                         }
                     }
                 },
@@ -512,13 +528,13 @@
                         "readpatt" : {
                             "title" : "Readout pattern",
                             "type" : "string",
-                            "enum" : ["ACQ1", "ACQ2", "BRIGHT1", "BRIGHT2", 
-                                      "DEEP2", "DEEP8", "FAST", "FASTGRPAVG", 
-                                      "FASTINTAVG", "FGS", "FGS60", "FGS8370", 
-                                      "FGS840", "FGSRAPID", "FINEGUIDE", "ID", 
-                                      "MEDIUM2", "MEDIUM8", "NIS", "NISRAPID", 
-                                      "NRS", "NRSN16R4", "NRSN32R8", "NRSN8R2", 
-                                      "NRSRAPID", "NRSSLOW", "RAPID", "SHALLOW2", 
+                            "enum" : ["ACQ1", "ACQ2", "BRIGHT1", "BRIGHT2",
+                                      "DEEP2", "DEEP8", "FAST", "FASTGRPAVG",
+                                      "FASTINTAVG", "FGS", "FGS60", "FGS8370",
+                                      "FGS840", "FGSRAPID", "FINEGUIDE", "ID",
+                                      "MEDIUM2", "MEDIUM8", "NIS", "NISRAPID",
+                                      "NRS", "NRSN16R4", "NRSN32R8", "NRSN8R2",
+                                      "NRSRAPID", "NRSSLOW", "RAPID", "SHALLOW2",
                                       "SHALLOW4", "SLOW", "TRACK", "ANY"],
                             "fits_keyword" : "READPATT"
                         },
