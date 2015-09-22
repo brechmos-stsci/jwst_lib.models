@@ -344,6 +344,8 @@
                         "channel" : {
                             "title" : "NIRCam channel: long or short",
                             "type" : "string",
+                            "enum" : ["LONG", "SHORT", "12", "34", "1", "2",
+                                      "3", "4", "ANY", "N/A"],
                             "fits_keyword" : "CHANNEL"
                         },
 
