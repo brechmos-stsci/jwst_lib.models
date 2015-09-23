@@ -319,7 +319,8 @@
                         "name" : {
                             "title" : "Instrument used to acquire the data",
                             "type" : "string",
-                            "enum" :  ["NIRCAM", "NIRSPEC", "MIRI", "TFI", "FGS", "NIRISS"],
+                            "enum" :  ["NIRCAM", "NIRSPEC", "MIRI", "TFI", 
+                                       "FGS", "NIRISS", "ANY", "N/A"],
                             "fits_keyword" : "INSTRUME"
                         },
 
@@ -328,7 +329,7 @@
                             "type" : "string",
                             "enum" : ["NRCA1", "NRCA2", "NRCA3", "NRCA4", "NRCALONG",
                                       "NRCB1", "NRCB2", "NRCB3", "NRCB4", "NRCBLONG",
-                                      "NRS1", "NRS2",
+                                      "NRS1", "NRS2", "ANY",
                                       "MIRIMAGE", "MIRIFULONG", "MIRIFUSHORT",
                                       "NIRISS", "NIS", "GUIDER1", "GUIDER2", "N/A"],
                             "description": "'NIRISS' is deprecated in favor of 'NIS'",
@@ -503,7 +504,7 @@
                                       "MIR_FLAT-MRS", "MIR_CORONCAL",
                                       "NIS_AMI", "NIS_DARK", "NIS_FOCUS",
                                       "NIS_IMAGE", "NIS_LAMP", "NIS_SOSS",
-                                      "NIS_WFSS",
+                                      "NIS_WFSS", "N/A", "ANY",
                                       "NRC_IMAGE", "NRC_SLITLESS", "NRC_TACQ",
                                       "NRC_CORON", "NRC_FOCUS", "NRC_DARK",
                                       "NRC_FLAT", "NRC_LED", "NRC_WFSC",
@@ -544,7 +545,7 @@
                                       "MEDIUM2", "MEDIUM8", "NIS", "NISRAPID",
                                       "NRS", "NRSN16R4", "NRSN32R8", "NRSN8R2",
                                       "NRSRAPID", "NRSSLOW", "RAPID", "SHALLOW2",
-                                      "SHALLOW4", "SLOW", "TRACK", "ANY"],
+                                      "SHALLOW4", "SLOW", "TRACK", "ANY", "N/A"],
                             "fits_keyword" : "READPATT"
                         },
 
@@ -660,7 +661,7 @@
                               "S200B1", "S400A1", "SLITLESSPRISM", "SUB128",
                               "SUB16", "SUB160", "SUB1A", "SUB1B", "SUB256",
                               "SUB32", "SUB320", "SUB64", "SUB640", "SUB96",
-                              "SUBPRISM"],
+                              "SUBPRISM", "N/A"],
                             "fits_keyword" : "SUBARRAY"
                         },
                         "xstart" : {
